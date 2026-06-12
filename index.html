@@ -792,6 +792,18 @@ html.dark .marquee-item span.dot { color: #00d4ff; }
   to { transform: translateX(-50%); }
 }
 
+/* ===================== Glyph Matrix Overlay ===================== */
+#glyphMatrixCanvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9998;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .marquee-track, .mesh-blob, .float-badge, .gradient-text-animated, .profile-ring { animation: none !important; }
 }
@@ -801,6 +813,7 @@ html.dark .marquee-item span.dot { color: #00d4ff; }
 <div id="scrollProgress" class="fixed top-0 left-0 h-1 bg-[#0071e3] dark:bg-[#00d4ff] z-[60] transition-all duration-100" style="width: 0%"></div>
 <div class="grid-bg"></div>
 <canvas id="particleCanvas"></canvas>
+<canvas id="glyphMatrixCanvas"></canvas>
 
 <nav class="nav-glass fixed top-0 w-full z-50">
 <div class="max-w-6xl mx-auto px-6 h-12 md:h-14 flex items-center justify-between">
@@ -2186,6 +2199,77 @@ function toggleTheme(event) {
 
 let isThemeAnimating = false;
 
+// Nothing OS Glyph Matrix charging animation (full-screen dot wave)
+const glyphMatrixCanvas = document.getElementById('glyphMatrixCanvas');
+
+function playGlyphMatrix(originX, originY) {
+  if (!glyphMatrixCanvas) return;
+  const gctx = glyphMatrixCanvas.getContext('2d');
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const W = window.innerWidth, H = window.innerHeight;
+  glyphMatrixCanvas.width = W * dpr;
+  glyphMatrixCanvas.height = H * dpr;
+  gctx.scale(dpr, dpr);
+  glyphMatrixCanvas.style.opacity = '1';
+
+  const spacing = 26;
+  const cols = Math.ceil(W / spacing);
+  const rows = Math.ceil(H / spacing);
+  const goingDark = !document.documentElement.classList.contains('dark');
+  const litColor = goingDark ? '0, 212, 255' : '0, 113, 227';
+  const duration = 850;
+  const start = performance.now();
+  const maxDist = Math.hypot(Math.max(originX, W - originX), Math.max(originY, H - originY));
+
+  function frame(now) {
+    const t = (now - start) / duration;
+    if (t >= 1) {
+      gctx.clearRect(0, 0, W, H);
+      glyphMatrixCanvas.style.opacity = '0';
+      return;
+    }
+    gctx.clearRect(0, 0, W, H);
+    // Charging fill sweeps up from the bottom, with a ripple from the click point
+    const fillLevel = H - t * 1.25 * H;
+    const globalAlpha = t > 0.72 ? 1 - (t - 0.72) / 0.28 : 1;
+
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const x = c * spacing + spacing / 2;
+        const y = r * spacing + spacing / 2;
+        // Column wobble like the Glyph Matrix charging wave
+        const wobble = Math.sin(c * 0.55 + t * 14) * spacing * 0.9;
+        const lit = y > fillLevel + wobble;
+        // Ripple ring expanding from the toggle click
+        const dist = Math.hypot(x - originX, y - originY);
+        const ringPos = t * 1.15 * maxDist;
+        const onRing = Math.abs(dist - ringPos) < spacing * 1.4;
+
+        if (lit || onRing) {
+          const brightness = onRing ? 0.95 : 0.30 + 0.45 * Math.min(1, (y - (fillLevel + wobble)) / (H * 0.25));
+          gctx.fillStyle = `rgba(${litColor}, ${brightness * globalAlpha})`;
+          gctx.beginPath();
+          gctx.arc(x, y, onRing ? 2.4 : 1.7, 0, Math.PI * 2);
+          gctx.fill();
+        } else {
+          gctx.fillStyle = `rgba(134, 134, 139, ${0.10 * globalAlpha})`;
+          gctx.beginPath();
+          gctx.arc(x, y, 1.1, 0, Math.PI * 2);
+          gctx.fill();
+        }
+      }
+    }
+    // Signature Nothing red dot — bottom centre, always on while animating
+    gctx.fillStyle = `rgba(255, 59, 48, ${globalAlpha})`;
+    gctx.beginPath();
+    gctx.arc(W / 2, H - spacing, 3, 0, Math.PI * 2);
+    gctx.fill();
+
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
 darkModeToggle.addEventListener('click', (event) => {
   if (isThemeAnimating) return;
   isThemeAnimating = true;
@@ -2193,6 +2277,11 @@ darkModeToggle.addEventListener('click', (event) => {
   // Cache click coordinates
   const clientX = event.clientX;
   const clientY = event.clientY;
+
+  // Full-screen Glyph Matrix wave (skipped if user prefers reduced motion)
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    playGlyphMatrix(clientX || window.innerWidth / 2, clientY || 40);
+  }
 
   const dots = darkModeToggle.querySelectorAll('.glyph-dot');
   const ring = darkModeToggle.querySelector('.glyph-ring');
