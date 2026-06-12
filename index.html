@@ -532,11 +532,141 @@ html.dark .profile-status {
 }
 
 /* WhatsApp Form Styles */
+.glass-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  color: white;
+  transition: all 0.3s ease;
+}
+html:not(.dark) .glass-input {
+  background: rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: black;
+}
+.glass-input::placeholder {
+  color: #8e8e93;
+}
+.glass-input:focus {
+  outline: none;
+  border-color: #25D366;
+}
 #whatsappForm input:focus, #whatsappForm textarea:focus {
   box-shadow: 0 0 0 4px rgba(37, 211, 102, 0.15);
 }
 html.dark #whatsappForm input:focus, html.dark #whatsappForm textarea:focus {
   box-shadow: 0 0 0 4px rgba(37, 211, 102, 0.2);
+}
+
+/* ===================== Hero Gradient Mesh ===================== */
+.hero-mesh {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+}
+.mesh-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.45;
+  animation: blob-float 22s ease-in-out infinite;
+  will-change: transform;
+}
+.mesh-blob.b1 {
+  width: 420px; height: 420px;
+  background: radial-gradient(circle, #0071e3, transparent 70%);
+  top: -120px; left: -100px;
+}
+.mesh-blob.b2 {
+  width: 460px; height: 460px;
+  background: radial-gradient(circle, #00d4ff, transparent 70%);
+  top: 60px; right: -140px;
+  animation-delay: -7s;
+}
+.mesh-blob.b3 {
+  width: 360px; height: 360px;
+  background: radial-gradient(circle, #af52de, transparent 70%);
+  bottom: -140px; left: 28%;
+  animation-delay: -14s;
+}
+html.dark .mesh-blob { opacity: 0.22; }
+@keyframes blob-float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(50px, -40px) scale(1.12); }
+  66% { transform: translate(-40px, 35px) scale(0.94); }
+}
+
+/* ===================== Animated Gradient Text ===================== */
+.gradient-text-animated {
+  background: linear-gradient(120deg, #0071e3, #00d4ff, #af52de, #0071e3);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-shift 8s ease infinite;
+}
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ===================== Floating Tech Badges ===================== */
+.float-badge {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 14px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(14px) saturate(180%);
+  -webkit-backdrop-filter: blur(14px) saturate(180%);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+  animation: badge-float 6s ease-in-out infinite;
+  color: #1d1d1f;
+  z-index: 5;
+}
+html.dark .float-badge {
+  background: rgba(26, 26, 26, 0.7);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #f5f5f7;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4);
+}
+@keyframes badge-float {
+  0%, 100% { transform: translateY(0px) rotate(var(--rot, 0deg)); }
+  50% { transform: translateY(-14px) rotate(var(--rot, 0deg)); }
+}
+
+/* ===================== Magnetic Buttons ===================== */
+.magnetic {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ===================== Bento Cards ===================== */
+.bento-card {
+  border-radius: 24px;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.bento-card:hover {
+  transform: translateY(-4px);
+}
+
+/* ===================== Stat Counters ===================== */
+.stat-number {
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
 }
 </style>
 </head>
@@ -626,17 +756,61 @@ html.dark #whatsappForm input:focus, html.dark #whatsappForm textarea:focus {
   </div>
 </div>
 
-<section id="hero" class="min-h-[85vh] flex flex-col items-center justify-center text-center px-6 pt-32 relative z-10 bg-gradient-to-b from-apple-sky to-white dark:from-gray-900 dark:to-black">
-<div class="reveal">
-<h1 class="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tighter mb-6 gradient-text leading-[1.1]">
-Intelligence<br>by Design.
+<section id="hero" class="min-h-[90vh] flex flex-col items-center justify-center text-center px-6 pt-32 relative z-10 bg-gradient-to-b from-apple-sky to-white dark:from-gray-900 dark:to-black overflow-hidden">
+<div class="hero-mesh">
+  <div class="mesh-blob b1"></div>
+  <div class="mesh-blob b2"></div>
+  <div class="mesh-blob b3"></div>
+</div>
+
+<!-- Floating Tech Badges -->
+<div class="float-badge hidden md:flex" style="top: 22%; left: 8%; --rot: -4deg; animation-delay: -1s;">
+  <span>🐍</span> Python
+</div>
+<div class="float-badge hidden md:flex" style="top: 16%; right: 10%; --rot: 3deg; animation-delay: -3s;">
+  <span>🧠</span> TensorFlow
+</div>
+<div class="float-badge hidden lg:flex" style="bottom: 26%; left: 12%; --rot: 2deg; animation-delay: -4.5s;">
+  <span>⚡</span> XGBoost
+</div>
+<div class="float-badge hidden lg:flex" style="bottom: 20%; right: 9%; --rot: -3deg; animation-delay: -2s;">
+  <span>📊</span> Scikit-Learn
+</div>
+
+<div class="reveal relative z-10">
+<span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-6 bg-white/70 dark:bg-white/5 border border-black/5 dark:border-white/10 backdrop-blur-md text-apple-blue dark:text-blue-400">
+  <span class="w-2 h-2 rounded-full bg-[#00A36C] animate-pulse"></span>
+  Open to Internships
+</span>
+<h1 class="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tighter mb-6 leading-[1.1]">
+<span class="dark:text-white">Intelligence</span><br><span class="gradient-text-animated">by Design.</span>
 </h1>
 <p class="max-w-2xl text-apple-gray text-base sm:text-lg md:text-xl mb-10 leading-normal mx-auto font-medium dark:text-gray-400">
 Hey, I'm Charan — a CS student who builds ML systems that actually work in production, not just in notebooks.
 </p>
-<div class="flex flex-col sm:flex-row gap-4 justify-center items-center w-full max-w-sm sm:max-w-none mx-auto">
-<a href="#contact" class="cta-button w-full sm:w-auto text-center">Get in Touch</a>
-<a href="NARAM_RESUME.pdf" download="NARAM_RESUME.pdf" class="cta-button-secondary w-full sm:w-auto text-center">Download CV</a>
+<div class="flex flex-col sm:flex-row gap-4 justify-center items-center w-full max-w-sm sm:max-w-none mx-auto mb-16">
+<a href="#contact" class="cta-button magnetic w-full sm:w-auto text-center">Get in Touch</a>
+<a href="NARAM_RESUME.pdf" download="NARAM_RESUME.pdf" class="cta-button-secondary magnetic w-full sm:w-auto text-center">Download CV</a>
+</div>
+
+<!-- Stats Row -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-10 max-w-2xl mx-auto">
+  <div>
+    <p class="stat-number gradient-text-animated">98.28<span class="text-2xl">%</span></p>
+    <p class="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-apple-gray dark:text-gray-400 mt-1">Churn Model Accuracy</p>
+  </div>
+  <div>
+    <p class="stat-number gradient-text-animated">5</p>
+    <p class="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-apple-gray dark:text-gray-400 mt-1">ML Projects Shipped</p>
+  </div>
+  <div>
+    <p class="stat-number gradient-text-animated">&lt;10<span class="text-2xl">ms</span></p>
+    <p class="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-apple-gray dark:text-gray-400 mt-1">FAISS Retrieval Speed</p>
+  </div>
+  <div>
+    <p class="stat-number gradient-text-animated">9.41</p>
+    <p class="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-apple-gray dark:text-gray-400 mt-1">Sem 3 CGPA / 10</p>
+  </div>
 </div>
 </div>
 </section>
@@ -668,9 +842,28 @@ I'm the kind of person who reads the TensorFlow source code to understand why re
 </section>
 
 <section id="skills" class="py-16 md:py-24 px-6 max-w-6xl mx-auto relative z-10">
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+<div class="reveal mb-10">
+  <span class="text-xs font-bold uppercase tracking-widest text-apple-blue dark:text-blue-400 mb-4 block">Toolbox</span>
+  <h2 class="text-3xl md:text-4xl font-bold tracking-tight dark:text-white">What I work with.</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
 
-  <div class="card-border p-6 md:p-10 reveal">
+  <!-- Featured: Deep Learning & AI (spans 2 cols) -->
+  <div class="bento-card card-border p-6 md:p-10 reveal md:col-span-2 border-apple-blue/30 shadow-lg shadow-blue-100/50 dark:border-blue-900/30 dark:shadow-blue-900/30 bg-gradient-to-br from-blue-50/60 to-transparent dark:from-blue-950/20">
+    <div class="flex items-center gap-3 mb-8">
+      <div class="w-2.5 h-2.5 rounded-full bg-[#007AFF]"></div>
+      <h3 class="text-xl font-bold dark:text-white">Deep Learning & AI</h3>
+    </div>
+    <div class="flex flex-wrap gap-2.5">
+      <span class="skill-tag font-bold text-apple-blue dark:text-blue-400">TensorFlow</span><span class="skill-tag">Keras</span>
+      <span class="skill-tag">XGBoost</span><span class="skill-tag">Optuna</span>
+      <span class="skill-tag">Classification Models</span><span class="skill-tag">Hyperparameter Tuning</span>
+      <span class="skill-tag">Neural Collaborative Filtering</span><span class="skill-tag">FAISS</span>
+    </div>
+  </div>
+
+  <!-- Machine Learning -->
+  <div class="bento-card card-border p-6 md:p-10 reveal">
     <div class="flex items-center gap-3 mb-8">
       <div class="w-2.5 h-2.5 rounded-full bg-[#34C759]"></div>
       <h3 class="text-xl font-bold dark:text-white">Machine Learning</h3>
@@ -682,19 +875,8 @@ I'm the kind of person who reads the TensorFlow source code to understand why re
     </div>
   </div>
 
-  <div class="card-border p-6 md:p-10 reveal border-apple-blue/30 shadow-lg shadow-blue-100/50 dark:border-blue-900/30 dark:shadow-blue-900/30">
-    <div class="flex items-center gap-3 mb-8">
-      <div class="w-2.5 h-2.5 rounded-full bg-[#007AFF]"></div>
-      <h3 class="text-xl font-bold dark:text-white">Deep Learning & AI</h3>
-    </div>
-    <div class="flex flex-wrap gap-2.5">
-      <span class="skill-tag font-bold text-apple-blue dark:text-blue-400">TensorFlow</span><span class="skill-tag">Keras</span>
-      <span class="skill-tag">XGBoost</span><span class="skill-tag">Optuna</span>
-      <span class="skill-tag">Classification Models</span><span class="skill-tag">Hyperparameter Tuning</span>
-    </div>
-  </div>
-
-  <div class="card-border p-6 md:p-10 reveal">
+  <!-- Data Intelligence -->
+  <div class="bento-card card-border p-6 md:p-10 reveal">
     <div class="flex items-center gap-3 mb-8">
       <div class="w-2.5 h-2.5 rounded-full bg-[#FF9500]"></div>
       <h3 class="text-xl font-bold dark:text-white">Data Intelligence</h3>
@@ -706,7 +888,8 @@ I'm the kind of person who reads the TensorFlow source code to understand why re
     </div>
   </div>
 
-  <div class="card-border p-6 md:p-10 reveal">
+  <!-- Engineering Core (spans 2 cols) -->
+  <div class="bento-card card-border p-6 md:p-10 reveal md:col-span-2">
     <div class="flex items-center gap-3 mb-8">
       <div class="w-2.5 h-2.5 rounded-full bg-[#AF52DE]"></div>
       <h3 class="text-xl font-bold dark:text-white">Engineering Core</h3>
@@ -715,6 +898,7 @@ I'm the kind of person who reads the TensorFlow source code to understand why re
       <span class="skill-tag">Python 3</span><span class="skill-tag">Advanced OOP</span>
       <span class="skill-tag">SQL</span><span class="skill-tag">SQLAlchemy</span>
       <span class="skill-tag">Git Workflow</span><span class="skill-tag">Data Structures</span>
+      <span class="skill-tag">BeautifulSoup</span><span class="skill-tag">Web Scraping</span>
     </div>
   </div>
 
@@ -1017,11 +1201,96 @@ final_metrics = pd.DataFrame(data=final_metrics_dict)
 </section>
 
 <section id="projects" class="py-16 md:py-24 px-6 max-w-7xl mx-auto relative z-10">
-<h2 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-8 md:mb-12 tracking-tight dark:text-white">Engineering Projects</h2>
+<div class="reveal mb-10">
+  <span class="text-xs font-bold uppercase tracking-widest text-apple-blue dark:text-blue-400 mb-4 block">Selected Work</span>
+  <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight dark:text-white">Engineering Projects</h2>
+</div>
 
-<div class="grid md:grid-cols-2 gap-8 md:gap-10">
-    <!-- Project 1: Deep Learning -->
-    <div class="group card-border p-8 reveal hover:shadow-2xl hover:shadow-blue-100/50 dark:hover:shadow-blue-900/50 flex flex-col justify-between">
+<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
+    <!-- Project 1: Walmart Forecasting (Flagship #1) -->
+    <div class="group bento-card card-border p-8 reveal hover:shadow-xl flex flex-col justify-between lg:col-span-2 lg:row-span-1 border-apple-blue/30 shadow-lg shadow-blue-100/50 dark:border-blue-900/30 dark:shadow-blue-900/30 bg-gradient-to-br from-blue-50/60 to-transparent dark:from-blue-950/20">
+      <div>
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30 px-3 py-1 rounded-full text-xs font-bold uppercase">Time Series Forecasting</span>
+            <span class="bg-apple-blue text-white px-3 py-1 rounded-full text-xs font-bold uppercase">⭐ Flagship</span>
+          </div>
+          <svg class="w-5 h-5 text-gray-400 dark:text-gray-500 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors duration-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M7 17L17 7M17 7H7M17 7V17"></path>
+          </svg>
+        </div>
+        <h3 class="text-2xl font-bold mb-3 dark:text-white">Walmart Store Weekly Sales Forecasting</h3>
+        <p class="text-apple-gray dark:text-gray-400 mb-5 font-medium text-sm leading-relaxed">
+          A global multi-series demand forecasting system — one model learning weekly sales across all ~3,300 Store–Department combinations at once. The real story isn't the accuracy; it's that I <span class="font-bold text-apple-dark dark:text-white">caught my own data leakage</span>. An early R² ≈ 0.98 looked too good, so I diagnosed it, traced it to lag/rolling features peeking at the future, and rebuilt the pipeline from scratch.
+        </p>
+        <!-- Engineering Story Grid -->
+        <div class="grid sm:grid-cols-2 gap-3 mb-6">
+          <div class="bg-white/60 dark:bg-gray-900/40 border border-apple-border dark:border-gray-800 rounded-xl p-3">
+            <p class="text-xs font-bold text-rose-600 dark:text-rose-400 mb-1">❌ Caught: Temporal Leakage</p>
+            <p class="text-[11px] text-apple-gray dark:text-gray-400 leading-snug">Features built before the date split let validation see future sales. Fixed by splitting first, engineering after.</p>
+          </div>
+          <div class="bg-white/60 dark:bg-gray-900/40 border border-apple-border dark:border-gray-800 rounded-xl p-3">
+            <p class="text-xs font-bold text-emerald-600 dark:text-emerald-400 mb-1">✅ Built: Recursive Walk-Forward</p>
+            <p class="text-[11px] text-apple-gray dark:text-gray-400 leading-snug">Custom engine from scratch — each prediction feeds the next week's lag features, simulating real deployment.</p>
+          </div>
+        </div>
+        <!-- Tech Pills -->
+        <div class="flex flex-wrap gap-2 mb-6">
+          <span class="bg-gray-50 dark:bg-gray-900 text-apple-gray dark:text-gray-400 px-2.5 py-1 rounded-md text-xs font-semibold border border-apple-border dark:border-gray-800">Scikit-Learn</span>
+          <span class="bg-gray-50 dark:bg-gray-900 text-apple-gray dark:text-gray-400 px-2.5 py-1 rounded-md text-xs font-semibold border border-apple-border dark:border-gray-800">XGBoost</span>
+          <span class="bg-gray-50 dark:bg-gray-900 text-apple-gray dark:text-gray-400 px-2.5 py-1 rounded-md text-xs font-semibold border border-apple-border dark:border-gray-800">LightGBM</span>
+          <span class="bg-gray-50 dark:bg-gray-900 text-apple-gray dark:text-gray-400 px-2.5 py-1 rounded-md text-xs font-semibold border border-apple-border dark:border-gray-800">Pandas</span>
+        </div>
+        <!-- Highlight Text -->
+        <div class="bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold inline-block mb-6">
+          🏆 Leakage-free pipeline — honest validation across 45 stores, 421K+ weekly records
+        </div>
+      </div>
+      <div class="mt-2 flex items-center justify-between">
+        <a href="https://github.com/NaramCharan/Walmart-Store-Weekly-Sales-Forecasting" target="_blank" rel="noopener noreferrer" class="text-black dark:text-white hover:text-apple-blue dark:hover:text-blue-400 transition-all duration-300 hover:scale-110 flex items-center justify-center" aria-label="View Project on GitHub">
+          <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Project 2: Churn Prediction -->
+    <div class="group bento-card card-border p-8 reveal hover:shadow-xl flex flex-col justify-between">
+      <div>
+        <div class="flex items-center justify-between mb-6">
+          <span class="bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400 border border-rose-100 dark:border-rose-900/30 px-3 py-1 rounded-full text-xs font-bold uppercase">Churn Prediction</span>
+          <svg class="w-5 h-5 text-gray-400 dark:text-gray-500 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors duration-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M7 17L17 7M17 7H7M17 7V17"></path>
+          </svg>
+        </div>
+        <h3 class="text-2xl font-bold mb-3 dark:text-white">E-Commerce Customer Churn Prediction</h3>
+        <p class="text-apple-gray dark:text-gray-400 mb-6 font-medium text-sm leading-relaxed">
+          A real business problem — not a classroom exercise. Built a full ML pipeline with Optuna tuning across 3 models to predict which customers will leave. XGBoost won with 98.28% accuracy.
+        </p>
+        <!-- Tech Pills -->
+        <div class="flex flex-wrap gap-2 mb-6">
+          <span class="bg-gray-50 dark:bg-gray-900 text-apple-gray dark:text-gray-400 px-2.5 py-1 rounded-md text-xs font-semibold border border-apple-border dark:border-gray-800">XGBoost</span>
+          <span class="bg-gray-50 dark:bg-gray-900 text-apple-gray dark:text-gray-400 px-2.5 py-1 rounded-md text-xs font-semibold border border-apple-border dark:border-gray-800">Optuna</span>
+          <span class="bg-gray-50 dark:bg-gray-900 text-apple-gray dark:text-gray-400 px-2.5 py-1 rounded-md text-xs font-semibold border border-apple-border dark:border-gray-800">Scikit-Learn</span>
+          <span class="bg-gray-50 dark:bg-gray-900 text-apple-gray dark:text-gray-400 px-2.5 py-1 rounded-md text-xs font-semibold border border-apple-border dark:border-gray-800">Pipelines</span>
+        </div>
+        <!-- Highlight Text -->
+        <div class="bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold inline-block mb-6">
+          🏆 98.28% accuracy, 94.76% F1 score — XGBoost selected for production
+        </div>
+      </div>
+      <div class="mt-2 flex items-center justify-between">
+        <a href="https://github.com/NaramCharan/ecommerce-customer-churn-prediction" target="_blank" rel="noopener noreferrer" class="text-black dark:text-white hover:text-apple-blue dark:hover:text-blue-400 transition-all duration-300 hover:scale-110 flex items-center justify-center" aria-label="View Project on GitHub">
+          <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Project 3: Deep Learning -->
+    <div class="group bento-card card-border p-8 reveal hover:shadow-xl flex flex-col justify-between">
       <div>
         <div class="flex items-center justify-between mb-6">
           <span class="bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/30 px-3 py-1 rounded-full text-xs font-bold uppercase">Deep Learning</span>
@@ -1040,7 +1309,7 @@ final_metrics = pd.DataFrame(data=final_metrics_dict)
           <span class="bg-gray-50 dark:bg-gray-900 text-apple-gray dark:text-gray-400 px-2.5 py-1 rounded-md text-xs font-semibold border border-apple-border dark:border-gray-800">FAISS</span>
         </div>
         <!-- Highlight Text -->
-        <div class="bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold inline-block mb-6">
+        <div class="bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold inline-block mb-6">
           ⚡ Sub-10ms retrieval with 32-dim embeddings — faster than most production systems
         </div>
       </div>
@@ -1053,42 +1322,8 @@ final_metrics = pd.DataFrame(data=final_metrics_dict)
       </div>
     </div>
 
-    <!-- Project 2: Predictive Analytics -->
-    <div class="group card-border p-8 reveal hover:shadow-2xl hover:shadow-emerald-100/50 dark:hover:shadow-emerald-900/50 flex flex-col justify-between">
-      <div>
-        <div class="flex items-center justify-between mb-6">
-          <span class="bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30 px-3 py-1 rounded-full text-xs font-bold uppercase">Predictive Analytics</span>
-          <svg class="w-5 h-5 text-gray-400 dark:text-gray-500 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors duration-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M7 17L17 7M17 7H7M17 7V17"></path>
-          </svg>
-        </div>
-        <h3 class="text-2xl font-bold mb-3 dark:text-white">Titanic Survival Prediction Engine</h3>
-        <p class="text-apple-gray dark:text-gray-400 mb-6 font-medium text-sm leading-relaxed">
-          An end-to-end ML classification engine comparing Logistic Regression, Random Forest, and XGBoost. Implements production-oriented patterns with selective ColumnTransformer pipelines, hybrid missing value handling (KNNImputer), RobustScaler, and 10-fold Stratified Cross-Validation tuned using Optuna.
-        </p>
-        <!-- Tech Pills -->
-        <div class="flex flex-wrap gap-2 mb-6">
-          <span class="bg-gray-50 dark:bg-gray-900 text-apple-gray dark:text-gray-400 px-2.5 py-1 rounded-md text-xs font-semibold border border-apple-border dark:border-gray-800">Scikit-Learn</span>
-          <span class="bg-gray-50 dark:bg-gray-900 text-apple-gray dark:text-gray-400 px-2.5 py-1 rounded-md text-xs font-semibold border border-apple-border dark:border-gray-800">XGBoost</span>
-          <span class="bg-gray-50 dark:bg-gray-900 text-apple-gray dark:text-gray-400 px-2.5 py-1 rounded-md text-xs font-semibold border border-apple-border dark:border-gray-800">Optuna</span>
-          <span class="bg-gray-50 dark:bg-gray-900 text-apple-gray dark:text-gray-400 px-2.5 py-1 rounded-md text-xs font-semibold border border-apple-border dark:border-gray-800">KNNImputer</span>
-        </div>
-        <!-- Highlight Text -->
-        <div class="bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold inline-block mb-6">
-          🎯 85.5% accuracy — 12% above baseline, zero data leakage
-        </div>
-      </div>
-      <div class="mt-2 flex items-center justify-between">
-        <a href="https://github.com/NaramCharan/Titanic-Survival-Engine-Predictive-Analysis" target="_blank" rel="noopener noreferrer" class="text-black dark:text-white hover:text-apple-blue dark:hover:text-blue-400 transition-all duration-300 hover:scale-110 flex items-center justify-center" aria-label="View Project on GitHub">
-          <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
-          </svg>
-        </a>
-      </div>
-    </div>
-
-    <!-- Project 3: Data Engineering -->
-    <div class="group card-border p-8 reveal hover:shadow-2xl hover:shadow-purple-100/50 dark:hover:shadow-purple-900/50 flex flex-col justify-between">
+    <!-- Project 4: Data Engineering -->
+    <div class="group bento-card card-border p-8 reveal hover:shadow-xl flex flex-col justify-between">
       <div>
         <div class="flex items-center justify-between mb-6">
           <span class="bg-purple-50 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400 border border-purple-100 dark:border-purple-900/30 px-3 py-1 rounded-full text-xs font-bold uppercase">Data Engineering</span>
@@ -1108,7 +1343,7 @@ final_metrics = pd.DataFrame(data=final_metrics_dict)
           <span class="bg-gray-50 dark:bg-gray-900 text-apple-gray dark:text-gray-400 px-2.5 py-1 rounded-md text-xs font-semibold border border-apple-border dark:border-gray-800">Pandas</span>
         </div>
         <!-- Highlight Text -->
-        <div class="bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold inline-block mb-6">
+        <div class="bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold inline-block mb-6">
           🚀 Scraped 980+ books in under 30 minutes — replacing days of manual collection
         </div>
       </div>
@@ -1121,33 +1356,33 @@ final_metrics = pd.DataFrame(data=final_metrics_dict)
       </div>
     </div>
 
-    <!-- Project 4: E-Commerce Churn Prediction -->
-    <div class="group card-border p-8 reveal hover:shadow-2xl hover:shadow-red-100/50 dark:hover:shadow-red-900/50 flex flex-col justify-between">
+    <!-- Project 5: Titanic Survival Prediction Engine -->
+    <div class="group bento-card card-border p-8 reveal hover:shadow-xl flex flex-col justify-between">
       <div>
         <div class="flex items-center justify-between mb-6">
-          <span class="bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-900/30 px-3 py-1 rounded-full text-xs font-bold uppercase">Churn Prediction</span>
-          <svg class="w-5 h-5 text-gray-400 dark:text-gray-500 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors duration-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <span class="bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30 px-3 py-1 rounded-full text-xs font-bold uppercase">Predictive Analytics</span>
+          <svg class="w-5 h-5 text-gray-400 dark:text-gray-500 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors duration-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M7 17L17 7M17 7H7M17 7V17"></path>
           </svg>
         </div>
-        <h3 class="text-2xl font-bold mb-3 dark:text-white">E-Commerce Customer Churn Prediction</h3>
+        <h3 class="text-2xl font-bold mb-3 dark:text-white">Titanic Survival Prediction Engine</h3>
         <p class="text-apple-gray dark:text-gray-400 mb-6 font-medium text-sm leading-relaxed">
-          A real business problem — not a classroom exercise. Built a full ML pipeline with Optuna tuning across 3 models to predict which customers will leave. XGBoost won with 98.28% accuracy.
+          An end-to-end ML classification engine comparing Logistic Regression, Random Forest, and XGBoost. Implements production-oriented patterns with selective ColumnTransformer pipelines, hybrid missing value handling (KNNImputer), RobustScaler, and 10-fold Stratified Cross-Validation tuned using Optuna.
         </p>
         <!-- Tech Pills -->
         <div class="flex flex-wrap gap-2 mb-6">
+          <span class="bg-gray-50 dark:bg-gray-900 text-apple-gray dark:text-gray-400 px-2.5 py-1 rounded-md text-xs font-semibold border border-apple-border dark:border-gray-800">Scikit-Learn</span>
           <span class="bg-gray-50 dark:bg-gray-900 text-apple-gray dark:text-gray-400 px-2.5 py-1 rounded-md text-xs font-semibold border border-apple-border dark:border-gray-800">XGBoost</span>
           <span class="bg-gray-50 dark:bg-gray-900 text-apple-gray dark:text-gray-400 px-2.5 py-1 rounded-md text-xs font-semibold border border-apple-border dark:border-gray-800">Optuna</span>
-          <span class="bg-gray-50 dark:bg-gray-900 text-apple-gray dark:text-gray-400 px-2.5 py-1 rounded-md text-xs font-semibold border border-apple-border dark:border-gray-800">Scikit-Learn</span>
-          <span class="bg-gray-50 dark:bg-gray-900 text-apple-gray dark:text-gray-400 px-2.5 py-1 rounded-md text-xs font-semibold border border-apple-border dark:border-gray-800">Pipelines</span>
+          <span class="bg-gray-50 dark:bg-gray-900 text-apple-gray dark:text-gray-400 px-2.5 py-1 rounded-md text-xs font-semibold border border-apple-border dark:border-gray-800">KNNImputer</span>
         </div>
         <!-- Highlight Text -->
-        <div class="bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold inline-block mb-6">
-          🏆 98.28% accuracy, 94.76% F1 score — XGBoost selected for production
+        <div class="bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold inline-block mb-6">
+          🎯 85.5% accuracy — 12% above baseline, zero data leakage
         </div>
       </div>
       <div class="mt-2 flex items-center justify-between">
-        <a href="https://github.com/NaramCharan/ecommerce-customer-churn-prediction" target="_blank" rel="noopener noreferrer" class="text-black dark:text-white hover:text-apple-blue dark:hover:text-blue-400 transition-all duration-300 hover:scale-110 flex items-center justify-center" aria-label="View Project on GitHub">
+        <a href="https://github.com/NaramCharan/Titanic-Survival-Engine-Predictive-Analysis" target="_blank" rel="noopener noreferrer" class="text-black dark:text-white hover:text-apple-blue dark:hover:text-blue-400 transition-all duration-300 hover:scale-110 flex items-center justify-center" aria-label="View Project on GitHub">
           <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
           </svg>
@@ -1197,7 +1432,7 @@ final_metrics = pd.DataFrame(data=final_metrics_dict)
 <div class="space-y-6">
 
     <!-- Machine Learning Specialization -->
-    <div class="cert-interactive-wrap border border-apple-border dark:border-gray-700 bg-white dark:bg-gray-800 p-6 rounded-2xl transition-all duration-300 hover:shadow-lg">
+    <div class="cert-interactive-wrap p-6 rounded-2xl transition-all duration-300 hover:shadow-lg font-sans">
       <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
         <div class="flex items-start gap-4">
           <!-- DeepLearning.AI Brand Icon -->
@@ -1238,15 +1473,15 @@ final_metrics = pd.DataFrame(data=final_metrics_dict)
             <!-- Courses List -->
             <ul class="mt-3 space-y-1.5 text-xs text-apple-gray dark:text-gray-400">
               <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                <svg class="w-4 h-4 text-zinc-500 dark:text-zinc-400" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
                 Supervised Machine Learning: Regression and Classification
               </li>
               <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                <svg class="w-4 h-4 text-zinc-500 dark:text-zinc-400" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
                 Advanced Learning Algorithms
               </li>
               <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                <svg class="w-4 h-4 text-zinc-500 dark:text-zinc-400" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
                 Unsupervised Learning, Recommenders, Reinforcement Learning
               </li>
             </ul>
@@ -1315,7 +1550,7 @@ final_metrics = pd.DataFrame(data=final_metrics_dict)
     </div>
 
     <!-- Python for Everybody (Michigan) -->
-    <div class="cert-interactive-wrap border border-apple-border dark:border-gray-700 bg-white dark:bg-gray-800 p-6 rounded-2xl transition-all duration-300 hover:shadow-lg font-sans">
+    <div class="cert-interactive-wrap p-6 rounded-2xl transition-all duration-300 hover:shadow-lg font-sans">
       <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
         <div class="flex items-start gap-4">
           <!-- University of Michigan Brand Icon -->
@@ -1335,23 +1570,23 @@ final_metrics = pd.DataFrame(data=final_metrics_dict)
             <!-- Courses List -->
             <ul class="mt-3 space-y-1.5 text-xs text-apple-gray dark:text-gray-400">
               <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                <svg class="w-4 h-4 text-zinc-500 dark:text-zinc-400" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
                 Programming for Everybody (Getting Started with Python)
               </li>
               <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                <svg class="w-4 h-4 text-zinc-500 dark:text-zinc-400" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
                 Python Data Structures
               </li>
               <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                <svg class="w-4 h-4 text-zinc-500 dark:text-zinc-400" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
                 Using Python to Access Web Data
               </li>
               <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                <svg class="w-4 h-4 text-zinc-500 dark:text-zinc-400" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
                 Using Databases with Python
               </li>
               <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                <svg class="w-4 h-4 text-zinc-500 dark:text-zinc-400" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
                 Capstone: Retrieving, Processing, and Visualizing Data with Python
               </li>
             </ul>
@@ -1419,7 +1654,7 @@ final_metrics = pd.DataFrame(data=final_metrics_dict)
     </div>
 
     <!-- Google Prompting Essentials -->
-    <div class="cert-interactive-wrap border border-apple-border dark:border-gray-700 bg-white dark:bg-gray-800 p-6 rounded-2xl transition-all duration-300 hover:shadow-lg font-sans">
+    <div class="cert-interactive-wrap p-6 rounded-2xl transition-all duration-300 hover:shadow-lg font-sans">
       <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
         <div class="flex items-start gap-4">
           <!-- Google Brand Icon -->
@@ -1442,11 +1677,11 @@ final_metrics = pd.DataFrame(data=final_metrics_dict)
             <!-- Courses List -->
             <ul class="mt-3 space-y-1.5 text-xs text-apple-gray dark:text-gray-400">
               <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                <svg class="w-4 h-4 text-zinc-500 dark:text-zinc-400" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
                 Structured prompt design, variables, and context constraints
               </li>
               <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                <svg class="w-4 h-4 text-zinc-500 dark:text-zinc-400" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
                 Zero-shot, few-shot, and chain-of-thought prompting methodologies
               </li>
             </ul>
@@ -1493,10 +1728,10 @@ final_metrics = pd.DataFrame(data=final_metrics_dict)
           <div class="flex-shrink-0 flex justify-center md:justify-end items-center relative mt-6 md:mt-0 z-10 md:pl-10">
             <div class="absolute right-6 top-0 w-16 h-80 bg-yellow-400 opacity-20 hidden md:block" style="clip-path: polygon(0 0, 100% 0, 100% 90%, 50% 100%, 0 90%);"></div>
             <div class="w-32 h-32 rounded-full border-4 border-dashed border-yellow-300 bg-white flex items-center justify-center p-1 shadow-md">
-              <div class="w-full h-full rounded-full border-2 border-yellow-600 flex flex-col items-center justify-center text-center p-2 bg-[#fffbeb]">
-                <span class="text-[8px] font-bold text-yellow-600 uppercase tracking-widest leading-none mb-1">Certified</span>
+              <div class="w-full h-full rounded-full border-2 border-black flex flex-col items-center justify-center text-center p-2 bg-zinc-50">
+                <span class="text-[8px] font-bold text-black uppercase tracking-widest leading-none mb-1">Certified</span>
                 <span class="text-[6px] text-gray-500 uppercase leading-none mb-2">Google</span>
-                <div class="w-6 h-6 rounded-full bg-yellow-600 flex items-center justify-center text-white text-[9px] font-extrabold shadow-sm">AI</div>
+                <div class="w-6 h-6 rounded-full bg-black flex items-center justify-center text-white text-[9px] font-extrabold shadow-sm">AI</div>
               </div>
             </div>
           </div>
@@ -1505,7 +1740,7 @@ final_metrics = pd.DataFrame(data=final_metrics_dict)
     </div>
 
     <!-- Databases and SQL for Data Science with Python (IBM) -->
-    <div class="cert-interactive-wrap border border-apple-border dark:border-gray-700 bg-white dark:bg-gray-800 p-6 rounded-2xl transition-all duration-300 hover:shadow-lg font-sans">
+    <div class="cert-interactive-wrap p-6 rounded-2xl transition-all duration-300 hover:shadow-lg font-sans">
       <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
         <div class="flex items-start gap-4">
           <!-- IBM Brand Icon -->
@@ -1525,11 +1760,11 @@ final_metrics = pd.DataFrame(data=final_metrics_dict)
             <!-- Courses List -->
             <ul class="mt-3 space-y-1.5 text-xs text-apple-gray dark:text-gray-400">
               <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                <svg class="w-4 h-4 text-zinc-500 dark:text-zinc-400" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
                 Relational databases, SQL queries, joins, and database design principles
               </li>
               <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                <svg class="w-4 h-4 text-zinc-500 dark:text-zinc-400" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
                 Analyzing real-world datasets using Jupyter Notebooks and Python DB APIs
               </li>
             </ul>
@@ -1603,23 +1838,23 @@ Have an internship opening? Want to collaborate on an ML project? Or just want t
 </p>
 
 <!-- WhatsApp Contact Form -->
-<form id="whatsappForm" class="card-border p-6 md:p-8 bg-white dark:bg-gray-800 text-left mb-10 shadow-sm space-y-5 max-w-2xl mx-auto">
+<form id="whatsappForm" class="card-border p-6 md:p-8 text-left mb-10 space-y-5 max-w-2xl mx-auto">
   <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
     <div>
       <label for="wa-name" class="block text-xs font-bold text-apple-gray dark:text-gray-400 uppercase tracking-widest mb-2">Your Name</label>
       <input type="text" id="wa-name" required placeholder="John Doe" 
-             class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-apple-border dark:border-gray-700 rounded-xl focus:outline-none focus:border-[#25D366] dark:focus:border-[#25D366] text-sm dark:text-white transition-colors" />
+             class="w-full px-4 py-3 glass-input rounded-xl focus:outline-none focus:border-[#25D366] dark:focus:border-[#25D366] text-sm dark:text-white transition-colors" />
     </div>
     <div>
       <label for="wa-email" class="block text-xs font-bold text-apple-gray dark:text-gray-400 uppercase tracking-widest mb-2">Your Email</label>
       <input type="email" id="wa-email" placeholder="john@company.com" 
-             class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-apple-border dark:border-gray-700 rounded-xl focus:outline-none focus:border-[#25D366] dark:focus:border-[#25D366] text-sm dark:text-white transition-colors" />
+             class="w-full px-4 py-3 glass-input rounded-xl focus:outline-none focus:border-[#25D366] dark:focus:border-[#25D366] text-sm dark:text-white transition-colors" />
     </div>
   </div>
   <div>
     <label for="wa-message" class="block text-xs font-bold text-apple-gray dark:text-gray-400 uppercase tracking-widest mb-2">Message</label>
     <textarea id="wa-message" required rows="3" placeholder="Hi Charan, I came across your portfolio and..." 
-              class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-apple-border dark:border-gray-700 rounded-xl focus:outline-none focus:border-[#25D366] dark:focus:border-[#25D366] text-sm dark:text-white transition-colors resize-none"></textarea>
+              class="w-full px-4 py-3 glass-input rounded-xl focus:outline-none focus:border-[#25D366] dark:focus:border-[#25D366] text-sm dark:text-white transition-colors resize-none"></textarea>
   </div>
   <button type="submit" class="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-[#25D366] hover:bg-[#20BD5A] text-white font-bold rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-green-200/40 dark:hover:shadow-green-900/40 hover:-translate-y-0.5">
     <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
@@ -1963,9 +2198,16 @@ function animate() {
 resize();
 animate();
 
-// Reveal Logic
+// Reveal Logic (with staggered delay for sibling groups)
 const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const siblings = Array.from(entry.target.parentElement.children).filter(c => c.classList.contains('reveal'));
+      const idx = siblings.indexOf(entry.target);
+      entry.target.style.transitionDelay = `${Math.min(idx, 5) * 80}ms`;
+      entry.target.classList.add('visible');
+    }
+  });
 }, { threshold: 0.08 });
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
@@ -2142,7 +2384,7 @@ function switchTab(tabName) {
     
     if (tab === tabName) {
       // Active tab styling
-      btn.className = "px-3 py-1 rounded text-xs font-mono font-medium transition-colors bg-white dark:bg-gray-800 text-apple-blue dark:text-blue-400 shadow-sm border border-apple-border dark:border-gray-700";
+      btn.className = "px-3 py-1 rounded text-xs font-mono font-medium transition-colors bg-white dark:bg-gray-800 text-apple-blue dark:text-blue-400 shadow-sm border border-apple-border dark:border-gray-700 font-semibold";
       code.classList.remove('hidden');
     } else {
       // Inactive tab styling
@@ -2151,6 +2393,19 @@ function switchTab(tabName) {
     }
   });
 }
+
+// Magnetic Buttons
+document.querySelectorAll('.magnetic').forEach(el => {
+  el.addEventListener('mousemove', (e) => {
+    const rect = el.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    el.style.transform = `translate(${x * 0.25}px, ${y * 0.35}px)`;
+  });
+  el.addEventListener('mouseleave', () => {
+    el.style.transform = 'translate(0, 0)';
+  });
+});
 
 // Toggle Code Expansion for main.py
 function toggleCodeExpand() {
@@ -2164,7 +2419,7 @@ function toggleCodeExpand() {
     btn.textContent = 'Collapse Review';
   } else {
     moreCode.classList.add('hidden');
-    fadeOverlay.className = "absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-apple-sky via-apple-sky/90 to-transparent dark:from-black dark:via-black/90 dark:to-transparent flex items-end justify-center pb-2 z-10";
+    fadeOverlay.className = "absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white via-white/90 to-transparent dark:from-black dark:via-black/90 dark:to-transparent flex items-end justify-center pb-2 z-10";
     btn.textContent = 'Expand Review';
     document.getElementById('code-main').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
@@ -2172,4 +2427,3 @@ function toggleCodeExpand() {
 </script>
 </body>
 </html>
-
