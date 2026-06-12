@@ -13,7 +13,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <script>
 tailwind.config = {
 darkMode: 'class',
@@ -21,7 +21,8 @@ theme: {
 extend: {
 fontFamily: {
   sans: ['Inter', 'sans-serif'],
-  mono: ['JetBrains Mono', 'monospace']
+  mono: ['JetBrains Mono', 'monospace'],
+  display: ['Space Grotesk', 'Inter', 'sans-serif']
 },
 colors: {
 apple: {
@@ -37,6 +38,14 @@ sky: '#fbfbfd'
 }
 }
 }
+}
+// Apply saved/default theme before first paint to avoid flash
+try {
+  if ((localStorage.getItem('theme') || 'dark') === 'dark') {
+    document.documentElement.classList.add('dark');
+  }
+} catch (e) {
+  document.documentElement.classList.add('dark');
 }
 </script>
 <style>
@@ -668,10 +677,129 @@ html.dark .float-badge {
   font-weight: 800;
   letter-spacing: -0.02em;
 }
+
+/* ===================== Display Typography ===================== */
+h1, h2, h3, h4 { font-family: 'Space Grotesk', 'Inter', sans-serif; }
+
+/* ===================== Blueprint Grid Background ===================== */
+.grid-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(0, 113, 227, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 113, 227, 0.045) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, black 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, black 30%, transparent 75%);
+}
+html.dark .grid-bg {
+  background-image:
+    linear-gradient(rgba(0, 212, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 212, 255, 0.05) 1px, transparent 1px);
+}
+
+/* ===================== Glow Border Cards ===================== */
+.glow-card {
+  position: relative;
+  overflow: hidden;
+}
+.glow-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: linear-gradient(135deg, rgba(0,113,227,0.5), rgba(0,212,255,0.25) 40%, transparent 60%, rgba(175,82,222,0.4));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+.glow-card:hover::before { opacity: 1; }
+
+/* ===================== Section Number Labels ===================== */
+.section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #0071e3;
+}
+html.dark .section-label { color: #00d4ff; }
+.section-label::before {
+  content: "";
+  width: 32px;
+  height: 1.5px;
+  background: linear-gradient(90deg, #0071e3, #00d4ff);
+}
+
+/* ===================== Typing Caret ===================== */
+.type-caret {
+  display: inline-block;
+  width: 10px;
+  margin-left: 2px;
+  border-bottom: 2.5px solid #00d4ff;
+  animation: caret-blink 0.9s steps(1) infinite;
+}
+@keyframes caret-blink { 50% { opacity: 0; } }
+.hero-terminal {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  color: #00863c;
+}
+html.dark .hero-terminal { color: #4ade80; }
+
+/* ===================== Marquee Strip ===================== */
+.marquee-wrap {
+  overflow: hidden;
+  position: relative;
+  border-top: 1px solid rgba(0,0,0,0.06);
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  padding: 14px 0;
+}
+html.dark .marquee-wrap {
+  border-color: rgba(255,255,255,0.08);
+}
+.marquee-track {
+  display: flex;
+  gap: 3rem;
+  width: max-content;
+  animation: marquee-scroll 30s linear infinite;
+}
+.marquee-wrap:hover .marquee-track { animation-play-state: paused; }
+.marquee-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #86868b;
+  white-space: nowrap;
+}
+.marquee-item span.dot { color: #0071e3; }
+html.dark .marquee-item span.dot { color: #00d4ff; }
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track, .mesh-blob, .float-badge, .gradient-text-animated, .profile-ring { animation: none !important; }
+}
 </style>
 </head>
 <body>
 <div id="scrollProgress" class="fixed top-0 left-0 h-1 bg-[#0071e3] dark:bg-[#00d4ff] z-[60] transition-all duration-100" style="width: 0%"></div>
+<div class="grid-bg"></div>
 <canvas id="particleCanvas"></canvas>
 
 <nav class="nav-glass fixed top-0 w-full z-50">
@@ -785,8 +913,11 @@ html.dark .float-badge {
 <h1 class="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tighter mb-6 leading-[1.1]">
 <span class="dark:text-white">Intelligence</span><br><span class="gradient-text-animated">by Design.</span>
 </h1>
-<p class="max-w-2xl text-apple-gray text-base sm:text-lg md:text-xl mb-10 leading-normal mx-auto font-medium dark:text-gray-400">
+<p class="max-w-2xl text-apple-gray text-base sm:text-lg md:text-xl mb-5 leading-normal mx-auto font-medium dark:text-gray-400">
 Hey, I'm Charan — a CS student who builds ML systems that actually work in production, not just in notebooks.
+</p>
+<p class="hero-terminal mb-10 h-5" aria-hidden="true">
+<span class="opacity-60">$</span> <span id="typedText"></span><span class="type-caret">&nbsp;</span>
 </p>
 <div class="flex flex-col sm:flex-row gap-4 justify-center items-center w-full max-w-sm sm:max-w-none mx-auto mb-16">
 <a href="#contact" class="cta-button magnetic w-full sm:w-auto text-center">Get in Touch</a>
@@ -815,9 +946,35 @@ Hey, I'm Charan — a CS student who builds ML systems that actually work in pro
 </div>
 </section>
 
+<!-- Tech Marquee Strip -->
+<div class="marquee-wrap relative z-10 bg-white/40 dark:bg-black/40 backdrop-blur-sm" aria-hidden="true">
+  <div class="marquee-track">
+    <span class="marquee-item"><span class="dot">●</span> TensorFlow</span>
+    <span class="marquee-item"><span class="dot">●</span> XGBoost</span>
+    <span class="marquee-item"><span class="dot">●</span> Scikit-Learn</span>
+    <span class="marquee-item"><span class="dot">●</span> Optuna</span>
+    <span class="marquee-item"><span class="dot">●</span> FAISS</span>
+    <span class="marquee-item"><span class="dot">●</span> Pandas</span>
+    <span class="marquee-item"><span class="dot">●</span> NumPy</span>
+    <span class="marquee-item"><span class="dot">●</span> Keras</span>
+    <span class="marquee-item"><span class="dot">●</span> LightGBM</span>
+    <span class="marquee-item"><span class="dot">●</span> SQLAlchemy</span>
+    <span class="marquee-item"><span class="dot">●</span> TensorFlow</span>
+    <span class="marquee-item"><span class="dot">●</span> XGBoost</span>
+    <span class="marquee-item"><span class="dot">●</span> Scikit-Learn</span>
+    <span class="marquee-item"><span class="dot">●</span> Optuna</span>
+    <span class="marquee-item"><span class="dot">●</span> FAISS</span>
+    <span class="marquee-item"><span class="dot">●</span> Pandas</span>
+    <span class="marquee-item"><span class="dot">●</span> NumPy</span>
+    <span class="marquee-item"><span class="dot">●</span> Keras</span>
+    <span class="marquee-item"><span class="dot">●</span> LightGBM</span>
+    <span class="marquee-item"><span class="dot">●</span> SQLAlchemy</span>
+  </div>
+</div>
+
 <section id="objective" class="py-16 md:py-24 px-6 max-w-4xl mx-auto relative z-10 bg-apple-lightGray dark:bg-gray-800 rounded-3xl">
 <div class="reveal">
-<span class="text-xs font-bold uppercase tracking-widest text-apple-blue dark:text-blue-400 mb-4 block">What I'm Looking For</span>
+<span class="section-label mb-4">01 · What I'm Looking For</span>
 <h2 class="text-3xl md:text-4xl font-bold mb-6 tracking-tight dark:text-white">Looking for my first big break in AI/ML.</h2>
 <p class="text-apple-gray dark:text-gray-400 text-base md:text-lg leading-relaxed font-medium mb-4">
 I'm a 3rd-year CS student who's spent the last two years going deep into machine learning — not just following tutorials, but actually building things from scratch. I've trained recommendation engines, written data pipelines, and obsessed over preventing data leakage before I even knew most people skip that step.
@@ -830,7 +987,7 @@ Now I'm ready to bring that energy to a real team. Whether it's TensorFlow, data
 
 <section id="about" class="py-16 md:py-32 px-6 max-w-4xl mx-auto relative z-10 mt-8 md:mt-12">
 <div class="reveal">
-<span class="text-xs font-bold uppercase tracking-widest text-apple-blue dark:text-blue-400 mb-4 block">A Bit About Me</span>
+<span class="section-label mb-4">02 · A Bit About Me</span>
 <h2 class="text-3xl md:text-4xl font-bold mb-8 tracking-tight dark:text-white">I build things that work,<br>not just things that demo well.</h2>
 <p class="text-apple-gray dark:text-gray-400 text-base md:text-lg leading-relaxed font-medium mb-4">
 Here's the thing — most students stop at training a model and calling it a day. I don't. I think about how it deploys, how fast the lookup needs to be, and whether the data pipeline would survive messy real-world inputs. That's why I built my recommendation engine with FAISS for sub-10ms retrieval, not just a basic cosine similarity function.
@@ -843,13 +1000,13 @@ I'm the kind of person who reads the TensorFlow source code to understand why re
 
 <section id="skills" class="py-16 md:py-24 px-6 max-w-6xl mx-auto relative z-10">
 <div class="reveal mb-10">
-  <span class="text-xs font-bold uppercase tracking-widest text-apple-blue dark:text-blue-400 mb-4 block">Toolbox</span>
+  <span class="section-label mb-4">03 · Toolbox</span>
   <h2 class="text-3xl md:text-4xl font-bold tracking-tight dark:text-white">What I work with.</h2>
 </div>
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
 
   <!-- Featured: Deep Learning & AI (spans 2 cols) -->
-  <div class="bento-card card-border p-6 md:p-10 reveal md:col-span-2 border-apple-blue/30 shadow-lg shadow-blue-100/50 dark:border-blue-900/30 dark:shadow-blue-900/30 bg-gradient-to-br from-blue-50/60 to-transparent dark:from-blue-950/20">
+  <div class="bento-card glow-card card-border p-6 md:p-10 reveal md:col-span-2 border-apple-blue/30 shadow-lg shadow-blue-100/50 dark:border-blue-900/30 dark:shadow-blue-900/30 bg-gradient-to-br from-blue-50/60 to-transparent dark:from-blue-950/20">
     <div class="flex items-center gap-3 mb-8">
       <div class="w-2.5 h-2.5 rounded-full bg-[#007AFF]"></div>
       <h3 class="text-xl font-bold dark:text-white">Deep Learning & AI</h3>
@@ -863,7 +1020,7 @@ I'm the kind of person who reads the TensorFlow source code to understand why re
   </div>
 
   <!-- Machine Learning -->
-  <div class="bento-card card-border p-6 md:p-10 reveal">
+  <div class="bento-card glow-card card-border p-6 md:p-10 reveal">
     <div class="flex items-center gap-3 mb-8">
       <div class="w-2.5 h-2.5 rounded-full bg-[#34C759]"></div>
       <h3 class="text-xl font-bold dark:text-white">Machine Learning</h3>
@@ -876,7 +1033,7 @@ I'm the kind of person who reads the TensorFlow source code to understand why re
   </div>
 
   <!-- Data Intelligence -->
-  <div class="bento-card card-border p-6 md:p-10 reveal">
+  <div class="bento-card glow-card card-border p-6 md:p-10 reveal">
     <div class="flex items-center gap-3 mb-8">
       <div class="w-2.5 h-2.5 rounded-full bg-[#FF9500]"></div>
       <h3 class="text-xl font-bold dark:text-white">Data Intelligence</h3>
@@ -889,7 +1046,7 @@ I'm the kind of person who reads the TensorFlow source code to understand why re
   </div>
 
   <!-- Engineering Core (spans 2 cols) -->
-  <div class="bento-card card-border p-6 md:p-10 reveal md:col-span-2">
+  <div class="bento-card glow-card card-border p-6 md:p-10 reveal md:col-span-2">
     <div class="flex items-center gap-3 mb-8">
       <div class="w-2.5 h-2.5 rounded-full bg-[#AF52DE]"></div>
       <h3 class="text-xl font-bold dark:text-white">Engineering Core</h3>
@@ -907,7 +1064,7 @@ I'm the kind of person who reads the TensorFlow source code to understand why re
 
 <section id="architecture" class="py-16 md:py-24 px-6 max-w-7xl mx-auto relative z-10">
 <div class="reveal">
-  <span class="text-xs font-bold uppercase tracking-widest text-apple-blue dark:text-blue-400 mb-4 block">System Architecture</span>
+  <span class="section-label mb-4">04 · System Architecture</span>
   <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 tracking-tight dark:text-white">E-Commerce Churn Prediction Engine</h2>
   <p class="max-w-3xl text-apple-gray dark:text-gray-400 text-base md:text-lg mb-12 font-medium">
     A production-oriented ML system that predicts which e-commerce customers will churn using Scikit-Learn Pipelines, Optuna hyperparameter optimization, and XGBoost. Hover over the pipeline nodes to inspect each stage, and toggle tabs to see the actual codebase.
@@ -1202,13 +1359,13 @@ final_metrics = pd.DataFrame(data=final_metrics_dict)
 
 <section id="projects" class="py-16 md:py-24 px-6 max-w-7xl mx-auto relative z-10">
 <div class="reveal mb-10">
-  <span class="text-xs font-bold uppercase tracking-widest text-apple-blue dark:text-blue-400 mb-4 block">Selected Work</span>
+  <span class="section-label mb-4">05 · Selected Work</span>
   <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight dark:text-white">Engineering Projects</h2>
 </div>
 
 <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
     <!-- Project 1: Walmart Forecasting (Flagship #1) -->
-    <div class="group bento-card card-border p-8 reveal hover:shadow-xl flex flex-col justify-between lg:col-span-2 lg:row-span-1 border-apple-blue/30 shadow-lg shadow-blue-100/50 dark:border-blue-900/30 dark:shadow-blue-900/30 bg-gradient-to-br from-blue-50/60 to-transparent dark:from-blue-950/20">
+    <div class="group bento-card glow-card card-border p-8 reveal hover:shadow-xl flex flex-col justify-between lg:col-span-2 lg:row-span-1 border-apple-blue/30 shadow-lg shadow-blue-100/50 dark:border-blue-900/30 dark:shadow-blue-900/30 bg-gradient-to-br from-blue-50/60 to-transparent dark:from-blue-950/20">
       <div>
         <div class="flex items-center justify-between mb-6">
           <div class="flex flex-wrap items-center gap-2">
@@ -1256,7 +1413,7 @@ final_metrics = pd.DataFrame(data=final_metrics_dict)
     </div>
 
     <!-- Project 2: Churn Prediction -->
-    <div class="group bento-card card-border p-8 reveal hover:shadow-xl flex flex-col justify-between">
+    <div class="group bento-card glow-card card-border p-8 reveal hover:shadow-xl flex flex-col justify-between">
       <div>
         <div class="flex items-center justify-between mb-6">
           <span class="bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400 border border-rose-100 dark:border-rose-900/30 px-3 py-1 rounded-full text-xs font-bold uppercase">Churn Prediction</span>
@@ -1290,7 +1447,7 @@ final_metrics = pd.DataFrame(data=final_metrics_dict)
     </div>
 
     <!-- Project 3: Deep Learning -->
-    <div class="group bento-card card-border p-8 reveal hover:shadow-xl flex flex-col justify-between">
+    <div class="group bento-card glow-card card-border p-8 reveal hover:shadow-xl flex flex-col justify-between">
       <div>
         <div class="flex items-center justify-between mb-6">
           <span class="bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/30 px-3 py-1 rounded-full text-xs font-bold uppercase">Deep Learning</span>
@@ -1323,7 +1480,7 @@ final_metrics = pd.DataFrame(data=final_metrics_dict)
     </div>
 
     <!-- Project 4: Data Engineering -->
-    <div class="group bento-card card-border p-8 reveal hover:shadow-xl flex flex-col justify-between">
+    <div class="group bento-card glow-card card-border p-8 reveal hover:shadow-xl flex flex-col justify-between">
       <div>
         <div class="flex items-center justify-between mb-6">
           <span class="bg-purple-50 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400 border border-purple-100 dark:border-purple-900/30 px-3 py-1 rounded-full text-xs font-bold uppercase">Data Engineering</span>
@@ -1357,7 +1514,7 @@ final_metrics = pd.DataFrame(data=final_metrics_dict)
     </div>
 
     <!-- Project 5: Titanic Survival Prediction Engine -->
-    <div class="group bento-card card-border p-8 reveal hover:shadow-xl flex flex-col justify-between">
+    <div class="group bento-card glow-card card-border p-8 reveal hover:shadow-xl flex flex-col justify-between">
       <div>
         <div class="flex items-center justify-between mb-6">
           <span class="bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30 px-3 py-1 rounded-full text-xs font-bold uppercase">Predictive Analytics</span>
@@ -1394,7 +1551,7 @@ final_metrics = pd.DataFrame(data=final_metrics_dict)
 
 <section id="education" class="py-16 md:py-24 px-6 max-w-5xl mx-auto relative z-10">
 <div class="card-border p-6 md:p-10 bg-white dark:bg-gray-800 reveal">
-<span class="text-xs font-bold uppercase tracking-widest text-apple-blue dark:text-blue-400 mb-6 md:mb-8 block">Education</span>
+<span class="section-label mb-6 md:mb-8">06 · Education</span>
 <div class="space-y-8">
 <div>
 <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-2 gap-1">
@@ -1428,7 +1585,7 @@ final_metrics = pd.DataFrame(data=final_metrics_dict)
 
 <section id="certifications" class="py-16 md:py-24 px-6 max-w-5xl mx-auto relative z-10">
 <div class="card-border p-6 md:p-10 bg-white dark:bg-gray-800 reveal">
-<span class="text-xs font-bold uppercase tracking-widest text-apple-blue dark:text-blue-400 mb-6 md:mb-8 block">Professional Certifications</span>
+<span class="section-label mb-6 md:mb-8">07 · Certifications</span>
 <div class="space-y-6">
 
     <!-- Machine Learning Specialization -->
@@ -1950,8 +2107,8 @@ const html = document.documentElement;
 const sunIcon = document.getElementById('sunIcon');
 const moonIcon = document.getElementById('moonIcon');
 
-// Check for saved theme preference or default to light mode
-const currentTheme = safeStorage.getItem('theme') || 'light';
+// Check for saved theme preference or default to dark mode
+const currentTheme = safeStorage.getItem('theme') || 'dark';
 if (currentTheme === 'dark') {
   html.classList.add('dark');
   sunIcon.style.display = 'none';
@@ -2392,6 +2549,33 @@ function switchTab(tabName) {
       code.classList.add('hidden');
     }
   });
+}
+
+// Hero Terminal Typing Effect
+const typedEl = document.getElementById('typedText');
+if (typedEl) {
+  const phrases = [
+    'python train.py --model xgboost --trials 200',
+    'model.fit(X_train, Y_train)  # no leakage, ever',
+    'faiss.search(query_vector, k=10)  # 8.4ms',
+    'optuna.create_study(direction="maximize")',
+    'git push origin production'
+  ];
+  let pIdx = 0, cIdx = 0, deleting = false;
+  function typeLoop() {
+    const phrase = phrases[pIdx];
+    typedEl.textContent = phrase.slice(0, cIdx);
+    let delay = deleting ? 18 : 45;
+    if (!deleting && cIdx === phrase.length) {
+      delay = 2200; deleting = true;
+    } else if (deleting && cIdx === 0) {
+      deleting = false; pIdx = (pIdx + 1) % phrases.length; delay = 500;
+    } else {
+      cIdx += deleting ? -1 : 1;
+    }
+    setTimeout(typeLoop, delay);
+  }
+  typeLoop();
 }
 
 // Magnetic Buttons
