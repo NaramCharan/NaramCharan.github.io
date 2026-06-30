@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { profile, stats } from "@/lib/content";
 import { usePrefersReducedMotion } from "@/lib/useReducedMotion";
-import ArcReactorStatic from "./ArcReactorStatic";
+import ArcReactorAssemble from "./ArcReactorAssemble";
 
 const STATUS = [
   "BOOTING MARK XLII INTERFACE",
@@ -139,7 +139,7 @@ export default function DashboardIntro() {
 
               <div className="relative flex flex-col items-center">
                 <div className="relative h-60 w-60 sm:h-72 sm:w-72 md:h-80 md:w-80">
-                  <ArcReactorStatic />
+                  <ArcReactorAssemble />
                   {surging && (
                     <span
                       key={`ring-${bolt}`}

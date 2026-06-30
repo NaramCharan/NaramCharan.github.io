@@ -53,6 +53,11 @@ content is REAL, sourced from naramcharan.me.
   pure SVG (downward triangle + corner nodes + coil ring + upward-triangle "new
   element" core). Used in both Hero and DashboardIntro. NOTE: `ArcReactor3D.tsx`
   (the old 3D sphere) is now **unused** — kept in repo but not imported.
+- `ArcReactorAssemble.tsx` — anime.js (v4) variant used **in the boot intro**: the
+  reactor builds part-by-part (bezel → tick ring → coils sweep → triangle spins in →
+  nested + corner nodes → core ignites + flash) on a `createTimeline`. Parts are
+  hidden via `utils.set(opacity:0)` then revealed; `startedRef` guards StrictMode
+  double-mount; reduced-motion renders assembled. Hero still uses `ArcReactorStatic`.
 - Hydration safety: GlyphRail glyphs and reactor coil coords are deterministic
   (no `Math.random()` in render) to avoid SSR/client mismatch.
 - `Projects.tsx` — 5 real repos as HUD scan cards (MK-01…05, FEATURED on Walmart).

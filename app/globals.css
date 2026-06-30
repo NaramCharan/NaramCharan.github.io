@@ -178,6 +178,16 @@ h1 { letter-spacing: -0.035em; }
 .animate-radar { animation: radar-sweep 6s linear infinite; }
 .animate-ticker { animation: ticker 28s linear infinite; }
 
+/* Arc-reactor assembly: each part scales/rotates around its own centre,
+   and stays hidden until anime.js reveals it (no pre-animation flash). */
+.ar-part {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+}
+svg[data-assembling="true"] .ar-part {
+  opacity: 0;
+}
+
 .animate-spin-slow { animation: spin-slow 18s linear infinite; }
 .animate-spin-rev { animation: spin-rev 26s linear infinite; }
 .animate-pulse-core { animation: pulse-core 3.4s ease-in-out infinite; }
