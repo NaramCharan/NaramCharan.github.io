@@ -1,0 +1,116 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { motion, useScroll, useSpring } from "framer-motion";
+import { navLinks, profile } from "@/lib/content";
+import { EASE } from "@/lib/motion";
+
+export default function Navbar() {
+  const { scrollYProgress } = useScroll();
+  const progress = useSpring(scrollYProgress, {
+    stiffness: 120,
+    damping: 30,
+    mass: 0.3,
+  });
+  const [show, setShow] = useState(false);
+  const [active, setActive] = useState<string>("");
+
+  // Reveal the bar once the hero is scrolled past.
+  useEffect(() => {
+    const onScroll = () => setShow(window.scrollY > window.innerHeight * 0.55);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Track which section is in view for the active indicator.
+  useEffect(() => {
+    const ids = navLinks.map((l) => l.href.slice(1));
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) setActive(e.target.id);
+        });
+      },
+      { rootMargin: "-45% 0px -50% 0px" }
+    );
+    ids.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) obs.observe(el);
+    });
+    return () => obs.disconnect();
+  }, []);
+
+  return (
+    <>
+      {/* Scroll progress line */}
+      <motion.div
+        aria-hidden
+        className="fixed left-0 top-0 z-[62] h-0.5 w-full origin-left bg-gradient-to-r from-cyan via-cyan-bright to-gold"
+        style={{ scaleX: progress }}
+      />
+
+      <motion.header
+        initial={false}
+        animate={{ y: show ? 0 : -72, opacity: show ? 1 : 0 }}
+        transition={{ duration: 0.4, ease: EASE }}
+        className="fixed inset-x-0 top-0 z-[58] border-b border-line bg-bg/70 backdrop-blur-md"
+      >
+        <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
+          <a
+            href="#top"
+            className="group flex items-center gap-2.5"
+            aria-label="Back to top"
+          >
+            <span
+              aria-hidden
+              className="grid h-7 w-7 place-items-center rounded-full border border-cyan/50 text-cyan transition-colors duration-300 group-hover:border-cyan group-hover:bg-cyan/10"
+            >
+              <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="currentColor">
+                <polygon points="12,5 18,17 6,17" />
+              </svg>
+            </span>
+            <span className="mono text-sm font-bold tracking-[0.25em] text-cyan glow-cyan">
+              NC
+            </span>
+          </a>
+
+          <div className="hidden items-center gap-1 md:flex">
+            {navLinks.map((l) => {
+              const id = l.href.slice(1);
+              const isActive = active === id;
+              return (
+                <a
+                  key={l.href}
+                  href={l.href}
+                  className={`relative rounded px-3 py-2 mono text-[11px] tracking-[0.2em] transition-colors duration-300 ${
+                    isActive ? "text-cyan" : "text-text-dim hover:text-cyan"
+                  }`}
+                >
+                  {l.label.toUpperCase()}
+                  {isActive && (
+                    <motion.span
+                      layoutId="nav-active"
+                      className="absolute inset-x-2 -bottom-px h-px bg-cyan shadow-[0_0_8px_rgba(34,211,238,0.8)]"
+                      transition={{ duration: 0.35, ease: EASE }}
+                    />
+                  )}
+                </a>
+              );
+            })}
+          </div>
+
+          <a
+            href={profile.resume}
+            className="inline-flex min-h-9 items-center gap-1.5 rounded-md border border-gold/60 bg-gold/15 px-4 py-1.5 mono text-[11px] tracking-[0.15em] text-gold transition-all duration-300 hover:bg-gold/25 hover:shadow-[0_0_18px_rgba(255,178,62,0.3)]"
+          >
+            <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14" />
+            </svg>
+            RESUME
+          </a>
+        </nav>
+      </motion.header>
+    </>
+  );
+}

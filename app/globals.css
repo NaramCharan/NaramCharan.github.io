@@ -1,0 +1,217 @@
+@import "tailwindcss";
+
+/* ── JARVIS / Mark 42 design tokens ───────────────────────────── */
+@theme {
+  --color-bg: #05080f;
+  --color-bg-2: #070c16;
+  --color-surface: #0b1220;
+  --color-surface-2: #0f1828;
+  --color-cyan: #22d3ee;
+  --color-cyan-bright: #7de7f5;
+  --color-cyan-dim: #155e6b;
+  --color-gold: #ffb23e;
+  --color-gold-bright: #ffd089;
+  --color-text: #eaf7fb;
+  --color-text-muted: #a8c6d2; /* lifted for WCAG AA on OLED bg */
+  --color-text-dim: #88a6b3;
+  --color-line: rgba(34, 211, 238, 0.22);
+  --color-danger: #ef4444;
+
+  --font-display: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono-face), ui-monospace, "JetBrains Mono", monospace;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-weight: 300;
+  letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+/* Headings carry the display face and tighter optical tracking. */
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+h1 { letter-spacing: -0.035em; }
+
+/* HUD grid backdrop */
+.hud-grid {
+  background-image:
+    linear-gradient(var(--color-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-line) 1px, transparent 1px);
+  background-size: 44px 44px;
+  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, #000 35%, transparent 80%);
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, #000 35%, transparent 80%);
+}
+
+/* Faint scanline overlay */
+.scanlines::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 2px,
+    rgba(34, 211, 238, 0.025) 3px,
+    transparent 4px
+  );
+}
+
+.glow-cyan {
+  text-shadow: 0 0 12px rgba(34, 211, 238, 0.55);
+}
+.glow-gold {
+  text-shadow: 0 0 12px rgba(255, 178, 62, 0.5);
+}
+
+.mono {
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Reticle sweep used on project cards */
+@keyframes scan-sweep {
+  0% { transform: translateY(-110%); opacity: 0; }
+  20% { opacity: 1; }
+  100% { transform: translateY(110%); opacity: 0; }
+}
+
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+@keyframes spin-rev {
+  to { transform: rotate(-360deg); }
+}
+@keyframes pulse-core {
+  0%, 100% { opacity: 0.85; filter: drop-shadow(0 0 18px rgba(34,211,238,0.7)); }
+  50% { opacity: 1; filter: drop-shadow(0 0 34px rgba(125,231,245,0.95)); }
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
+}
+
+@keyframes lightning-flash {
+  0% { opacity: 0; }
+  6% { opacity: 0.95; }
+  14% { opacity: 0.15; }
+  22% { opacity: 0.8; }
+  40% { opacity: 0.05; }
+  100% { opacity: 0; }
+}
+@keyframes surge-shake {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-4px, 2px); }
+  40% { transform: translate(5px, -3px); }
+  60% { transform: translate(-3px, -2px); }
+  80% { transform: translate(3px, 3px); }
+}
+@keyframes bolt-draw {
+  0% { opacity: 0; stroke-dashoffset: 240; }
+  10% { opacity: 1; }
+  60% { opacity: 1; stroke-dashoffset: 0; }
+  100% { opacity: 0; stroke-dashoffset: 0; }
+}
+@keyframes ring-charge {
+  0% { transform: scale(0.6); opacity: 0.9; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+
+@keyframes glitch-shift {
+  0% { clip-path: inset(0 0 0 0); transform: translate(0); }
+  10% { clip-path: inset(20% 0 60% 0); transform: translate(-4px, 0); }
+  20% { clip-path: inset(70% 0 10% 0); transform: translate(4px, 0); }
+  30% { clip-path: inset(40% 0 40% 0); transform: translate(-2px, 0); }
+  40% { clip-path: inset(10% 0 80% 0); transform: translate(3px, 0); }
+  50% { clip-path: inset(0 0 0 0); transform: translate(0); }
+  100% { clip-path: inset(0 0 0 0); transform: translate(0); }
+}
+@keyframes glyph-flicker {
+  0%, 100% { opacity: 1; }
+  8% { opacity: 0.2; }
+  10% { opacity: 0.9; }
+  14% { opacity: 0.35; }
+  18% { opacity: 1; }
+  52% { opacity: 0.7; }
+  54% { opacity: 0.15; }
+  58% { opacity: 1; }
+}
+@keyframes glyph-stream {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-50%); }
+}
+
+.fx-glitch { animation: glitch-shift 600ms steps(2) 1; }
+.fx-flash { animation: lightning-flash 520ms ease-out; }
+.fx-shake { animation: surge-shake 420ms ease-in-out; }
+.fx-bolt { stroke-dasharray: 240; animation: bolt-draw 520ms ease-out forwards; }
+.fx-ring { animation: ring-charge 620ms ease-out forwards; }
+
+@keyframes radar-sweep { to { transform: rotate(360deg); } }
+@keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes float-up {
+  0% { transform: translateY(20px); opacity: 0; }
+  20%, 80% { opacity: 0.6; }
+  100% { transform: translateY(-120px); opacity: 0; }
+}
+
+.animate-radar { animation: radar-sweep 6s linear infinite; }
+.animate-ticker { animation: ticker 28s linear infinite; }
+
+.animate-spin-slow { animation: spin-slow 18s linear infinite; }
+.animate-spin-rev { animation: spin-rev 26s linear infinite; }
+.animate-pulse-core { animation: pulse-core 3.4s ease-in-out infinite; }
+.animate-blink { animation: blink 1.1s steps(2) infinite; }
+
+/* Focus visibility (a11y) */
+:where(a, button, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-cyan-bright);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+::selection {
+  background: rgba(34, 211, 238, 0.3);
+  color: #fff;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: var(--color-bg); }
+::-webkit-scrollbar-thumb {
+  background: var(--color-cyan-dim);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--color-cyan); }
+
+/* Honor reduced motion globally */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
