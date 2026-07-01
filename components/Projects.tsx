@@ -33,9 +33,12 @@ function ProjectCard({ p, i }: { p: Project; i: number }) {
         <GitHubMark className="h-5 w-5" />
       </span>
 
-      <div className="mb-4 flex items-center gap-3">
+      <div className="mb-4 flex flex-wrap items-center gap-2 pr-8">
         <span className="mono rounded border border-cyan/40 px-2 py-0.5 text-[10px] tracking-[0.2em] text-cyan">
           {p.code}
+        </span>
+        <span className="mono rounded bg-surface-2/80 px-2 py-0.5 text-[10px] tracking-[0.2em] text-text-muted">
+          {p.domain.toUpperCase()}
         </span>
         {p.featured && (
           <span className="mono rounded border border-gold/50 bg-gold/10 px-2 py-0.5 text-[10px] tracking-[0.2em] text-gold">
@@ -44,16 +47,35 @@ function ProjectCard({ p, i }: { p: Project; i: number }) {
         )}
       </div>
 
-      <h3 className="pr-7 text-lg font-semibold leading-snug text-text transition-colors duration-200 group-hover:text-cyan-bright">
-        {p.name}
-      </h3>
+      {/* Title + headline metric */}
+      <div className="flex items-start justify-between gap-4">
+        <h3 className="text-lg font-semibold leading-snug text-text transition-colors duration-200 group-hover:text-cyan-bright">
+          {p.name}
+        </h3>
+        <span className="mono shrink-0 whitespace-nowrap text-base font-bold text-gold glow-gold">
+          {p.metric}
+        </span>
+      </div>
       <p className="mt-2 text-sm leading-relaxed text-text-muted">
         {p.description}
       </p>
 
-      <p className="mt-3 border-l-2 border-gold/60 pl-3 text-sm italic text-gold-bright/90">
-        {p.highlight}
-      </p>
+      {/* Key results — always visible (desktop + mobile) */}
+      <div className="mt-4">
+        <p className="mono mb-2 flex items-center gap-2 text-[10px] tracking-[0.3em] text-gold/90">
+          <span className="h-px w-4 bg-gold/70" /> KEY RESULTS
+        </p>
+        <ul className="space-y-1.5">
+          {p.wins.map((w) => (
+            <li key={w} className="flex items-start gap-2 text-[13px] text-text/90">
+              <svg viewBox="0 0 24 24" className="mt-[3px] h-3.5 w-3.5 shrink-0 text-cyan" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <path d="M20 6 9 17l-5-5" />
+              </svg>
+              <span className="leading-snug">{w}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
 
       <div className="mt-5 flex flex-wrap gap-2">
         {p.tech.map((t) => (
@@ -66,35 +88,20 @@ function ProjectCard({ p, i }: { p: Project; i: number }) {
         ))}
       </div>
 
-      <div className="mt-5 flex items-center justify-between border-t border-line pt-4">
-        <span className="mono text-xs text-text-muted">{p.result}</span>
+      <div className="mt-5 flex items-center justify-between gap-4 border-t border-line pt-4">
+        {p.demo ? (
+          <span
+            className="mono text-xs text-gold transition-transform duration-200 group-hover:translate-x-0.5"
+          >
+            LIVE DEMO ↗
+          </span>
+        ) : (
+          <span aria-hidden />
+        )}
         <span className="mono inline-flex items-center gap-1.5 text-xs text-cyan transition-transform duration-200 group-hover:translate-x-1">
           <GitHubMark className="h-3.5 w-3.5" />
           VIEW CODE →
         </span>
-      </div>
-
-      {/* Hover reveal: key wins ("good things about the project") */}
-      <div className="pointer-events-none absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-bg via-bg/95 to-bg/0 p-6 opacity-0 backdrop-blur-[2px] transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100 sm:p-7">
-        <div className="translate-y-3 transition-transform duration-300 group-hover:translate-y-0">
-          <p className="mono mb-3 flex items-center gap-2 text-[10px] tracking-[0.3em] text-gold">
-            <span className="h-px w-5 bg-gold" /> KEY RESULTS
-          </p>
-          <ul className="space-y-2">
-            {p.wins.map((w) => (
-              <li key={w} className="flex items-start gap-2 text-sm text-text">
-                <svg viewBox="0 0 24 24" className="mt-0.5 h-4 w-4 shrink-0 text-cyan" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                  <path d="M20 6 9 17l-5-5" />
-                </svg>
-                <span className="leading-snug">{w}</span>
-              </li>
-            ))}
-          </ul>
-          <span className="mono mt-4 inline-flex items-center gap-1.5 text-xs text-cyan">
-            <GitHubMark className="h-3.5 w-3.5" />
-            OPEN ON GITHUB →
-          </span>
-        </div>
       </div>
     </motion.a>
   );
