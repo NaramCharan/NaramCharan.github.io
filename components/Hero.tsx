@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import {
   AnimatePresence,
   motion,
@@ -11,7 +12,7 @@ import { profile, navLinks, stats } from "@/lib/content";
 import { usePrefersReducedMotion } from "@/lib/useReducedMotion";
 import { useDecode, useRotate } from "@/lib/useDecode";
 import { enter, EASE } from "@/lib/motion";
-import ArcReactorStatic from "./ArcReactorStatic";
+import HeroReactor from "./HeroReactor";
 
 const SPECIALTIES = [
   "Recommendation Systems",
@@ -147,6 +148,7 @@ export default function Hero() {
   const reduced = usePrefersReducedMotion();
   const name = useDecode(profile.name, 28);
   const specialty = useRotate(SPECIALTIES);
+  const trackRef = useRef<HTMLDivElement>(null);
 
   // Mouse-parallax depth (desktop, motion-on only).
   const px = useMotionValue(0);
@@ -163,10 +165,10 @@ export default function Hero() {
   };
 
   return (
+    <div id="top" ref={trackRef} className="relative h-[165vh] lg:h-[185vh]">
     <section
-      id="top"
       onPointerMove={onMove}
-      className="relative flex min-h-dvh flex-col items-center justify-center overflow-hidden px-6 pt-28 pb-14"
+      className="sticky top-0 flex min-h-dvh flex-col items-center justify-center overflow-hidden px-6 pt-28 pb-14"
     >
       <div className="hud-grid pointer-events-none absolute inset-0 opacity-50" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(34,211,238,0.10),transparent_60%)]" />
@@ -204,7 +206,7 @@ export default function Hero() {
             style={{ x: reactorX, y: reactorY }}
             className="relative h-56 w-56 sm:h-64 sm:w-64 md:h-80 md:w-80"
           >
-            <ArcReactorStatic />
+            <HeroReactor trackRef={trackRef} />
           </motion.div>
 
           <motion.p
@@ -338,5 +340,6 @@ export default function Hero() {
         </div>
       </div>
     </section>
+    </div>
   );
 }
