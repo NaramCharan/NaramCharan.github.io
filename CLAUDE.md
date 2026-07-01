@@ -46,20 +46,21 @@ content is REAL, sourced from naramcharan.me.
 - `DashboardIntro.tsx` — **auto-playing** power-on gate (no clicking). Glyph rails
   stream, status lines cycle, lightning/glitch fires on a timeline, dissolves into
   site at ~3.3s. Gated once per session via `sessionStorage('jarvis_entered')`.
-- `Hero.tsx` — JARVIS HUD hero: 3D reactor + radar sweep, decoding name, rotating
-  "SPECIALIZING IN", flanking telemetry panels (accuracy chart / system feed) on
-  desktop, **mobile-specific** compact stat strip (panels hidden <lg), bottom ticker.
+- `Hero.tsx` — JARVIS HUD hero, wrapped in a **pinned scroll track** (`h-[165vh]
+  lg:h-[185vh]`, sticky section): decoding name, rotating "SPECIALIZING IN", flanking
+  telemetry panels (accuracy chart / system feed) on desktop, **mobile-specific**
+  compact stat strip (panels hidden <lg), bottom ticker, mouse parallax on the reactor.
+- `HeroReactor.tsx` — the hero reactor that **assembles on scroll** (anime.js v4
+  timeline `seek`-ed to scroll progress via a scroll listener over the pinned track).
+  Core + halo lit from the start; armour (bezel → tick ring → coils → triangle →
+  bevels → nodes) builds around it as you scroll. Reduced-motion renders assembled.
 - `ArcReactorStatic.tsx` — the **Iron Man 3 (Mark XLII) triangular arc reactor**,
   pure SVG (downward triangle + corner nodes + coil ring + upward-triangle "new
-  element" core). Used in both Hero and DashboardIntro. NOTE: `ArcReactor3D.tsx`
-  (the old 3D sphere) is now **unused** — kept in repo but not imported.
-- `ArcReactorAssemble.tsx` — anime.js (v4) variant used **in the boot intro**: the
-  reactor builds part-by-part (bezel → tick ring → coils sweep → triangle spins in →
-  nested + corner nodes → core ignites + flash) on a `createTimeline`. Parts are
-  hidden via `utils.set(opacity:0)` then revealed; `startedRef` guards StrictMode
-  double-mount; reduced-motion renders assembled. Hero still uses `ArcReactorStatic`.
+  element" core). Used by `DashboardIntro` (the boot gate).
 - Hydration safety: GlyphRail glyphs and reactor coil coords are deterministic
   (no `Math.random()` in render) to avoid SSR/client mismatch.
+- Branded favicon: `app/icon.svg` (mini arc reactor). No Three.js deps — the reactors
+  are all pure SVG + anime.js/CSS.
 - `Projects.tsx` — 5 real repos as HUD scan cards (MK-01…05, FEATURED on Walmart).
 - `Skills.tsx` + `SystemIcons.tsx` — "Suit Systems" with **icon emblems, NO numbers**
   (brain=Deep Learning, circuit=ML, database=Data, terminal=Engineering) in rotating reticles.
