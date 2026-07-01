@@ -1,17 +1,23 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { projects, type Project } from "@/lib/content";
 import { EASE } from "@/lib/motion";
 import SectionHeading from "./SectionHeading";
+import ProjectHologram from "./ProjectHologram";
 
-function ProjectCard({ p, i }: { p: Project; i: number }) {
+function ProjectCard({
+  p,
+  i,
+  onBrief,
+}: {
+  p: Project;
+  i: number;
+  onBrief: (p: Project) => void;
+}) {
   return (
-    <motion.a
-      href={p.repo}
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label={`${p.name} — open repository on GitHub`}
+    <motion.article
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-70px" }}
@@ -25,15 +31,8 @@ function ProjectCard({ p, i }: { p: Project; i: number }) {
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan to-transparent opacity-0 [animation:scan-sweep_1.4s_ease-in-out_infinite] group-hover:opacity-100"
       />
-      {/* GitHub icon (top-right) */}
-      <span
-        aria-hidden
-        className="absolute right-4 top-4 text-text-dim transition-all duration-300 group-hover:scale-110 group-hover:text-cyan"
-      >
-        <GitHubMark className="h-5 w-5" />
-      </span>
 
-      <div className="mb-4 flex flex-wrap items-center gap-2 pr-8">
+      <div className="mb-4 flex flex-wrap items-center gap-2">
         <span className="mono rounded border border-cyan/40 px-2 py-0.5 text-[10px] tracking-[0.2em] text-cyan">
           {p.code}
         </span>
@@ -88,22 +87,34 @@ function ProjectCard({ p, i }: { p: Project; i: number }) {
         ))}
       </div>
 
-      <div className="mt-5 flex items-center justify-between gap-4 border-t border-line pt-4">
-        {p.demo ? (
-          <span
-            className="mono text-xs text-gold transition-transform duration-200 group-hover:translate-x-0.5"
-          >
-            LIVE DEMO ↗
+      <div className="mt-5 flex items-center justify-between gap-3 border-t border-line pt-4">
+        {/* FRIDAY — opens the holographic project brief */}
+        <button
+          type="button"
+          onClick={() => onBrief(p)}
+          aria-label={`FRIDAY — analyze ${p.name}`}
+          className="friday-chip mono group/friday inline-flex items-center gap-2 rounded-md border border-cyan/40 bg-cyan/5 px-3 py-2 text-[11px] tracking-[0.2em] text-cyan transition-all duration-200 hover:border-cyan hover:bg-cyan/15 hover:shadow-[0_0_16px_-4px_rgba(34,211,238,0.5)]"
+        >
+          <span aria-hidden className="relative flex h-2 w-2">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan opacity-60" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-cyan" />
           </span>
-        ) : (
-          <span aria-hidden />
-        )}
-        <span className="mono inline-flex items-center gap-1.5 text-xs text-cyan transition-transform duration-200 group-hover:translate-x-1">
+          FRIDAY
+          <span className="text-cyan/60 transition-colors group-hover/friday:text-cyan">◈ BRIEF</span>
+        </button>
+
+        <a
+          href={p.repo}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`${p.name} — open repository on GitHub`}
+          className="mono inline-flex items-center gap-1.5 text-xs text-cyan transition-transform duration-200 hover:translate-x-1"
+        >
           <GitHubMark className="h-3.5 w-3.5" />
           VIEW CODE →
-        </span>
+        </a>
       </div>
-    </motion.a>
+    </motion.article>
   );
 }
 
@@ -116,18 +127,22 @@ function GitHubMark({ className }: { className?: string }) {
 }
 
 export default function Projects() {
+  const [active, setActive] = useState<Project | null>(null);
+
   return (
     <section id="projects" className="mx-auto max-w-6xl scroll-mt-20 px-6 py-28">
       <SectionHeading
         index="01"
         title="Projects"
-        subtitle="Production-grade ML systems — each scanned, validated, and leakage-checked before deployment."
+        subtitle="Production-grade ML systems — each scanned, validated, and leakage-checked before deployment. Tap FRIDAY on any card for the full brief."
       />
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
         {projects.map((p, i) => (
-          <ProjectCard key={p.id} p={p} i={i} />
+          <ProjectCard key={p.id} p={p} i={i} onBrief={setActive} />
         ))}
       </div>
+
+      <ProjectHologram project={active} onClose={() => setActive(null)} />
     </section>
   );
 }

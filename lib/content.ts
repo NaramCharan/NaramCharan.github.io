@@ -33,6 +33,7 @@ export type Project = {
   description: string;
   tech: string[];
   wins: string[]; // key results, shown inline (not hover-gated)
+  brief: { label: string; value: string }[]; // FRIDAY deep-dive readout
   repo: string;
   demo?: string; // optional live demo / notebook
 };
@@ -54,6 +55,14 @@ export const projects: Project[] = [
       "Custom recursive walk-forward inference, built from scratch",
       "Zero temporal leakage — split before feature extraction",
     ],
+    brief: [
+      { label: "OBJECTIVE", value: "Forecast weekly sales across many store-department series" },
+      { label: "METHOD", value: "Custom recursive walk-forward inference system, built from scratch" },
+      { label: "FEATURES", value: "Rolling & lag features dynamically projected over future horizons where actuals are missing" },
+      { label: "INTEGRITY", value: "Split before feature extraction; lags/rolling stats computed strictly within each partition — no temporal leakage" },
+      { label: "MODEL", value: "Optimized Random Forest Regressor (vs XGBoost / LightGBM)" },
+      { label: "RESULT", value: "95.5% validation R²" },
+    ],
   },
   {
     id: "churn",
@@ -69,6 +78,14 @@ export const projects: Project[] = [
       "98.28% accuracy · 94.76% F1 on production XGBoost",
       "Tuned with Optuna over 10-fold Stratified CV",
       "ColumnTransformer + hybrid KNN imputation",
+    ],
+    brief: [
+      { label: "OBJECTIVE", value: "Predict which e-commerce customers are about to churn" },
+      { label: "PIPELINE", value: "End-to-end ColumnTransformer — clean, scale & encode in one leakage-safe flow" },
+      { label: "IMPUTATION", value: "Hybrid KNN / simple-value imputation for missing customer data" },
+      { label: "TUNING", value: "Optuna hyperparameter search over 10-fold Stratified Cross-Validation" },
+      { label: "MODEL", value: "XGBoost selected for production after a 3-model bake-off" },
+      { label: "RESULT", value: "98.28% accuracy · 94.76% F1-score" },
     ],
   },
   {
@@ -86,6 +103,13 @@ export const projects: Project[] = [
       "32-dim latent embeddings with L2 regularization",
       "Meta's FAISS index for real-time retrieval",
     ],
+    brief: [
+      { label: "OBJECTIVE", value: "Recommend items from sparse user-item interaction data" },
+      { label: "ARCHITECTURE", value: "Neural collaborative filtering, built from scratch in PyTorch" },
+      { label: "EMBEDDINGS", value: "32-dimensional latent vectors trained with L2 regularization" },
+      { label: "RETRIEVAL", value: "Meta's FAISS index over item embeddings for real-time nearest-neighbour search" },
+      { label: "RESULT", value: "Sub-10ms similarity search at inference" },
+    ],
   },
   {
     id: "scraper",
@@ -102,6 +126,14 @@ export const projects: Project[] = [
       "BeautifulSoup + SQLAlchemy ORM pipeline",
       "Relational SQLite schema + clean CSV exports",
     ],
+    brief: [
+      { label: "OBJECTIVE", value: "Replace days of manual data collection with an automated pipeline" },
+      { label: "SCRAPER", value: "Automated multi-page crawler using BeautifulSoup" },
+      { label: "FIELDS", value: "Title, price, rating, availability, description & URL per book" },
+      { label: "STORAGE", value: "Relational SQLite schema via SQLAlchemy ORM + clean CSV exports" },
+      { label: "OUTPUT", value: "ML-ready datasets for downstream modelling" },
+      { label: "RESULT", value: "980+ books scraped in under 30 minutes" },
+    ],
   },
   {
     id: "titanic",
@@ -117,6 +149,14 @@ export const projects: Project[] = [
       "85.5% accuracy — 12% above baseline",
       "LogReg vs Random Forest vs XGBoost bake-off",
       "KNN imputation, leakage-free validation",
+    ],
+    brief: [
+      { label: "OBJECTIVE", value: "Predict passenger survival from the Titanic dataset" },
+      { label: "MODELS", value: "Logistic Regression vs Random Forest vs XGBoost, compared head-to-head" },
+      { label: "IMPUTATION", value: "KNNImputer for missing values; disciplined feature handling" },
+      { label: "TUNING", value: "Optuna hyperparameter optimization" },
+      { label: "INTEGRITY", value: "Leakage-free validation throughout" },
+      { label: "RESULT", value: "85.5% accuracy — 12% above baseline" },
     ],
   },
 ];
