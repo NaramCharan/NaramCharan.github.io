@@ -41,7 +41,7 @@ export default function About() {
             <div className="mt-5 flex items-end justify-between gap-4 rounded-md border border-line bg-bg-2/60 px-4 py-3">
               <div>
                 <div className="mono text-[9px] tracking-[0.2em] text-text-dim">
-                  CURRENT CGPA
+                  CGPA AVERAGE
                 </div>
                 <div className="mono text-2xl font-bold text-cyan glow-cyan">
                   {education.cgpa}

@@ -1,7 +1,6 @@
-import DashboardIntro from "@/components/DashboardIntro";
+import IntroDashboard from "@/components/IntroDashboard";
 import Navbar from "@/components/Navbar";
 import HudFrame from "@/components/HudFrame";
-import Hero from "@/components/Hero";
 import StatsBar from "@/components/StatsBar";
 import Projects from "@/components/Projects";
 import Skills from "@/components/Skills";
@@ -12,11 +11,10 @@ import Contact from "@/components/Contact";
 export default function Home() {
   return (
     <>
-      <DashboardIntro />
       <Navbar />
       <HudFrame />
       <main id="main">
-        <Hero />
+        <IntroDashboard />
         <StatsBar />
         <Projects />
         <Skills />

@@ -13,8 +13,8 @@ content is REAL, sourced from naramcharan.me.
 ## Stack & conventions
 - **Next.js 16 (App Router, Turbopack)** + TypeScript + **Tailwind CSS v4**
   (CSS-first: tokens live in `@theme` in `app/globals.css`, no tailwind.config).
-- **Framer Motion** for UI motion; **Three.js / @react-three/fiber + drei** for the
-  3D arc reactor (lazy-loaded, desktop-only, SVG fallback).
+- **Framer Motion** for UI motion (MotionValues scrubbed to scroll). No Three.js —
+  all reactors are pure SVG.
 - Static-export friendly. `npm run dev` → http://localhost:3000. `npm run build` must pass.
 - AGENTS.md rule: this is a modified Next.js — check `node_modules/next/dist/docs/` before
   using unfamiliar APIs.
@@ -36,27 +36,34 @@ content is REAL, sourced from naramcharan.me.
 - `lib/motion.ts` — shared easing + reveal helpers.
 - `lib/useDecode.ts` — `useDecode()` (scramble-in text) + `useRotate()` (cycling words).
 - `lib/useReducedMotion.ts` — SSR-safe reduced-motion hook.
-- `app/page.tsx` order: DashboardIntro → HudFrame → main[ Hero, StatsBar, Projects,
-  Skills, Blueprint, About, Contact ].
+- `app/page.tsx` order: Navbar → HudFrame → main[ IntroDashboard, StatsBar, Projects,
+  Skills, Blueprint, About, Contact ]. (No separate Hero/boot gate — IntroDashboard
+  IS the hero.)
 
 ### Key components
 - `Navbar.tsx` — scroll-aware sticky nav: top scroll-progress line, reveals after
   hero, active-section tracking (IntersectionObserver) with animated `layoutId`
   indicator, RESUME button. Wired in `app/page.tsx`.
-- `DashboardIntro.tsx` — **auto-playing** power-on gate (no clicking). Glyph rails
-  stream, status lines cycle, lightning/glitch fires on a timeline, dissolves into
-  site at ~3.3s. Gated once per session via `sessionStorage('jarvis_entered')`.
-- `Hero.tsx` — JARVIS HUD hero, wrapped in a **pinned scroll track** (`h-[165vh]
-  lg:h-[185vh]`, sticky section): decoding name, rotating "SPECIALIZING IN", flanking
-  telemetry panels (accuracy chart / system feed) on desktop, **mobile-specific**
-  compact stat strip (panels hidden <lg), bottom ticker, mouse parallax on the reactor.
-- `HeroReactor.tsx` — the hero reactor that **assembles on scroll** (anime.js v4
-  timeline `seek`-ed to scroll progress via a scroll listener over the pinned track).
-  Core + halo lit from the start; armour (bezel → tick ring → coils → triangle →
-  bevels → nodes) builds around it as you scroll. Reduced-motion renders assembled.
-- `ArcReactorStatic.tsx` — the **Iron Man 3 (Mark XLII) triangular arc reactor**,
-  pure SVG (downward triangle + corner nodes + coil ring + upward-triangle "new
-  element" core). Used by `DashboardIntro` (the boot gate).
+- `IntroDashboard.tsx` — **the hero**: pinned `h-[240vh]` track + sticky `h-dvh`
+  stage. Identity (decoding name, rotating SPECIALIZING IN, tagline, CTAs) visible
+  from the start; the reactor assembles on scroll and 6 HUD panels (accuracy chart,
+  power gauge, forecast bars, system feed, stat readouts, node net — desktop only)
+  reveal at 0.68–0.96 progress, AFTER core ignition. Scroll progress = a manual
+  rAF scroll listener feeding a `useMotionValue` (framer's `useScroll` did NOT
+  track on this page — keep the manual pattern).
+- `ReactorAssembly.tsx` — the IM3 reactor as scroll-scrubbed assembly, matching the
+  reference film: blueprint ghost outline → bezel drifts in → tick ring spins in →
+  coil segments fly in radially (staggered) → rotor triangle rotates into place →
+  bevels + corner nodes → core ignites with flash at ~0.72. All parts are motion.g
+  driven by `useTransform` off one progress MotionValue. Reduced-motion renders
+  fully assembled.
+- `ArcReactorStatic.tsx` — the same **Iron Man 3 (Mark XLII) reactor**, non-animated
+  SVG. Used by `ProjectHologram` (FRIDAY brief modal).
+- `ProjectHologram.tsx` — FRIDAY deep-dive dialog opened from project-card chips
+  (a11y complete: dialog role, ESC/scrim close, focus + scroll lock).
+- **Custom cursor:** Iron Man arrowhead — `public/cursor.svg/.png` (+ gold
+  `cursor-pointer.*` for links/buttons), wired in `globals.css` under
+  `@media (pointer: fine)`. PNGs regenerable via PIL (see git history).
 - Hydration safety: GlyphRail glyphs and reactor coil coords are deterministic
   (no `Math.random()` in render) to avoid SSR/client mismatch.
 - Branded favicon: `app/icon.svg` (mini arc reactor). No Three.js deps — the reactors
@@ -73,16 +80,17 @@ content is REAL, sourced from naramcharan.me.
 ## Content source
 All content in `lib/content.ts` is from the **real resume** (`public/NARAM_RESUME.pdf`,
 the actual file). Key authoritative facts: name "Naramreddy Charan Kumar Reddy";
-CGPA **8.7/10**; NCF uses **PyTorch/Keras** (resume PDF was edited TensorFlow→PyTorch
-to match; backup at iCloud `NARAM_RESUME.pdf.bak-tensorflow`); Walmart **95.5% R²**;
-skill groups = ML / Deep Learning & GenAI / Data Intelligence / Engineering Core;
-certs = Stanford ML, IBM SQL, Michigan Python, Google·Vanderbilt Prompt Eng.
-Hero has subtle mouse-parallax on the reactor (desktop, motion-on only).
+CGPA **8.89/10** (user-corrected; do not trust older 8.7/8.98 mentions); NCF uses
+**PyTorch, no Keras** (resume PDF edited TensorFlow→PyTorch; backup at iCloud
+`NARAM_RESUME.pdf.bak-tensorflow`); Walmart **95.5% R²**; skill groups = ML / Deep
+Learning & GenAI / Data Intelligence / Engineering Core; certs = Stanford ML, IBM
+SQL, Michigan Python, Google·Vanderbilt Prompt Eng — all with real VERIFY links.
 
 ## Open items / TODO
-- Optionally wire the user's generated dashboard PNG as a framed viewport (currently
-  the Blueprint SVG is the custom imagery).
-- Consider lighter-weight Three.js path or further code-split to defend sub-2s load.
+- **Merge `feat/reactor-assembly` → main and push to GitHub**, replacing
+  https://github.com/NaramCharan/NaramCharan.github.io so naramcharan.me serves this
+  site (needs `output: 'export'` in next.config.ts + `public/CNAME`; confirm with the
+  user before force-replacing the live repo).
 
 ## Status
 Built to address the "$10K checklist" (typography, restrained color, breathing
@@ -93,3 +101,7 @@ Build passes clean; verified in preview at desktop + mobile.
 - Use `mcp__Claude_Preview__preview_*` (launch config: `.claude/launch.json`, name "jarvis").
 - Quirk: a `location.reload()` via preview_eval can corrupt the screenshot canvas
   scaling — prefer a fresh `preview_start`, then `preview_resize`, then screenshot.
+- Quirk: the preview tab is `visibilityState: "hidden"` → **rAF never fires**, so
+  framer-motion styles/scroll scrubbing appear frozen in evals. Each
+  `preview_screenshot` pumps a few frames: scroll via eval → screenshot (pump) →
+  eval to read the now-updated styles. Don't mistake the freeze for broken code.
