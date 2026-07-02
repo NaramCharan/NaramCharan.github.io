@@ -1,0 +1,1 @@
+Naram Charan — ML & Data Science Engineer. JARVIS-style HUD with an arc reactor, key metrics (98.28% accuracy, 95.5% R², <10ms FAISS retrieval) and naramcharan.me.

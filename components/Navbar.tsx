@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { motion, useScroll, useSpring } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion, useScroll, useSpring } from "framer-motion";
 import { navLinks, profile } from "@/lib/content";
 import { EASE } from "@/lib/motion";
 
@@ -14,6 +14,23 @@ export default function Navbar() {
   });
   const [show, setShow] = useState(false);
   const [active, setActive] = useState<string>("");
+  const [open, setOpen] = useState(false);
+  const menuBtnRef = useRef<HTMLButtonElement>(null);
+  const firstLinkRef = useRef<HTMLAnchorElement>(null);
+
+  // Mobile menu: ESC closes + returns focus; first link focused on open.
+  useEffect(() => {
+    if (!open) return;
+    firstLinkRef.current?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setOpen(false);
+        menuBtnRef.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
 
   // Reveal the bar once the hero is scrolled past.
   useEffect(() => {
@@ -100,16 +117,74 @@ export default function Navbar() {
             })}
           </div>
 
-          <a
-            href={profile.resume}
-            className="inline-flex min-h-9 items-center gap-1.5 rounded-md border border-gold/60 bg-gold/15 px-4 py-1.5 mono text-[11px] tracking-[0.15em] text-gold transition-all duration-300 hover:bg-gold/25 hover:shadow-[0_0_18px_rgba(255,178,62,0.3)]"
-          >
-            <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14" />
-            </svg>
-            RESUME
-          </a>
+          <div className="flex items-center gap-2">
+            <a
+              href={profile.resume}
+              className="inline-flex min-h-9 items-center gap-1.5 rounded-md border border-gold/60 bg-gold/15 px-4 py-1.5 mono text-[11px] tracking-[0.15em] text-gold transition-all duration-300 hover:bg-gold/25 hover:shadow-[0_0_18px_rgba(255,178,62,0.3)]"
+            >
+              <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14" />
+              </svg>
+              RESUME
+            </a>
+
+            {/* Mobile menu toggle */}
+            <button
+              ref={menuBtnRef}
+              type="button"
+              aria-label={open ? "Close menu" : "Open menu"}
+              aria-expanded={open}
+              aria-controls="mobile-nav"
+              onClick={() => setOpen((v) => !v)}
+              className="grid h-9 w-9 place-items-center rounded-md border border-line text-cyan transition-colors duration-300 hover:border-cyan/60 md:hidden"
+            >
+              <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                {open ? (
+                  <path d="M6 6l12 12M18 6L6 18" />
+                ) : (
+                  <path d="M4 7h16M4 12h16M4 17h16" />
+                )}
+              </svg>
+            </button>
+          </div>
         </nav>
+
+        {/* Mobile menu panel */}
+        <AnimatePresence>
+          {open && (
+            <motion.nav
+              id="mobile-nav"
+              aria-label="Mobile"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.28, ease: EASE }}
+              className="overflow-hidden border-t border-line bg-bg/90 backdrop-blur-md md:hidden"
+            >
+              <ul className="mx-auto max-w-6xl px-6 py-2">
+                {navLinks.map((l, i) => {
+                  const id = l.href.slice(1);
+                  const isActive = active === id;
+                  return (
+                    <li key={l.href}>
+                      <a
+                        ref={i === 0 ? firstLinkRef : undefined}
+                        href={l.href}
+                        onClick={() => setOpen(false)}
+                        className={`block border-b border-line/40 py-3.5 mono text-xs tracking-[0.25em] last:border-0 ${
+                          isActive ? "text-cyan" : "text-text-muted"
+                        }`}
+                      >
+                        <span aria-hidden className="mr-2 text-gold">{isActive ? "◢" : "·"}</span>
+                        {l.label.toUpperCase()}
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
+            </motion.nav>
+          )}
+        </AnimatePresence>
       </motion.header>
     </>
   );

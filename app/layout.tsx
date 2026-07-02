@@ -34,6 +34,11 @@ export const metadata: Metadata = {
     title: "Naram Charan — ML & Data Science Engineer",
     description: "I teach machines to predict things.",
     type: "website",
+    url: "https://naramcharan.me",
+  },
+  // og/twitter images come from the app/opengraph-image.png file convention.
+  twitter: {
+    card: "summary_large_image",
   },
 };
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useLayoutEffect, useRef, type ReactNode } from "react";
+import dynamic from "next/dynamic";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { AnimatePresence, motion } from "framer-motion";
@@ -8,8 +9,26 @@ import { profile } from "@/lib/content";
 import { usePrefersReducedMotion } from "@/lib/useReducedMotion";
 import { useRotate } from "@/lib/useDecode";
 import { EASE } from "@/lib/motion";
-import HeroCanvas from "./reactor3d/HeroCanvas";
 import ArcReactorStatic from "./ArcReactorStatic";
+
+// Split the three.js bundle out of the initial load — the canvas streams in
+// behind a lightweight reactor shimmer instead of blocking first paint.
+const HeroCanvas = dynamic(() => import("./reactor3d/HeroCanvas"), {
+  ssr: false,
+  loading: () => (
+    <div
+      aria-hidden
+      className="absolute inset-0 flex flex-col items-center justify-center gap-4"
+    >
+      <div className="h-44 w-44 opacity-40 sm:h-56 sm:w-56">
+        <ArcReactorStatic />
+      </div>
+      <span className="mono text-[10px] tracking-[0.35em] text-cyan/60">
+        INITIALIZING RENDERER…
+      </span>
+    </div>
+  ),
+});
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -112,6 +131,10 @@ export default function IntroDashboard() {
               Welcome to the world,
             </p>
             <p className="mono text-sm tracking-[0.35em] text-cyan sm:text-base">LET&apos;S DIVE IN</p>
+            {/* Identity at rest — recruiters see the name without scrolling */}
+            <p className="mono mt-5 text-[10px] tracking-[0.3em] text-text-muted sm:text-xs">
+              NARAM CHARAN · ML ENGINEER · OPEN TO INTERNSHIPS
+            </p>
           </div>
         )}
 
