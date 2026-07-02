@@ -13,9 +13,12 @@ content is REAL, sourced from naramcharan.me.
 ## Stack & conventions
 - **Next.js 16 (App Router, Turbopack)** + TypeScript + **Tailwind CSS v4**
   (CSS-first: tokens live in `@theme` in `app/globals.css`, no tailwind.config).
-- **GSAP + ScrollTrigger** drives the hero's scroll-scrubbed assembly timeline;
-  **Framer Motion** for the rest of the UI motion. No Three.js — all reactors are
-  pure SVG.
+- **Three.js / React-Three-Fiber + drei + postprocessing (Bloom)** power the hero's
+  3D reactor; **GSAP + ScrollTrigger** scrubs both the WebGL progress and the DOM
+  overlays; **Framer Motion** for the rest of the UI. (The old "no Three.js, SVG
+  only" rule was lifted when the user asked for a true 3D cinematic hero matching the
+  EDITH reference video.) The FRIDAY modal reactor + reduced-motion hero fallback are
+  still the pure-SVG `ArcReactorStatic`.
 - Static-export friendly. `npm run dev` → http://localhost:3000. `npm run build` must pass.
 - AGENTS.md rule: this is a modified Next.js — check `node_modules/next/dist/docs/` before
   using unfamiliar APIs.
@@ -45,25 +48,32 @@ content is REAL, sourced from naramcharan.me.
 - `Navbar.tsx` — scroll-aware sticky nav: top scroll-progress line, reveals after
   hero, active-section tracking (IntersectionObserver) with animated `layoutId`
   indicator, RESUME button. Wired in `app/page.tsx`.
-- `IntroDashboard.tsx` — **the hero**: pinned `h-[300vh]` track + sticky `h-dvh`
-  stage, driven by ONE GSAP timeline via `ScrollTrigger` (`scrub: 0.5`, reverses on
-  scroll-up). Three segments (user-specced): **A 0–30%** "Welcome to the world /
-  LET'S DIVE IN" visible at rest, drifts out; **B 30–70%** the Stark assembly —
-  bezel/tick/housing fly in from off-screen corners (`power3.out`), 18 coils stagger
-  in radially (function-based x/y off `data-angle`), triangle + nodes + core snap
-  with `back.out(1.7)`, glow + flash charge-up, schematic callouts + streaming code
-  columns (desktop) dissolve after; **C 70–100%** status → name → SPECIALIZING IN →
-  tagline "types" on (clip-path wipe + caret) → CTAs; 6 HUD panels (desktop) stagger
-  in. Markup renders the FINAL state (SSR/SEO/reduced-motion safe); GSAP `.from()`
-  immediateRender poses the scattered start on mount. `gsap.context` + `ctx.revert()`
-  for StrictMode. (History: framer `useScroll` and anime.js `onScroll` did NOT track
-  on this page; ScrollTrigger works. If it regresses, fall back to a manual rAF
-  scroll listener.)
-- `ReactorAssembly.tsx` — the IM3 reactor as a **GSAP rig**: pure SVG rendering the
-  assembled state; every part classed (`.ra-bezel/.ra-tick/.ra-housing/.ra-coil×18
-  (data-angle)/.ra-tri/.ra-nest/.ra-node/.ra-corewrap/.ra-flash/.ra-glowring/
-  .ra-callout/.ra-ghost`) + `.ar-part` (fill-box origin + will-change). The timeline
-  in IntroDashboard owns ALL its motion — this file has zero animation code.
+- `IntroDashboard.tsx` — **the hero**: pinned `h-[320vh]` track + sticky `h-dvh`
+  stage. The 3D reactor is `reactor3d/HeroCanvas` (WebGL, absolute inset-0). A GSAP
+  timeline scrubbed on the same `#top` track drives the **DOM overlays** in lockstep:
+  **A 0–28%** EDITH glasses + "Welcome to the world / LET'S DIVE IN" (visible at rest,
+  drifts out); **B 28–74%** the 3D assembly (owned by the canvas) + streaming code
+  columns; **C 74–100%** status → name → SPECIALIZING IN → tagline "types" on
+  (clip-path wipe + caret) → CTAs; 6 HUD panels stagger in. Timeline tween positions
+  are in scroll-fraction terms padded to ~1 (`tl.to({},{duration:.001},1)`) so
+  position ≈ scroll progress. `.from()` immediateRender hides identity at load; DOM
+  renders the FINAL readable state (SSR/SEO safe). **Reduced motion** skips WebGL
+  entirely → static `ArcReactorStatic` + all content shown. (History: framer
+  `useScroll` and anime.js `onScroll` did NOT track on this page; GSAP ScrollTrigger
+  works.)
+- `reactor3d/` — the WebGL hero. `HeroCanvas.tsx`: client-only `<Canvas>` (mounts
+  post-hydration), lights + framed `<Environment>`/`<Lightformer>` (no network HDR
+  fetch), `<Bloom>` postprocessing, and the single `ScrollTrigger` that writes 0..1
+  into a `progress` ref (+ `--p`/`data-seg` on the track). `Reactor3D.tsx`: the Mark
+  XLII rig — torus bezel/housing, tick ring, 18 copper coils, extruded triangular
+  rotor + core, corner nodes, 4 robotic arms; each part lerps from a scattered/scaled
+  start to its locked pose across its own progress window (read in `useFrame`, no
+  React re-render); core `pointLight` ignites ~0.68–0.82. `EdithGlasses.tsx`: opening
+  smart-glasses that scale toward the viewer + fade as the reactor forms (~0.05–0.26).
+  `parts.tsx`: shared PBR materials (dark/bright metal, copper, cyan glass, core glow)
+  + the extruded-triangle geometry helper. **Quirk:** in the hidden preview tab rAF is
+  throttled → the R3F loop + ScrollTrigger freeze; each `preview_screenshot` pumps a
+  few frames (scroll via eval → `dispatchEvent('scroll')` → screenshot).
 - `ArcReactorStatic.tsx` — the same **Iron Man 3 (Mark XLII) reactor**, non-animated
   SVG. Used by `ProjectHologram` (FRIDAY brief modal).
 - `ProjectHologram.tsx` — FRIDAY deep-dive dialog opened from project-card chips
