@@ -189,12 +189,27 @@ h1 { letter-spacing: -0.035em; }
 .animate-radar { animation: radar-sweep 6s linear infinite; }
 .animate-ticker { animation: ticker 28s linear infinite; }
 
-/* Arc-reactor assembly: each part scales/rotates around its own centre,
-   and stays hidden until anime.js reveals it (no pre-animation flash). */
+/* Arc-reactor assembly: each part scales/rotates around its own centre.
+   will-change keeps the GSAP fly-ins on the GPU compositor. */
 .ar-part {
   transform-box: fill-box;
   transform-origin: 50% 50%;
+  will-change: transform;
 }
+
+/* Holographic projection glitch — a brief skew/opacity blip every 3s
+   (Layer 3 of the hologram stack; neutralized by reduced-motion below). */
+@keyframes holo-glitch {
+  0%, 90%, 100% { transform: skewX(0deg) translateX(0); opacity: 1; }
+  91% { transform: skewX(0.6deg) translateX(2px); opacity: 0.85; }
+  93% { transform: skewX(-0.4deg) translateX(-2px); opacity: 0.95; }
+  95% { transform: skewX(0.2deg) translateX(1px); opacity: 0.9; }
+  97% { transform: skewX(0deg) translateX(0); opacity: 1; }
+}
+.holo-glitch {
+  animation: holo-glitch 3s linear infinite;
+}
+
 svg[data-assembling="true"] .ar-part {
   opacity: 0;
 }

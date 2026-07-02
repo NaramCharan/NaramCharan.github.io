@@ -1,21 +1,18 @@
 "use client";
 
-import { motion, useTransform, type MotionValue } from "framer-motion";
-
 /**
- * The IM3 Mark XLII reactor, assembling piece-by-piece as the intro track is
- * scrolled — choreography matched to the reference film: coil segments fly in
- * from off-screen and converge, the bezel ring locks, the triangular rotor
- * spins into place, corner nodes clamp on, then the core ignites with a flash.
- * Every part is scrubbed off one shared scroll-progress MotionValue.
+ * The IM3 Mark XLII arc reactor as a GSAP-ready rig: pure SVG, every part
+ * carries a class hook (.ra-*) so the scroll timeline in IntroDashboard can
+ * fly pieces in from off-screen and snap them together (film-matched:
+ * scattered components → staggered mechanical assembly → core ignition).
+ *
+ * This component renders the FINAL (assembled) state — GSAP owns the motion.
+ * With reduced motion no timeline runs, so this is also the a11y fallback.
+ * All parts use .ar-part (transform-box: fill-box + will-change: transform)
+ * so scales/rotations are GPU-accelerated around each piece's own centre.
  *
  * Geometry is identical to ArcReactorStatic (kept for non-scrolling uses).
  */
-type Props = {
-  progress: MotionValue<number>;
-  reduced: boolean;
-};
-
 const OUTER = "100,162 46.3,69 153.7,69";
 const NEST1 = "100,150 56.7,75 143.3,75";
 const NEST2 = "100,138 67,81 133,81";
@@ -27,44 +24,10 @@ const CORNERS: [number, number][] = [
 const CORE = "100,78 81,111 119,111";
 const CORE_INNER = "100,88 89.6,106 110.4,106";
 
-export default function ReactorAssembly({ progress, reduced }: Props) {
-  // ── Assembly windows over scroll progress (0..1) ──────────────
-  // glow warms as parts arrive, then surges on core ignition
-  const glowOpacity = useTransform(progress, [0.05, 0.6, 0.72], [0.05, 0.35, 1]);
-
-  // 1. bezel ring drifts in and locks
-  const bezelOpacity = useTransform(progress, [0.04, 0.16], [0, 1]);
-  const bezelScale = useTransform(progress, [0.04, 0.2], [1.35, 1]);
-  const bezelRotate = useTransform(progress, [0.04, 0.2], [-40, 0]);
-
-  // 2. tick ring spins into alignment
-  const tickOpacity = useTransform(progress, [0.12, 0.24], [0, 1]);
-  const tickRotate = useTransform(progress, [0.12, 0.28], [120, 0]);
-
-  // 3. coil housing
-  const housingOpacity = useTransform(progress, [0.18, 0.3], [0, 1]);
-  const housingScale = useTransform(progress, [0.18, 0.3], [0.82, 1]);
-
-  // 4. rotor triangle spins into place
-  const triOpacity = useTransform(progress, [0.34, 0.46], [0, 1]);
-  const triRotate = useTransform(progress, [0.34, 0.5], [-75, 0]);
-  const triScale = useTransform(progress, [0.34, 0.5], [0.5, 1]);
-
-  // 5. nested bevels
-  const nest1Opacity = useTransform(progress, [0.46, 0.56], [0, 1]);
-  const nest2Opacity = useTransform(progress, [0.5, 0.6], [0, 1]);
-
-  // 6. core ignition + flash
-  const coreOpacity = useTransform(progress, [0.62, 0.72], [0, 1]);
-  const coreScale = useTransform(progress, [0.62, 0.74], [0.3, 1]);
-  const flashOpacity = useTransform(progress, [0.66, 0.73, 0.82], [0, 0.65, 0]);
-
-  const style = (s: Record<string, MotionValue<number>>) =>
-    reduced ? undefined : { ...s, transformOrigin: "100px 100px" };
-
+export default function ReactorAssembly() {
   return (
     <div aria-hidden className="relative flex h-full w-full items-center justify-center">
-      <svg viewBox="0 0 200 200" className="h-full w-full max-h-[460px]">
+      <svg viewBox="0 0 200 200" className="ra-svg h-full w-full max-h-[460px] overflow-visible">
         <defs>
           <radialGradient id="ra-core" cx="50%" cy="42%" r="60%">
             <stop offset="0%" stopColor="#f4feff" />
@@ -83,80 +46,103 @@ export default function ReactorAssembly({ progress, reduced }: Props) {
           </linearGradient>
         </defs>
 
-        {/* Blueprint ghost — faint schematic the parts assemble into */}
-        <g stroke="#22d3ee" strokeOpacity="0.14" fill="none" strokeDasharray="3 5">
+        {/* Blueprint ghost — the faint schematic the parts assemble into */}
+        <g
+          className="ra-ghost"
+          stroke="#22d3ee"
+          strokeOpacity="0.14"
+          fill="none"
+          strokeDasharray="3 5"
+        >
           <circle cx="100" cy="100" r="90" strokeWidth="1" />
           <circle cx="100" cy="100" r="76" strokeWidth="1" />
           <polygon points={OUTER} strokeWidth="1.2" strokeLinejoin="round" />
         </g>
 
-        {/* Ambient glow — warms up as the build completes */}
-        <motion.circle
-          cx="100" cy="100" r="98" fill="url(#ra-glow)"
-          style={style({ opacity: glowOpacity })}
-        />
+        {/* Schematic callout annotations (visible while parts float, à la EDITH) */}
+        <g className="ra-callout" opacity="0" stroke="#22d3ee" strokeOpacity="0.5" strokeWidth="0.7" fill="none">
+          <path d="M100 100 L136 64 H170" />
+          <circle cx="136" cy="64" r="1.6" fill="#22d3ee" stroke="none" />
+          <path d="M100 100 L62 138 H28" />
+          <circle cx="62" cy="138" r="1.6" fill="#22d3ee" stroke="none" />
+        </g>
+
+        {/* Ambient glow — "charging up" after assembly */}
+        <circle className="ra-glowring ar-part" cx="100" cy="100" r="98" fill="url(#ra-glow)" />
 
         {/* 1 — Outer bezel */}
-        <motion.g
-          style={style({ opacity: bezelOpacity, scale: bezelScale, rotate: bezelRotate })}
-        >
+        <g className="ra-bezel ar-part">
           <circle cx="100" cy="100" r="90" fill="#06121a" stroke="#0f3d47" strokeWidth="3" />
           <circle cx="100" cy="100" r="90" fill="none" stroke="#22d3ee" strokeOpacity="0.45" strokeWidth="1" />
-        </motion.g>
+        </g>
 
-        {/* 2 — Tick ring (CSS spin nested inside the scrub transform) */}
-        <motion.g
-          style={style({ opacity: tickOpacity, rotate: tickRotate })}
-        >
+        {/* 2 — Tick ring (CSS idle spin nested inside the GSAP part) */}
+        <g className="ra-tick ar-part">
           <g className="animate-spin-slow" style={{ transformOrigin: "100px 100px" }}>
             <circle
               cx="100" cy="100" r="83" fill="none"
               stroke="#22d3ee" strokeOpacity="0.35" strokeWidth="1" strokeDasharray="2 6"
             />
           </g>
-        </motion.g>
-
-        {/* 3 — Coil housing */}
-        <motion.g
-          style={style({ opacity: housingOpacity, scale: housingScale })}
-        >
-          <circle cx="100" cy="100" r="76" fill="#08161f" stroke="#155e6b" strokeWidth="2" />
-        </motion.g>
-
-        {/* Coil segments — fly in radially from off-screen, one after another */}
-        <g>
-          {Array.from({ length: 18 }).map((_, i) => (
-            <Coil key={i} i={i} progress={progress} reduced={reduced} />
-          ))}
         </g>
 
-        {/* 4 — Rotor triangle spins into place */}
-        <motion.g
-          style={style({ opacity: triOpacity, rotate: triRotate, scale: triScale })}
-        >
+        {/* 3 — Coil housing */}
+        <g className="ra-housing ar-part">
+          <circle cx="100" cy="100" r="76" fill="#08161f" stroke="#155e6b" strokeWidth="2" />
+        </g>
+
+        {/* Coil segments — the scattered pieces that stagger into the ring */}
+        <g>
+          {Array.from({ length: 18 }).map((_, i) => {
+            const a = (i / 18) * Math.PI * 2;
+            const x = +(100 + Math.cos(a) * 70).toFixed(2);
+            const y = +(100 + Math.sin(a) * 70).toFixed(2);
+            const rot = +((a * 180) / Math.PI + 90).toFixed(2);
+            return (
+              <g key={i} className="ra-coil ar-part" data-angle={a.toFixed(4)}>
+                <rect
+                  x={+(x - 3).toFixed(2)}
+                  y={+(y - 6).toFixed(2)}
+                  width="6"
+                  height="12"
+                  rx="1.5"
+                  fill="#0a2730"
+                  stroke="#22d3ee"
+                  strokeOpacity="0.7"
+                  strokeWidth="0.8"
+                  transform={`rotate(${rot} ${x} ${y})`}
+                />
+              </g>
+            );
+          })}
+        </g>
+
+        {/* 4 — Rotor triangle */}
+        <g className="ra-tri ar-part">
           <polygon points={OUTER} fill="#08202a" stroke="url(#ra-metal)" strokeWidth="6" strokeLinejoin="round" />
           <polygon points={OUTER} fill="none" stroke="#7de7f5" strokeOpacity="0.85" strokeWidth="1.5" strokeLinejoin="round" />
-        </motion.g>
+        </g>
 
         {/* 5 — Nested bevels */}
-        <motion.polygon
+        <polygon
+          className="ra-nest ar-part"
           points={NEST1} fill="none" stroke="#22d3ee" strokeOpacity="0.55" strokeWidth="2" strokeLinejoin="round"
-          style={style({ opacity: nest1Opacity })}
         />
-        <motion.polygon
+        <polygon
+          className="ra-nest ar-part"
           points={NEST2} fill="none" stroke="#22d3ee" strokeOpacity="0.4" strokeWidth="1.5" strokeLinejoin="round"
-          style={style({ opacity: nest2Opacity })}
         />
 
-        {/* Corner nodes clamp on, one per corner */}
+        {/* Corner nodes */}
         {CORNERS.map(([x, y], i) => (
-          <CornerNode key={i} x={x} y={y} i={i} progress={progress} reduced={reduced} />
+          <g key={i} className="ra-node ar-part">
+            <circle cx={x} cy={y} r="9" fill="#06121a" stroke="#22d3ee" strokeWidth="2" />
+            <circle cx={x} cy={y} r="4" fill="#22d3ee" />
+          </g>
         ))}
 
-        {/* 6 — Core ignition */}
-        <motion.g
-          style={style({ opacity: coreOpacity, scale: coreScale })}
-        >
+        {/* 6 — Core (the back.out "mechanical snap" piece) */}
+        <g className="ra-corewrap ar-part">
           <circle cx="100" cy="100" r="34" fill="url(#ra-glow)" />
           <polygon
             points={CORE}
@@ -166,81 +152,11 @@ export default function ReactorAssembly({ progress, reduced }: Props) {
           />
           <polygon points={CORE_INNER} fill="none" stroke="#eafdff" strokeOpacity="0.9" strokeWidth="1.5" strokeLinejoin="round" />
           <polygon points="100,94 95,104 105,104" fill="#eafdff" />
-        </motion.g>
+        </g>
 
         {/* Ignition flash */}
-        <motion.circle
-          cx="100" cy="100" r="60" fill="#bdf3fb"
-          style={reduced ? { opacity: 0 } : { opacity: flashOpacity }}
-        />
+        <circle className="ra-flash ar-part" cx="100" cy="100" r="60" fill="#bdf3fb" opacity="0" />
       </svg>
     </div>
-  );
-}
-
-/* One coil segment flying in along its own radial line. */
-function Coil({
-  i,
-  progress,
-  reduced,
-}: {
-  i: number;
-  progress: MotionValue<number>;
-  reduced: boolean;
-}) {
-  const a = (i / 18) * Math.PI * 2;
-  const x = +(100 + Math.cos(a) * 70).toFixed(2);
-  const y = +(100 + Math.sin(a) * 70).toFixed(2);
-  const rot = +((a * 180) / Math.PI + 90).toFixed(2);
-  // staggered window: first coil ~0.08, last ~0.27, each 0.14 wide
-  const start = 0.08 + i * 0.011;
-  const end = start + 0.14;
-  const opacity = useTransform(progress, [start, end], [0, 1]);
-  const tx = useTransform(progress, [start, end], [+(Math.cos(a) * 130).toFixed(2), 0]);
-  const ty = useTransform(progress, [start, end], [+(Math.sin(a) * 130).toFixed(2), 0]);
-
-  return (
-    <motion.g style={reduced ? undefined : { opacity, x: tx, y: ty }}>
-      <rect
-        x={+(x - 3).toFixed(2)}
-        y={+(y - 6).toFixed(2)}
-        width="6"
-        height="12"
-        rx="1.5"
-        fill="#0a2730"
-        stroke="#22d3ee"
-        strokeOpacity="0.7"
-        strokeWidth="0.8"
-        transform={`rotate(${rot} ${x} ${y})`}
-      />
-    </motion.g>
-  );
-}
-
-/* One corner node popping into place. */
-function CornerNode({
-  x,
-  y,
-  i,
-  progress,
-  reduced,
-}: {
-  x: number;
-  y: number;
-  i: number;
-  progress: MotionValue<number>;
-  reduced: boolean;
-}) {
-  const start = 0.52 + i * 0.045;
-  const opacity = useTransform(progress, [start, start + 0.08], [0, 1]);
-  const scale = useTransform(progress, [start, start + 0.08], [0, 1]);
-
-  return (
-    <motion.g
-      style={reduced ? undefined : { opacity, scale, transformOrigin: `${x}px ${y}px` }}
-    >
-      <circle cx={x} cy={y} r="9" fill="#06121a" stroke="#22d3ee" strokeWidth="2" />
-      <circle cx={x} cy={y} r="4" fill="#22d3ee" />
-    </motion.g>
   );
 }

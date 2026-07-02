@@ -13,8 +13,9 @@ content is REAL, sourced from naramcharan.me.
 ## Stack & conventions
 - **Next.js 16 (App Router, Turbopack)** + TypeScript + **Tailwind CSS v4**
   (CSS-first: tokens live in `@theme` in `app/globals.css`, no tailwind.config).
-- **Framer Motion** for UI motion (MotionValues scrubbed to scroll). No Three.js —
-  all reactors are pure SVG.
+- **GSAP + ScrollTrigger** drives the hero's scroll-scrubbed assembly timeline;
+  **Framer Motion** for the rest of the UI motion. No Three.js — all reactors are
+  pure SVG.
 - Static-export friendly. `npm run dev` → http://localhost:3000. `npm run build` must pass.
 - AGENTS.md rule: this is a modified Next.js — check `node_modules/next/dist/docs/` before
   using unfamiliar APIs.
@@ -44,23 +45,32 @@ content is REAL, sourced from naramcharan.me.
 - `Navbar.tsx` — scroll-aware sticky nav: top scroll-progress line, reveals after
   hero, active-section tracking (IntersectionObserver) with animated `layoutId`
   indicator, RESUME button. Wired in `app/page.tsx`.
-- `IntroDashboard.tsx` — **the hero**: pinned `h-[240vh]` track + sticky `h-dvh`
-  stage. Identity (decoding name, rotating SPECIALIZING IN, tagline, CTAs) visible
-  from the start; the reactor assembles on scroll and 6 HUD panels (accuracy chart,
-  power gauge, forecast bars, system feed, stat readouts, node net — desktop only)
-  reveal at 0.68–0.96 progress, AFTER core ignition. Scroll progress = a manual
-  rAF scroll listener feeding a `useMotionValue` (framer's `useScroll` did NOT
-  track on this page — keep the manual pattern).
-- `ReactorAssembly.tsx` — the IM3 reactor as scroll-scrubbed assembly, matching the
-  reference film: blueprint ghost outline → bezel drifts in → tick ring spins in →
-  coil segments fly in radially (staggered) → rotor triangle rotates into place →
-  bevels + corner nodes → core ignites with flash at ~0.72. All parts are motion.g
-  driven by `useTransform` off one progress MotionValue. Reduced-motion renders
-  fully assembled.
+- `IntroDashboard.tsx` — **the hero**: pinned `h-[300vh]` track + sticky `h-dvh`
+  stage, driven by ONE GSAP timeline via `ScrollTrigger` (`scrub: 0.5`, reverses on
+  scroll-up). Three segments (user-specced): **A 0–30%** "Welcome to the world /
+  LET'S DIVE IN" visible at rest, drifts out; **B 30–70%** the Stark assembly —
+  bezel/tick/housing fly in from off-screen corners (`power3.out`), 18 coils stagger
+  in radially (function-based x/y off `data-angle`), triangle + nodes + core snap
+  with `back.out(1.7)`, glow + flash charge-up, schematic callouts + streaming code
+  columns (desktop) dissolve after; **C 70–100%** status → name → SPECIALIZING IN →
+  tagline "types" on (clip-path wipe + caret) → CTAs; 6 HUD panels (desktop) stagger
+  in. Markup renders the FINAL state (SSR/SEO/reduced-motion safe); GSAP `.from()`
+  immediateRender poses the scattered start on mount. `gsap.context` + `ctx.revert()`
+  for StrictMode. (History: framer `useScroll` and anime.js `onScroll` did NOT track
+  on this page; ScrollTrigger works. If it regresses, fall back to a manual rAF
+  scroll listener.)
+- `ReactorAssembly.tsx` — the IM3 reactor as a **GSAP rig**: pure SVG rendering the
+  assembled state; every part classed (`.ra-bezel/.ra-tick/.ra-housing/.ra-coil×18
+  (data-angle)/.ra-tri/.ra-nest/.ra-node/.ra-corewrap/.ra-flash/.ra-glowring/
+  .ra-callout/.ra-ghost`) + `.ar-part` (fill-box origin + will-change). The timeline
+  in IntroDashboard owns ALL its motion — this file has zero animation code.
 - `ArcReactorStatic.tsx` — the same **Iron Man 3 (Mark XLII) reactor**, non-animated
   SVG. Used by `ProjectHologram` (FRIDAY brief modal).
 - `ProjectHologram.tsx` — FRIDAY deep-dive dialog opened from project-card chips
-  (a11y complete: dialog role, ESC/scrim close, focus + scroll lock).
+  (a11y complete: dialog role, ESC/scrim close, focus + scroll lock). Three-layer
+  hologram stack: glass (backdrop-blur 15px + cyan gradient), glow (inset + outer
+  cyan shadows), glitch (`.holo-glitch` skew blip every 3s, on an INNER wrapper so
+  it can't fight framer's entrance/exit transform).
 - **Custom cursor:** Iron Man arrowhead — `public/cursor.svg/.png` (+ gold
   `cursor-pointer.*` for links/buttons), wired in `globals.css` under
   `@media (pointer: fine)`. PNGs regenerable via PIL (see git history).

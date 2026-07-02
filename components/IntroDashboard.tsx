@@ -1,18 +1,16 @@
 "use client";
 
-import { useEffect, useRef, type ReactNode } from "react";
-import {
-  AnimatePresence,
-  motion,
-  useMotionValue,
-  useTransform,
-  type MotionValue,
-} from "framer-motion";
+import { useLayoutEffect, useRef, type ReactNode } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { AnimatePresence, motion } from "framer-motion";
 import { profile } from "@/lib/content";
 import { usePrefersReducedMotion } from "@/lib/useReducedMotion";
-import { useDecode, useRotate } from "@/lib/useDecode";
-import { enter, EASE } from "@/lib/motion";
+import { useRotate } from "@/lib/useDecode";
+import { EASE } from "@/lib/motion";
 import ReactorAssembly from "./ReactorAssembly";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const SPECIALTIES = [
   "Recommendation Systems",
@@ -21,92 +19,154 @@ const SPECIALTIES = [
   "Neural Networks",
 ];
 
+const CODE_LINES = [
+  "model = NCF(n_users, n_items, dim=32)",
+  "opt = torch.optim.Adam(model.parameters())",
+  "loss = bce(preds, interactions) + l2(emb)",
+  "index = faiss.IndexFlatL2(32)",
+  "index.add(item_embeddings)",
+  "D, I = index.search(user_vec, k=10)",
+  "assert latency_ms < 10",
+  "study = optuna.create_study()",
+  "study.optimize(objective, n_trials=120)",
+  "r2_score(y_val, y_pred)  # 0.955",
+];
+
 /**
- * The hero: a crisp, all-vector JARVIS dashboard. Identity (name, tagline,
- * CTAs) is visible from the start; the HUD panels assemble around the arc
- * reactor scrubbed to scroll position via Framer Motion `useScroll`.
+ * The hero — a scroll-scrubbed "Stark assembly" driven by one GSAP timeline
+ * tied to ScrollTrigger (scrub: reverse on scroll-up, stop when you stop).
+ *
+ *   Segment A (0–30%)  · "Welcome to the world" fades in and out
+ *   Segment B (30–70%) · scattered reactor parts fly in and snap together
+ *   Segment C (70–100%)· name + subtitle fade in, quote "types" on, HUD panels
+ *
+ * Markup renders the FINAL state (SSR/SEO/no-JS/reduced-motion safe); the
+ * timeline immediately re-poses everything to the scattered start on mount.
  */
 export default function IntroDashboard() {
   const reduced = usePrefersReducedMotion();
-  const trackRef = useRef<HTMLDivElement>(null);
-  const name = useDecode(profile.name, 28);
+  const trackRef = useRef<HTMLElement>(null);
   const specialty = useRotate(SPECIALTIES);
 
-  // Scroll progress over the pinned track (manual listener — reliable with
-  // this page's scroll setup, same pattern the hero reactor used).
-  const scrollYProgress = useMotionValue(0);
-  useEffect(() => {
+  useLayoutEffect(() => {
     const track = trackRef.current;
     if (!track || reduced) return;
-    let raf = 0;
-    const update = () => {
-      raf = 0;
-      const dist = Math.max(1, track.offsetHeight - window.innerHeight);
-      const p = Math.min(1, Math.max(0, -track.getBoundingClientRect().top / dist));
-      scrollYProgress.set(p);
-    };
-    const onScroll = () => {
-      if (!raf) raf = requestAnimationFrame(update);
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    update();
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-      if (raf) cancelAnimationFrame(raf);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reduced]);
 
-  // Panels reveal AFTER the reactor build (~0.72 = core ignition), matching
-  // the reference choreography: parts converge → core ignites → HUD lights up.
-  const pAccuracy = useTransform(scrollYProgress, [0.68, 0.8], [0, 1]);
-  const pSystems = useTransform(scrollYProgress, [0.72, 0.84], [0, 1]);
-  const pForecast = useTransform(scrollYProgress, [0.78, 0.9], [0, 1]);
-  const pTerminal = useTransform(scrollYProgress, [0.74, 0.86], [0, 1]);
-  const pStats = useTransform(scrollYProgress, [0.8, 0.92], [0, 1]);
-  const pNodes = useTransform(scrollYProgress, [0.84, 0.96], [0, 1]);
-  const reactorScale = useTransform(scrollYProgress, [0, 0.6], [0.9, 1]);
-  const hintOpacity = useTransform(scrollYProgress, [0, 0.12], [1, 0]);
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        defaults: { ease: "none" },
+        scrollTrigger: {
+          trigger: track,
+          start: "top top",
+          end: "bottom bottom",
+          scrub: 0.5,
+        },
+      });
+
+      /* ── Segment A (0–3): welcome line — visible at rest, drifts out ── */
+      tl.to(".ia-hint", { autoAlpha: 0, duration: 0.4 }, 0.1)
+        .to(".ia-welcome", { autoAlpha: 0, y: -30, scale: 1.04, duration: 0.7, ease: "power1.in" }, 2.3);
+
+      /* ── Segment B (3–7): the Stark assembly ───────────────────── */
+      // schematic callouts + streaming code appear with the floating parts
+      tl.fromTo(".ra-callout", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.4 }, 2.9)
+        .fromTo(".ia-code", { autoAlpha: 0 }, { autoAlpha: 0.55, duration: 0.5 }, 3.0)
+        // big rings fly in from off-screen corners, rotating into place
+        .from(".ra-bezel", { x: -500, y: -300, rotation: -180, scale: 0.4, autoAlpha: 0, duration: 1.4, ease: "power3.out" }, 3.0)
+        .from(".ra-tick", { x: 520, y: -280, rotation: 220, scale: 0.4, autoAlpha: 0, duration: 1.3, ease: "power3.out" }, 3.25)
+        .from(".ra-housing", { x: -460, y: 340, rotation: -160, scale: 0.5, autoAlpha: 0, duration: 1.2, ease: "power3.out" }, 3.5)
+        // 18 coil segments stagger in radially — mechanical assembly
+        .from(".ra-coil", {
+          x: (_, el) => Math.cos(+(el as SVGGElement).dataset.angle!) * 340,
+          y: (_, el) => Math.sin(+(el as SVGGElement).dataset.angle!) * 340,
+          rotation: 180,
+          scale: 0,
+          autoAlpha: 0,
+          duration: 0.9,
+          stagger: 0.045,
+          ease: "power2.out",
+        }, 3.9)
+        // rotor triangle + bevels + corner nodes
+        .from(".ra-tri", { scale: 0, rotation: 180, autoAlpha: 0, duration: 0.8, ease: "back.out(1.4)" }, 5.7)
+        .from(".ra-nest", { autoAlpha: 0, scale: 0.6, duration: 0.4, stagger: 0.15, ease: "power2.out" }, 6.2)
+        .from(".ra-node", { scale: 0, autoAlpha: 0, duration: 0.4, stagger: 0.12, ease: "back.out(1.7)" }, 6.3)
+        // the core snaps in — back.out for the mechanical click
+        .from(".ra-corewrap", { scale: 0, rotation: 180, autoAlpha: 0, duration: 0.6, ease: "back.out(1.7)" }, 6.6)
+        // charge-up: glow blooms, flash pops, callouts/code dissolve
+        .from(".ra-glowring", { autoAlpha: 0, duration: 0.5 }, 6.9)
+        .fromTo(".ra-flash", { autoAlpha: 0 }, { autoAlpha: 0.8, duration: 0.2 }, 7.0)
+        .to(".ra-flash", { autoAlpha: 0, duration: 0.3 }, 7.2)
+        .to(".ra-callout", { autoAlpha: 0, duration: 0.3 }, 6.6)
+        .to(".ia-code", { autoAlpha: 0, duration: 0.4 }, 6.8)
+        .fromTo(".ia-reactor", { scale: 0.92 }, { scale: 1, duration: 4, ease: "none" }, 3.0);
+
+      /* ── Segment C (7–10): identity + HUD panels ───────────────── */
+      tl.from(".ia-status", { autoAlpha: 0, y: 14, duration: 0.4, ease: "power2.out" }, 7.2)
+        .from(".ia-name", { autoAlpha: 0, y: 26, duration: 0.7, ease: "power2.out" }, 7.4)
+        .from(".ia-spec", { autoAlpha: 0, y: 14, duration: 0.5, ease: "power2.out" }, 7.9)
+        // the quote "types" on via a clip wipe; caret rides along then fades
+        .fromTo(".ia-quote", { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 1.4 }, 8.1)
+        .from(".ia-caret", { autoAlpha: 0, duration: 0.1 }, 8.1)
+        .to(".ia-caret", { autoAlpha: 0, duration: 0.2 }, 9.7)
+        .from(".ia-ctas", { autoAlpha: 0, y: 16, duration: 0.5, ease: "power2.out" }, 9.3)
+        .from(".ia-panel", { autoAlpha: 0, y: 14, duration: 0.5, stagger: 0.35, ease: "power2.out" }, 7.6);
+    }, track);
+
+    return () => ctx.revert();
+  }, [reduced]);
 
   return (
     <section
       id="top"
       ref={trackRef}
       aria-label="Intro"
-      className={reduced ? "relative" : "relative h-[240vh]"}
+      className={reduced ? "relative" : "relative h-[300vh]"}
     >
       <div className="sticky top-0 flex h-dvh flex-col items-center justify-center overflow-hidden bg-bg px-6">
         <div className="hud-grid pointer-events-none absolute inset-0 opacity-40" />
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(34,211,238,0.10),transparent_62%)]" />
 
-        {/* Reactor — assembles piece-by-piece as you scroll */}
-        <motion.div
-          style={reduced ? undefined : { scale: reactorScale }}
-          className="relative z-10 h-44 w-44 sm:h-56 sm:w-56 lg:h-72 lg:w-72"
-        >
-          <ReactorAssembly progress={scrollYProgress} reduced={reduced} />
-        </motion.div>
+        {/* Segment A — welcome line (skipped entirely under reduced motion) */}
+        {!reduced && (
+          <div
+            aria-hidden
+            className="ia-welcome pointer-events-none absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 text-center"
+          >
+            <p className="ia-welcome-line text-balance text-3xl font-semibold tracking-tight text-text glow-cyan sm:text-5xl lg:text-6xl">
+              Welcome to the world,
+            </p>
+            <p className="ia-welcome-line mono text-sm tracking-[0.35em] text-cyan sm:text-base">
+              LET&apos;S DIVE IN
+            </p>
+          </div>
+        )}
 
-        {/* Identity — the hero content, visible from the start */}
+        {/* Streaming code columns (desktop, during assembly) */}
+        <div aria-hidden className="ia-code pointer-events-none absolute inset-y-0 left-6 z-0 hidden w-64 flex-col justify-center gap-1.5 opacity-0 lg:flex">
+          {CODE_LINES.slice(0, 5).map((l) => (
+            <span key={l} className="mono text-[10px] leading-4 text-cyan/60">{l}</span>
+          ))}
+        </div>
+        <div aria-hidden className="ia-code pointer-events-none absolute inset-y-0 right-6 z-0 hidden w-64 flex-col items-end justify-center gap-1.5 opacity-0 text-right lg:flex">
+          {CODE_LINES.slice(5).map((l) => (
+            <span key={l} className="mono text-[10px] leading-4 text-cyan/60">{l}</span>
+          ))}
+        </div>
+
+        {/* Segment B — the reactor rig */}
+        <div className="ia-reactor relative z-10 h-44 w-44 sm:h-56 sm:w-56 lg:h-72 lg:w-72">
+          <ReactorAssembly />
+        </div>
+
+        {/* Segment C — identity */}
         <div className="relative z-10 mt-2 flex flex-col items-center text-center">
-          <motion.p
-            {...enter(0.1)}
-            className="mono text-[11px] tracking-[0.4em] text-cyan/80 sm:text-xs"
-          >
+          <p className="ia-status mono text-[11px] tracking-[0.4em] text-cyan/80 sm:text-xs">
             {profile.status}
-          </motion.p>
-          <motion.h1
-            {...enter(0.18)}
-            className="mt-4 text-balance text-4xl font-semibold leading-[0.95] tracking-tight sm:text-6xl lg:text-7xl"
-          >
-            <span className="glow-cyan">{name || profile.name}</span>
-          </motion.h1>
-          <motion.div
-            {...enter(0.26)}
-            className="mt-4 flex h-6 items-center gap-2 mono text-xs tracking-[0.15em] text-text-dim sm:text-sm"
-          >
+          </p>
+          <h1 className="ia-name mt-4 text-balance text-4xl font-semibold leading-[0.95] tracking-tight sm:text-6xl lg:text-7xl">
+            <span className="glow-cyan">{profile.name}</span>
+          </h1>
+          <div className="ia-spec mt-4 flex h-6 items-center gap-2 mono text-xs tracking-[0.15em] text-text-dim sm:text-sm">
             <span className="text-gold">◢</span>
             <span>SPECIALIZING IN</span>
             <span className="relative inline-flex min-w-[13ch] justify-start text-cyan">
@@ -122,14 +182,14 @@ export default function IntroDashboard() {
                 </motion.span>
               </AnimatePresence>
             </span>
-          </motion.div>
-          <motion.p
-            {...enter(0.34)}
-            className="mt-4 max-w-md text-balance text-lg leading-relaxed text-text sm:text-xl"
-          >
-            &ldquo;{profile.tagline}&rdquo;
-          </motion.p>
-          <motion.div {...enter(0.42)} className="mt-7 flex flex-col gap-3 sm:flex-row">
+          </div>
+          <p className="mt-4 max-w-md text-balance text-lg leading-relaxed text-text sm:text-xl">
+            <span className="ia-quote inline-block">&ldquo;{profile.tagline}&rdquo;</span>
+            {!reduced && (
+              <span aria-hidden className="ia-caret ml-0.5 inline-block h-5 w-2 translate-y-0.5 animate-blink bg-cyan align-baseline" />
+            )}
+          </p>
+          <div className="ia-ctas mt-7 flex flex-col gap-3 sm:flex-row">
             <a
               href="#projects"
               className="group inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-cyan/50 bg-cyan/10 px-7 py-3 text-sm font-medium text-cyan transition-all duration-300 hover:bg-cyan/20 hover:shadow-[0_0_26px_rgba(34,211,238,0.35)]"
@@ -143,13 +203,13 @@ export default function IntroDashboard() {
             >
               Download Resume
             </a>
-          </motion.div>
+          </div>
         </div>
 
-        {/* ── Panels (desktop) ─────────────────────────────── */}
+        {/* ── HUD panels (desktop, Segment C) ─────────────────────── */}
         <div aria-hidden className="pointer-events-none absolute inset-0 hidden lg:block">
           {/* MODEL ACCURACY — top centre */}
-          <Panel p={pAccuracy} reduced={reduced} className="left-1/2 top-8 w-[300px] -translate-x-1/2">
+          <Panel className="left-1/2 top-8 w-[300px] -translate-x-1/2">
             <PanelHead label="MODEL ACCURACY" code="MK-02" />
             <div className="flex items-end justify-between">
               <span className="mono text-2xl font-bold text-gold glow-gold">98.28%</span>
@@ -159,7 +219,7 @@ export default function IntroDashboard() {
           </Panel>
 
           {/* SUIT SYSTEMS — top left */}
-          <Panel p={pSystems} reduced={reduced} className="left-8 top-24 w-[220px]">
+          <Panel className="left-8 top-24 w-[220px]">
             <PanelHead label="SUIT SYSTEMS" code="PWR" />
             <div className="flex items-center gap-4">
               <PowerGauge />
@@ -171,14 +231,14 @@ export default function IntroDashboard() {
           </Panel>
 
           {/* STORE-DEPARTMENT FORECAST — bottom left */}
-          <Panel p={pForecast} reduced={reduced} className="bottom-16 left-8 w-[260px]">
+          <Panel className="bottom-16 left-8 w-[260px]">
             <PanelHead label="STORE-DEPT FORECAST" code="MK-01" />
             <ForecastBars />
             <p className="mono mt-2 text-[9px] tracking-wide text-text-dim">95.5% VALIDATION R²</p>
           </Panel>
 
           {/* TERMINAL — top right */}
-          <Panel p={pTerminal} reduced={reduced} className="right-8 top-20 w-[260px]">
+          <Panel className="right-8 top-20 w-[260px]">
             <PanelHead label="SYSTEM FEED" code="LIVE" />
             <ul className="space-y-1">
               {[
@@ -202,7 +262,7 @@ export default function IntroDashboard() {
           </Panel>
 
           {/* STAT READOUTS — right mid */}
-          <Panel p={pStats} reduced={reduced} className="right-10 top-1/2 w-[240px] -translate-y-1/2">
+          <Panel className="right-10 top-1/2 w-[240px] -translate-y-1/2">
             <div className="grid grid-cols-3 gap-2 text-center">
               {[
                 ["<10", "MS", "LATENCY"],
@@ -221,7 +281,7 @@ export default function IntroDashboard() {
           </Panel>
 
           {/* GLOBAL NODES — bottom right */}
-          <Panel p={pNodes} reduced={reduced} className="bottom-16 right-8 w-[260px]">
+          <Panel className="bottom-16 right-8 w-[260px]">
             <PanelHead label="GLOBAL NODES" code="NET" />
             <NodeNet />
           </Panel>
@@ -232,15 +292,12 @@ export default function IntroDashboard() {
           J.A.R.V.I.S // MARK XLII
         </div>
         {!reduced && (
-          <motion.div
-            style={{ opacity: hintOpacity }}
-            className="pointer-events-none absolute bottom-8 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1.5"
-          >
+          <div className="ia-hint pointer-events-none absolute bottom-8 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1.5">
             <span className="mono text-[10px] tracking-[0.35em] text-cyan/80">SCROLL TO INITIALIZE</span>
             <svg viewBox="0 0 24 24" className="h-4 w-4 animate-bounce text-cyan/70" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
               <path d="M12 5v14M5 12l7 7 7-7" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-          </motion.div>
+          </div>
         )}
 
         {/* Blend into the site below */}
@@ -250,26 +307,13 @@ export default function IntroDashboard() {
   );
 }
 
-/* ── Reusable panel shell (reveals on scroll) ───────────────── */
-function Panel({
-  p,
-  reduced,
-  className,
-  children,
-}: {
-  p: MotionValue<number>;
-  reduced: boolean;
-  className: string;
-  children: ReactNode;
-}) {
+/* ── HUD panel shell (GSAP reveals .ia-panel in Segment C) ──────── */
+function Panel({ className, children }: { className: string; children: ReactNode }) {
   return (
-    <motion.div
-      style={reduced ? undefined : { opacity: p }}
-      className={`absolute rounded-lg border border-line bg-surface/70 p-3 backdrop-blur-sm ${className}`}
-    >
+    <div className={`ia-panel absolute rounded-lg border border-line bg-surface/70 p-3 backdrop-blur-sm ${className}`}>
       <span aria-hidden className="absolute right-2.5 top-2.5 h-2.5 w-2.5 border-r border-t border-cyan/50" />
       {children}
-    </motion.div>
+    </div>
   );
 }
 
