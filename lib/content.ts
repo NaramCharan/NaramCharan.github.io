@@ -20,7 +20,7 @@ export const stats = [
   { value: 98.28, suffix: "%", label: "Churn Model Accuracy" },
   { value: 95.5, suffix: "%", label: "Walmart Validation R²" },
   { value: 10, prefix: "<", suffix: "ms", label: "FAISS Retrieval Speed" },
-  { value: 8.89, suffix: "", label: "CGPA Average · /10" },
+  { value: 8.98, suffix: "", label: "CGPA Average · /10" },
 ];
 
 export type Project = {
@@ -228,11 +228,17 @@ export const education = {
   school: "GD Goenka University, Gurugram",
   year: "3rd Year",
   graduation: "Expected May 2028",
-  cgpa: "8.89 / 10.0",
+  cgpa: "8.98 / 10.0",
 };
 
 // `url` = the holder's real credential verification link.
 export const certifications = [
+  {
+    name: "Claude Code: A Highly Agentic Coding Assistant",
+    issuer: "DeepLearning.AI · Anthropic",
+    note: "Jul 2026",
+    url: "https://learn.deeplearning.ai/accomplishments/1aa0da77-0c19-49ac-a36f-3652f5d9bab9?usp=sharing",
+  },
   {
     name: "Machine Learning Specialization",
     issuer: "DeepLearning.AI · Stanford University",

@@ -106,11 +106,12 @@ content is REAL, sourced from naramcharan.me.
 ## Content source
 All content in `lib/content.ts` is from the **real resume** (`public/NARAM_RESUME.pdf`,
 the actual file). Key authoritative facts: name "Naramreddy Charan Kumar Reddy";
-CGPA **8.89/10** (user-corrected; do not trust older 8.7/8.98 mentions); NCF uses
-**PyTorch, no Keras** (resume PDF edited TensorFlow→PyTorch; backup at iCloud
-`NARAM_RESUME.pdf.bak-tensorflow`); Walmart **95.5% R²**; skill groups = ML / Deep
-Learning & GenAI / Data Intelligence / Engineering Core; certs = Stanford ML, IBM
-SQL, Michigan Python, Google·Vanderbilt Prompt Eng — all with real VERIFY links.
+CGPA **8.98/10** (user-corrected 2026-07-02; earlier 8.89/8.7 mentions are stale);
+NCF uses **PyTorch, no Keras** (resume PDF edited TensorFlow→PyTorch; backup at
+iCloud `NARAM_RESUME.pdf.bak-tensorflow`); Walmart **95.5% R²**; skill groups = ML /
+Deep Learning & GenAI / Data Intelligence / Engineering Core; certs (newest first) =
+**Claude Code (DeepLearning.AI·Anthropic, Jul 2026)**, Stanford ML, IBM SQL,
+Michigan Python, Google·Vanderbilt Prompt Eng — all with real VERIFY links.
 
 ## Open items / TODO
 - **Merge `feat/reactor-assembly` → main and push to GitHub**, replacing
