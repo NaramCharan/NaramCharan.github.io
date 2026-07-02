@@ -61,6 +61,7 @@ export default function IntroDashboard() {
       });
       // positions below are in scroll-fraction terms; pad total to ~1 at the end.
       tl.to(".ia-hint", { autoAlpha: 0, duration: 0.05 }, 0.03)
+        .to(".ia-reticle", { autoAlpha: 0, scale: 1.6, duration: 0.12, ease: "power1.in" }, 0.06)
         .to(".ia-welcome", { autoAlpha: 0, y: -40, scale: 1.05, duration: 0.1, ease: "power1.in" }, 0.15)
         .fromTo(".ia-code", { autoAlpha: 0 }, { autoAlpha: 0.55, duration: 0.08 }, 0.3)
         .to(".ia-code", { autoAlpha: 0, duration: 0.08 }, 0.66)
@@ -97,6 +98,9 @@ export default function IntroDashboard() {
         )}
 
         <div className="hud-grid pointer-events-none absolute inset-0 z-0 opacity-30" />
+
+        {/* Segment A — JARVIS optical-scan reticle (the opening "lock-on") */}
+        {!reduced && <ScanReticle />}
 
         {/* Segment A — welcome line */}
         {!reduced && (
@@ -259,6 +263,87 @@ export default function IntroDashboard() {
         <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 z-[15] h-32 bg-gradient-to-b from-transparent to-bg" />
       </div>
     </section>
+  );
+}
+
+/* ── JARVIS optical-scan reticle — the opening lock-on ───────── */
+function ScanReticle() {
+  const ticks = Array.from({ length: 60 });
+  return (
+    <div
+      aria-hidden
+      className="ia-reticle pointer-events-none absolute left-1/2 top-1/2 z-[12] -translate-x-1/2 -translate-y-1/2"
+    >
+      <div className="relative h-[min(78vw,560px)] w-[min(78vw,560px)]">
+        <svg viewBox="0 0 400 400" className="absolute inset-0 h-full w-full">
+          <defs>
+            <radialGradient id="rt-sweep" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor="#22d3ee" stopOpacity="0.28" />
+              <stop offset="100%" stopColor="#22d3ee" stopOpacity="0" />
+            </radialGradient>
+          </defs>
+
+          {/* radar sweep */}
+          <g className="animate-radar" style={{ transformOrigin: "200px 200px" }}>
+            <path d="M200 200 L200 24 A176 176 0 0 1 324 96 Z" fill="url(#rt-sweep)" />
+          </g>
+
+          {/* outer dashed ring — slow spin */}
+          <g className="animate-spin-slow" style={{ transformOrigin: "200px 200px" }}>
+            <circle cx="200" cy="200" r="188" fill="none" stroke="#22d3ee" strokeOpacity="0.5" strokeWidth="1" strokeDasharray="2 8" />
+          </g>
+
+          {/* tick ring — reverse spin */}
+          <g className="animate-spin-rev" style={{ transformOrigin: "200px 200px" }}>
+            {ticks.map((_, i) => {
+              const a = (i / 60) * Math.PI * 2;
+              const r1 = i % 5 === 0 ? 156 : 164;
+              const x1 = +(200 + Math.cos(a) * r1).toFixed(2);
+              const y1 = +(200 + Math.sin(a) * r1).toFixed(2);
+              const x2 = +(200 + Math.cos(a) * 172).toFixed(2);
+              const y2 = +(200 + Math.sin(a) * 172).toFixed(2);
+              return (
+                <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#22d3ee" strokeOpacity={i % 5 === 0 ? 0.8 : 0.4} strokeWidth={i % 5 === 0 ? 1.4 : 0.8} />
+              );
+            })}
+          </g>
+
+          {/* static mid + inner rings */}
+          <circle cx="200" cy="200" r="150" fill="none" stroke="#22d3ee" strokeOpacity="0.25" strokeWidth="1" />
+          <circle cx="200" cy="200" r="96" fill="none" stroke="#7de7f5" strokeOpacity="0.5" strokeWidth="1" strokeDasharray="3 6" />
+
+          {/* crosshair (gapped at centre) */}
+          <g stroke="#22d3ee" strokeOpacity="0.55" strokeWidth="1">
+            <line x1="200" y1="30" x2="200" y2="78" />
+            <line x1="200" y1="322" x2="200" y2="370" />
+            <line x1="30" y1="200" x2="78" y2="200" />
+            <line x1="322" y1="200" x2="370" y2="200" />
+          </g>
+
+          {/* centre target */}
+          <circle cx="200" cy="200" r="5" fill="none" stroke="#7de7f5" strokeWidth="1.2" />
+          <circle cx="200" cy="200" r="1.6" fill="#7de7f5" />
+
+          {/* corner brackets on a square frame */}
+          {[
+            "M96 60 h-36 v36",
+            "M304 60 h36 v36",
+            "M96 340 h-36 v-36",
+            "M304 340 h36 v-36",
+          ].map((d) => (
+            <path key={d} d={d} fill="none" stroke="#22d3ee" strokeOpacity="0.7" strokeWidth="1.4" />
+          ))}
+        </svg>
+
+        {/* HUD labels */}
+        <span className="mono absolute left-1/2 top-[6%] -translate-x-1/2 text-[10px] tracking-[0.4em] text-cyan/80">
+          ◈ OPTICAL SCAN ◈
+        </span>
+        <span className="mono absolute bottom-[7%] left-1/2 -translate-x-1/2 text-[9px] tracking-[0.35em] text-cyan/55">
+          CALIBRATING · MK XLII
+        </span>
+      </div>
+    </div>
   );
 }
 

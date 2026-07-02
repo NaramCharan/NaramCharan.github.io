@@ -7,7 +7,6 @@ import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Reactor3D from "./Reactor3D";
-import EdithGlasses from "./EdithGlasses";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -53,7 +52,7 @@ export default function HeroCanvas({
   return (
     <Canvas
       className="!absolute inset-0"
-      camera={{ position: [0, 0, 8.0], fov: 42 }}
+      camera={{ position: [0, 0, 9.2], fov: 42 }}
       dpr={[1, 2]}
       gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
     >
@@ -70,8 +69,7 @@ export default function HeroCanvas({
         <Lightformer intensity={1.5} color="#22d3ee" position={[4, -1, 2]} scale={[3, 3, 1]} />
       </Environment>
 
-      <EdithGlasses progress={progress} />
-      <group position={[0, 0.95, 0]}>
+      <group position={[0, 0.35, 0]}>
         <Reactor3D progress={progress} />
       </group>
 

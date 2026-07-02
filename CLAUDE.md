@@ -60,20 +60,26 @@ content is REAL, sourced from naramcharan.me.
   renders the FINAL readable state (SSR/SEO safe). **Reduced motion** skips WebGL
   entirely → static `ArcReactorStatic` + all content shown. (History: framer
   `useScroll` and anime.js `onScroll` did NOT track on this page; GSAP ScrollTrigger
-  works.)
+  works.) The opening lock-on is the `ScanReticle` DOM/SVG overlay (JARVIS optical
+  scanner — spinning dashed rings, tick ring, crosshair, corner brackets, radar
+  sweep, "OPTICAL SCAN / CALIBRATING · MK XLII" labels) which GSAP scales+fades out
+  entering assembly (replaced the earlier 3D EDITH glasses, which the user cut).
 - `reactor3d/` — the WebGL hero. `HeroCanvas.tsx`: client-only `<Canvas>` (mounts
-  post-hydration), lights + framed `<Environment>`/`<Lightformer>` (no network HDR
-  fetch), `<Bloom>` postprocessing, and the single `ScrollTrigger` that writes 0..1
-  into a `progress` ref (+ `--p`/`data-seg` on the track). `Reactor3D.tsx`: the Mark
-  XLII rig — torus bezel/housing, tick ring, 18 copper coils, extruded triangular
-  rotor + core, corner nodes, 4 robotic arms; each part lerps from a scattered/scaled
-  start to its locked pose across its own progress window (read in `useFrame`, no
-  React re-render); core `pointLight` ignites ~0.68–0.82. `EdithGlasses.tsx`: opening
-  smart-glasses that scale toward the viewer + fade as the reactor forms (~0.05–0.26).
-  `parts.tsx`: shared PBR materials (dark/bright metal, copper, cyan glass, core glow)
-  + the extruded-triangle geometry helper. **Quirk:** in the hidden preview tab rAF is
-  throttled → the R3F loop + ScrollTrigger freeze; each `preview_screenshot` pumps a
-  few frames (scroll via eval → `dispatchEvent('scroll')` → screenshot).
+  post-hydration; camera z **9.2**, reactor group offset **y 0.35** — sized/placed so
+  the assembled reactor clears the sticky navbar), lights + framed
+  `<Environment>`/`<Lightformer>` (no network HDR fetch), `<Bloom>` postprocessing,
+  and the single `ScrollTrigger` that writes 0..1 into a `progress` ref (+
+  `--p`/`data-seg` on the track). `Reactor3D.tsx`: the Mark XLII rig — torus
+  bezel/housing, tick ring, 18 copper coils, extruded triangular rotor + core, corner
+  nodes, 4 robotic arms; each part lerps from a scattered/scaled start to its locked
+  pose across its own progress window (read in `useFrame`, no React re-render); core
+  `pointLight` + emissive **ignite to a flash then CALM** (`win(p,0.8,0.94)`) so the
+  name/copy read in segment C. `parts.tsx`: shared PBR materials (dark/bright metal,
+  copper, cyan glass, core glow) + the extruded-triangle geometry helper. **Quirk:**
+  in the hidden preview tab rAF is throttled → the R3F loop + ScrollTrigger freeze;
+  each `preview_screenshot` pumps a few frames (scroll via eval →
+  `dispatchEvent('scroll')` → screenshot). Also: HMR reloads can corrupt the
+  screenshot canvas scaling → do a fresh `preview_start` + `preview_resize`.
 - `ArcReactorStatic.tsx` — the same **Iron Man 3 (Mark XLII) reactor**, non-animated
   SVG. Used by `ProjectHologram` (FRIDAY brief modal).
 - `ProjectHologram.tsx` — FRIDAY deep-dive dialog opened from project-card chips
