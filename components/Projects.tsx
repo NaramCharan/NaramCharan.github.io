@@ -1,17 +1,23 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { projects, type Project } from "@/lib/content";
 import { EASE } from "@/lib/motion";
 import SectionHeading from "./SectionHeading";
+import ProjectHologram from "./ProjectHologram";
 
-function ProjectCard({ p, i }: { p: Project; i: number }) {
+function ProjectCard({
+  p,
+  i,
+  onBrief,
+}: {
+  p: Project;
+  i: number;
+  onBrief: (p: Project) => void;
+}) {
   return (
-    <motion.a
-      href={p.repo}
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label={`${p.name} — open repository on GitHub`}
+    <motion.article
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-70px" }}
@@ -25,17 +31,13 @@ function ProjectCard({ p, i }: { p: Project; i: number }) {
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan to-transparent opacity-0 [animation:scan-sweep_1.4s_ease-in-out_infinite] group-hover:opacity-100"
       />
-      {/* GitHub icon (top-right) */}
-      <span
-        aria-hidden
-        className="absolute right-4 top-4 text-text-dim transition-all duration-300 group-hover:scale-110 group-hover:text-cyan"
-      >
-        <GitHubMark className="h-5 w-5" />
-      </span>
 
-      <div className="mb-4 flex items-center gap-3">
+      <div className="mb-4 flex flex-wrap items-center gap-2">
         <span className="mono rounded border border-cyan/40 px-2 py-0.5 text-[10px] tracking-[0.2em] text-cyan">
           {p.code}
+        </span>
+        <span className="mono rounded bg-surface-2/80 px-2 py-0.5 text-[10px] tracking-[0.2em] text-text-muted">
+          {p.domain.toUpperCase()}
         </span>
         {p.featured && (
           <span className="mono rounded border border-gold/50 bg-gold/10 px-2 py-0.5 text-[10px] tracking-[0.2em] text-gold">
@@ -44,16 +46,35 @@ function ProjectCard({ p, i }: { p: Project; i: number }) {
         )}
       </div>
 
-      <h3 className="pr-7 text-lg font-semibold leading-snug text-text transition-colors duration-200 group-hover:text-cyan-bright">
-        {p.name}
-      </h3>
+      {/* Title + headline metric */}
+      <div className="flex items-start justify-between gap-4">
+        <h3 className="text-lg font-semibold leading-snug text-text transition-colors duration-200 group-hover:text-cyan-bright">
+          {p.name}
+        </h3>
+        <span className="mono shrink-0 whitespace-nowrap text-base font-bold text-gold glow-gold">
+          {p.metric}
+        </span>
+      </div>
       <p className="mt-2 text-sm leading-relaxed text-text-muted">
         {p.description}
       </p>
 
-      <p className="mt-3 border-l-2 border-gold/60 pl-3 text-sm italic text-gold-bright/90">
-        {p.highlight}
-      </p>
+      {/* Key results — always visible (desktop + mobile) */}
+      <div className="mt-4">
+        <p className="mono mb-2 flex items-center gap-2 text-[10px] tracking-[0.3em] text-gold/90">
+          <span className="h-px w-4 bg-gold/70" /> KEY RESULTS
+        </p>
+        <ul className="space-y-1.5">
+          {p.wins.map((w) => (
+            <li key={w} className="flex items-start gap-2 text-[13px] text-text/90">
+              <svg viewBox="0 0 24 24" className="mt-[3px] h-3.5 w-3.5 shrink-0 text-cyan" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <path d="M20 6 9 17l-5-5" />
+              </svg>
+              <span className="leading-snug">{w}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
 
       <div className="mt-5 flex flex-wrap gap-2">
         {p.tech.map((t) => (
@@ -66,37 +87,34 @@ function ProjectCard({ p, i }: { p: Project; i: number }) {
         ))}
       </div>
 
-      <div className="mt-5 flex items-center justify-between border-t border-line pt-4">
-        <span className="mono text-xs text-text-muted">{p.result}</span>
-        <span className="mono inline-flex items-center gap-1.5 text-xs text-cyan transition-transform duration-200 group-hover:translate-x-1">
+      <div className="mt-5 flex items-center justify-between gap-3 border-t border-line pt-4">
+        {/* FRIDAY — opens the holographic project brief */}
+        <button
+          type="button"
+          onClick={() => onBrief(p)}
+          aria-label={`FRIDAY — analyze ${p.name}`}
+          className="friday-chip mono group/friday inline-flex items-center gap-2 rounded-md border border-cyan/40 bg-cyan/5 px-3 py-2 text-[11px] tracking-[0.2em] text-cyan transition-all duration-200 hover:border-cyan hover:bg-cyan/15 hover:shadow-[0_0_16px_-4px_rgba(34,211,238,0.5)]"
+        >
+          <span aria-hidden className="relative flex h-2 w-2">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan opacity-60" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-cyan" />
+          </span>
+          FRIDAY
+          <span className="text-cyan/60 transition-colors group-hover/friday:text-cyan">◈ BRIEF</span>
+        </button>
+
+        <a
+          href={p.repo}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`${p.name} — open repository on GitHub`}
+          className="mono inline-flex items-center gap-1.5 text-xs text-cyan transition-transform duration-200 hover:translate-x-1"
+        >
           <GitHubMark className="h-3.5 w-3.5" />
           VIEW CODE →
-        </span>
+        </a>
       </div>
-
-      {/* Hover reveal: key wins ("good things about the project") */}
-      <div className="pointer-events-none absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-bg via-bg/95 to-bg/0 p-6 opacity-0 backdrop-blur-[2px] transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100 sm:p-7">
-        <div className="translate-y-3 transition-transform duration-300 group-hover:translate-y-0">
-          <p className="mono mb-3 flex items-center gap-2 text-[10px] tracking-[0.3em] text-gold">
-            <span className="h-px w-5 bg-gold" /> KEY RESULTS
-          </p>
-          <ul className="space-y-2">
-            {p.wins.map((w) => (
-              <li key={w} className="flex items-start gap-2 text-sm text-text">
-                <svg viewBox="0 0 24 24" className="mt-0.5 h-4 w-4 shrink-0 text-cyan" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                  <path d="M20 6 9 17l-5-5" />
-                </svg>
-                <span className="leading-snug">{w}</span>
-              </li>
-            ))}
-          </ul>
-          <span className="mono mt-4 inline-flex items-center gap-1.5 text-xs text-cyan">
-            <GitHubMark className="h-3.5 w-3.5" />
-            OPEN ON GITHUB →
-          </span>
-        </div>
-      </div>
-    </motion.a>
+    </motion.article>
   );
 }
 
@@ -109,18 +127,22 @@ function GitHubMark({ className }: { className?: string }) {
 }
 
 export default function Projects() {
+  const [active, setActive] = useState<Project | null>(null);
+
   return (
     <section id="projects" className="mx-auto max-w-6xl scroll-mt-20 px-6 py-28">
       <SectionHeading
         index="01"
         title="Projects"
-        subtitle="Production-grade ML systems — each scanned, validated, and leakage-checked before deployment."
+        subtitle="Production-grade ML systems — each scanned, validated, and leakage-checked before deployment. Tap FRIDAY on any card for the full brief."
       />
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
         {projects.map((p, i) => (
-          <ProjectCard key={p.id} p={p} i={i} />
+          <ProjectCard key={p.id} p={p} i={i} onBrief={setActive} />
         ))}
       </div>
+
+      <ProjectHologram project={active} onClose={() => setActive(null)} />
     </section>
   );
 }

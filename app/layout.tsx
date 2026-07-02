@@ -43,9 +43,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${display.variable} ${body.variable} ${mono.variable} h-full`}
+      className={`${display.variable} ${body.variable} ${mono.variable}`}
     >
-      <body className="min-h-full scanlines selection:text-white">
+      <body className="min-h-dvh scanlines selection:text-white">
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded focus:bg-cyan focus:px-4 focus:py-2 focus:text-bg"

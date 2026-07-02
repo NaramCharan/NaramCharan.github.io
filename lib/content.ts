@@ -20,7 +20,7 @@ export const stats = [
   { value: 98.28, suffix: "%", label: "Churn Model Accuracy" },
   { value: 95.5, suffix: "%", label: "Walmart Validation R²" },
   { value: 10, prefix: "<", suffix: "ms", label: "FAISS Retrieval Speed" },
-  { value: 8.7, suffix: "", label: "Current CGPA · /10" },
+  { value: 8.89, suffix: "", label: "CGPA Average · /10" },
 ];
 
 export type Project = {
@@ -28,12 +28,14 @@ export type Project = {
   code: string;
   name: string;
   featured?: boolean;
+  domain: string; // scan-at-a-glance category
+  metric: string; // one headline number, shown prominent
   description: string;
-  highlight: string;
   tech: string[];
-  result: string;
+  wins: string[]; // key results, shown inline (not hover-gated)
+  brief: { label: string; value: string }[]; // FRIDAY deep-dive readout
   repo: string;
-  wins: string[]; // surfaced on hover — the "good things"
+  demo?: string; // optional live demo / notebook
 };
 
 export const projects: Project[] = [
@@ -42,84 +44,119 @@ export const projects: Project[] = [
     code: "MK-01",
     name: "Walmart Store Weekly Sales Forecasting",
     featured: true,
+    domain: "Time-Series Forecasting",
+    metric: "95.5% R²",
     description:
-      "Global multi-series forecasting pipeline predicting weekly sales across multiple store-department combinations, with a custom recursive walk-forward inference system built from scratch.",
-    highlight:
-      "Eliminated critical temporal leakage by splitting before feature extraction — lags & rolling stats computed strictly within each partition.",
+      "Global multi-series forecasting pipeline predicting weekly sales across many store-department combinations, with a custom recursive walk-forward inference system built from scratch.",
     tech: ["Python", "Scikit-Learn", "XGBoost", "LightGBM", "Pandas"],
-    result: "95.5% validation R² · optimized Random Forest",
     repo: "https://github.com/NaramCharan/Walmart-Store-Weekly-Sales-Forecasting",
     wins: [
-      "95.5% validation R² across multiple store-department series",
-      "Custom recursive walk-forward inference built from scratch",
+      "95.5% validation R² with an optimized Random Forest",
+      "Custom recursive walk-forward inference, built from scratch",
       "Zero temporal leakage — split before feature extraction",
+    ],
+    brief: [
+      { label: "OBJECTIVE", value: "Forecast weekly sales across many store-department series" },
+      { label: "METHOD", value: "Custom recursive walk-forward inference system, built from scratch" },
+      { label: "FEATURES", value: "Rolling & lag features dynamically projected over future horizons where actuals are missing" },
+      { label: "INTEGRITY", value: "Split before feature extraction; lags/rolling stats computed strictly within each partition — no temporal leakage" },
+      { label: "MODEL", value: "Optimized Random Forest Regressor (vs XGBoost / LightGBM)" },
+      { label: "RESULT", value: "95.5% validation R²" },
     ],
   },
   {
     id: "churn",
     code: "MK-02",
     name: "E-Commerce Customer Churn Prediction",
+    domain: "Classification",
+    metric: "98.28% acc",
     description:
-      "End-to-end classification pipeline using ColumnTransformer with hybrid KNN / simple-value imputation to clean, scale, and encode customer data while strictly preventing leakage.",
-    highlight:
-      "Tuned with Optuna over 10-fold Stratified CV — XGBoost selected for production.",
+      "End-to-end classification pipeline using ColumnTransformer with hybrid KNN / simple-value imputation to clean, scale and encode customer data — leakage-safe throughout.",
     tech: ["Scikit-Learn", "XGBoost", "Optuna"],
-    result: "98.28% accuracy · 94.76% F1",
     repo: "https://github.com/NaramCharan/ecommerce-customer-churn-prediction",
     wins: [
       "98.28% accuracy · 94.76% F1 on production XGBoost",
-      "10-fold Stratified CV tuned with Optuna",
-      "ColumnTransformer + hybrid KNN imputation, leakage-safe",
+      "Tuned with Optuna over 10-fold Stratified CV",
+      "ColumnTransformer + hybrid KNN imputation",
+    ],
+    brief: [
+      { label: "OBJECTIVE", value: "Predict which e-commerce customers are about to churn" },
+      { label: "PIPELINE", value: "End-to-end ColumnTransformer — clean, scale & encode in one leakage-safe flow" },
+      { label: "IMPUTATION", value: "Hybrid KNN / simple-value imputation for missing customer data" },
+      { label: "TUNING", value: "Optuna hyperparameter search over 10-fold Stratified Cross-Validation" },
+      { label: "MODEL", value: "XGBoost selected for production after a 3-model bake-off" },
+      { label: "RESULT", value: "98.28% accuracy · 94.76% F1-score" },
     ],
   },
   {
     id: "recsys",
     code: "MK-03",
     name: "Neural Collaborative Filtering Architecture",
+    domain: "Recommender Systems",
+    metric: "<10ms retrieval",
     description:
-      "Custom recommendation engine training 32-dimensional latent embedding vectors on sparse user-item interaction data with L2 regularization.",
-    highlight:
-      "Integrated Meta's FAISS to index item embeddings for real-time retrieval.",
+      "Custom recommendation engine training 32-dimensional latent embedding vectors on sparse user-item interaction data with L2 regularization, built from scratch in PyTorch.",
     tech: ["PyTorch", "FAISS"],
-    result: "Sub-10ms similarity search",
     repo: "https://github.com/NaramCharan/Collaborative_Filtering_Recommendation_system",
     wins: [
       "Sub-10ms FAISS similarity search at inference",
       "32-dim latent embeddings with L2 regularization",
-      "Recommendation engine built from scratch in PyTorch",
+      "Meta's FAISS index for real-time retrieval",
+    ],
+    brief: [
+      { label: "OBJECTIVE", value: "Recommend items from sparse user-item interaction data" },
+      { label: "ARCHITECTURE", value: "Neural collaborative filtering, built from scratch in PyTorch" },
+      { label: "EMBEDDINGS", value: "32-dimensional latent vectors trained with L2 regularization" },
+      { label: "RETRIEVAL", value: "Meta's FAISS index over item embeddings for real-time nearest-neighbour search" },
+      { label: "RESULT", value: "Sub-10ms similarity search at inference" },
     ],
   },
   {
     id: "scraper",
     code: "MK-04",
     name: "Book Data Scraping & Database Pipeline",
+    domain: "Data Engineering",
+    metric: "980+ in <30 min",
     description:
       "Automated multi-page scraper using BeautifulSoup + SQLAlchemy ORM, extracting structured data (title, price, rating, availability, description, URL) into a relational schema.",
-    highlight:
-      "Designed a SQLite schema and clean CSV exports — replacing days of manual collection.",
     tech: ["BeautifulSoup", "SQLAlchemy", "SQLite", "Pandas"],
-    result: "980+ books in under 30 minutes",
     repo: "https://github.com/NaramCharan/Book-webscrapper",
     wins: [
       "980+ books scraped in under 30 minutes",
       "BeautifulSoup + SQLAlchemy ORM pipeline",
       "Relational SQLite schema + clean CSV exports",
     ],
+    brief: [
+      { label: "OBJECTIVE", value: "Replace days of manual data collection with an automated pipeline" },
+      { label: "SCRAPER", value: "Automated multi-page crawler using BeautifulSoup" },
+      { label: "FIELDS", value: "Title, price, rating, availability, description & URL per book" },
+      { label: "STORAGE", value: "Relational SQLite schema via SQLAlchemy ORM + clean CSV exports" },
+      { label: "OUTPUT", value: "ML-ready datasets for downstream modelling" },
+      { label: "RESULT", value: "980+ books scraped in under 30 minutes" },
+    ],
   },
   {
     id: "titanic",
     code: "MK-05",
     name: "Titanic Survival Prediction Engine",
+    domain: "Classification",
+    metric: "85.5% acc",
     description:
       "End-to-end classification comparing Logistic Regression, Random Forest and XGBoost with KNN imputation and disciplined, leakage-free validation.",
-    highlight: "Zero data leakage — 12% above baseline.",
     tech: ["Scikit-Learn", "XGBoost", "Optuna", "KNNImputer"],
-    result: "85.5% accuracy",
     repo: "https://github.com/NaramCharan/Titanic-Survival-Engine-Predictive-Analysis",
     wins: [
       "85.5% accuracy — 12% above baseline",
       "LogReg vs Random Forest vs XGBoost bake-off",
-      "KNN imputation with disciplined, leakage-free validation",
+      "KNN imputation, leakage-free validation",
+    ],
+    brief: [
+      { label: "OBJECTIVE", value: "Predict passenger survival from the Titanic dataset" },
+      { label: "MODELS", value: "Logistic Regression vs Random Forest vs XGBoost, compared head-to-head" },
+      { label: "IMPUTATION", value: "KNNImputer for missing values; disciplined feature handling" },
+      { label: "TUNING", value: "Optuna hyperparameter optimization" },
+      { label: "INTEGRITY", value: "Leakage-free validation throughout" },
+      { label: "RESULT", value: "85.5% accuracy — 12% above baseline" },
     ],
   },
 ];
@@ -191,7 +228,7 @@ export const education = {
   school: "GD Goenka University, Gurugram",
   year: "3rd Year",
   graduation: "Expected May 2028",
-  cgpa: "8.7 / 10.0",
+  cgpa: "8.89 / 10.0",
 };
 
 // `url` = the holder's real credential verification link.

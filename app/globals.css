@@ -43,6 +43,17 @@ body {
   overflow-x: hidden;
 }
 
+/* Iron Man arrowhead cursor (mouse users only; touch devices unaffected).
+   SVG first (crisp on Chrome/Firefox), PNG fallback (Safari), then system. */
+@media (pointer: fine) {
+  body {
+    cursor: url("/cursor.svg") 4 2, url("/cursor.png") 4 2, auto;
+  }
+  a, button, [role="button"], select, summary, label[for] {
+    cursor: url("/cursor-pointer.svg") 4 2, url("/cursor-pointer.png") 4 2, pointer;
+  }
+}
+
 /* Headings carry the display face and tighter optical tracking. */
 h1, h2, h3, h4 {
   font-family: var(--font-display);
@@ -177,6 +188,31 @@ h1 { letter-spacing: -0.035em; }
 
 .animate-radar { animation: radar-sweep 6s linear infinite; }
 .animate-ticker { animation: ticker 28s linear infinite; }
+
+/* Arc-reactor assembly: each part scales/rotates around its own centre.
+   will-change keeps the GSAP fly-ins on the GPU compositor. */
+.ar-part {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+
+/* Holographic projection glitch — a brief skew/opacity blip every 3s
+   (Layer 3 of the hologram stack; neutralized by reduced-motion below). */
+@keyframes holo-glitch {
+  0%, 90%, 100% { transform: skewX(0deg) translateX(0); opacity: 1; }
+  91% { transform: skewX(0.6deg) translateX(2px); opacity: 0.85; }
+  93% { transform: skewX(-0.4deg) translateX(-2px); opacity: 0.95; }
+  95% { transform: skewX(0.2deg) translateX(1px); opacity: 0.9; }
+  97% { transform: skewX(0deg) translateX(0); opacity: 1; }
+}
+.holo-glitch {
+  animation: holo-glitch 3s linear infinite;
+}
+
+svg[data-assembling="true"] .ar-part {
+  opacity: 0;
+}
 
 .animate-spin-slow { animation: spin-slow 18s linear infinite; }
 .animate-spin-rev { animation: spin-rev 26s linear infinite; }
