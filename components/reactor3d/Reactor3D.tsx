@@ -123,10 +123,16 @@ export default function Reactor3D({ progress }: Props) {
       coreRef.current.scale.setScalar(Math.max(0.001, backOut(win(p, 0.66, 0.76))));
       coreRef.current.position.z = 0.2;
     }
+    // Core ignites, then CALMS once the name/text arrives (segment C) so the
+    // copy reads — the reactor settles to a quiet idle glow instead of blaring.
+    const ign = win(p, 0.66, 0.8);
+    const calm = win(p, 0.8, 0.94);
+    const glow = ign * (1 - 0.86 * calm);
     if (coreLightRef.current) {
-      const ign = win(p, 0.68, 0.82);
-      coreLightRef.current.intensity = ign * 14 * (0.9 + Math.sin(t * 8) * 0.08);
+      coreLightRef.current.intensity = glow * 12 * (0.9 + Math.sin(t * 8) * 0.08);
     }
+    mat.coreGlow.emissiveIntensity = 0.5 + glow * 2.1;   // ~2.6 flash → ~0.8 idle
+    mat.cyanGlass.emissiveIntensity = 2.2 - 1.55 * calm; // coils/ring settle to ~0.65
 
     if (tickRef.current && asm > 0.95) tickRef.current.rotation.z += 0.002;
 

@@ -102,7 +102,7 @@ export default function IntroDashboard() {
         {!reduced && (
           <div
             aria-hidden
-            className="ia-welcome pointer-events-none absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 text-center"
+            className="ia-welcome pointer-events-none absolute inset-x-0 bottom-[14%] z-20 flex flex-col items-center gap-3 text-center"
           >
             <p className="text-balance text-3xl font-semibold tracking-tight text-text glow-cyan sm:text-5xl lg:text-6xl">
               Welcome to the world,
