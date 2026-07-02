@@ -127,12 +127,12 @@ export default function Reactor3D({ progress }: Props) {
     // copy reads — the reactor settles to a quiet idle glow instead of blaring.
     const ign = win(p, 0.66, 0.8);
     const calm = win(p, 0.8, 0.94);
-    const glow = ign * (1 - 0.86 * calm);
+    const glow = ign * (1 - 0.93 * calm);
     if (coreLightRef.current) {
-      coreLightRef.current.intensity = glow * 12 * (0.9 + Math.sin(t * 8) * 0.08);
+      coreLightRef.current.intensity = glow * 10 * (0.9 + Math.sin(t * 8) * 0.08);
     }
-    mat.coreGlow.emissiveIntensity = 0.5 + glow * 2.1;   // ~2.6 flash → ~0.8 idle
-    mat.cyanGlass.emissiveIntensity = 2.2 - 1.55 * calm; // coils/ring settle to ~0.65
+    mat.coreGlow.emissiveIntensity = 0.3 + glow * 2.1;   // ~2.4 flash → ~0.44 idle
+    mat.cyanGlass.emissiveIntensity = 2.2 - 1.85 * calm; // coils/ring settle to ~0.35
 
     if (tickRef.current && asm > 0.95) tickRef.current.rotation.z += 0.002;
 
