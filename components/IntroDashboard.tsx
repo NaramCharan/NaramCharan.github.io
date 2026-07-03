@@ -88,7 +88,9 @@ export default function IntroDashboard() {
         .from(".ia-name", { autoAlpha: 0, y: 28, duration: 0.09 }, 0.77)
         .from(".ia-spec", { autoAlpha: 0, y: 14, duration: 0.06 }, 0.82)
         .fromTo(".ia-quote", { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 0.1, ease: "none" }, 0.85)
-        .fromTo(".ia-caret", { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.02 }, 0.96)
+        // caret exists only while the quote "types" — hidden at rest and after
+        .fromTo(".ia-caret", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.01 }, 0.85)
+        .to(".ia-caret", { autoAlpha: 0, duration: 0.02 }, 0.96)
         .from(".ia-ctas", { autoAlpha: 0, y: 16, duration: 0.06 }, 0.9)
         .from(".ia-panel", { autoAlpha: 0, y: 14, duration: 0.06, stagger: 0.02 }, 0.78)
         .to({}, { duration: 0.001 }, 1); // pad so positions ≈ scroll fraction
@@ -113,7 +115,16 @@ export default function IntroDashboard() {
             <ArcReactorStatic />
           </div>
         ) : (
-          <HeroCanvas trackId="top" />
+          // Faint at rest (scattered parts can't glint over the identity text),
+          // full strength as soon as the scroll assembly begins. --p is written
+          // on the track by the canvas ScrollTrigger, so CSS handles the fade.
+          <div
+            aria-hidden
+            className="absolute inset-0"
+            style={{ opacity: "calc(0.25 + var(--p, 0) * 6)" }}
+          >
+            <HeroCanvas trackId="top" />
+          </div>
         )}
 
         <div className="hud-grid pointer-events-none absolute inset-0 z-0 opacity-30" />
@@ -121,19 +132,23 @@ export default function IntroDashboard() {
         {/* Segment A — JARVIS optical-scan reticle (the opening "lock-on") */}
         {!reduced && <ScanReticle />}
 
-        {/* Segment A — welcome line */}
+        {/* Segment A — at-rest identity: name + role at headline scale, no scroll needed */}
         {!reduced && (
           <div
             aria-hidden
-            className="ia-welcome pointer-events-none absolute inset-x-0 bottom-[14%] z-20 flex flex-col items-center gap-3 text-center"
+            className="ia-welcome pointer-events-none absolute inset-x-0 bottom-[12%] z-20 flex flex-col items-center gap-2.5 px-6 text-center"
           >
-            <p className="text-balance text-3xl font-semibold tracking-tight text-text glow-cyan sm:text-5xl lg:text-6xl">
+            <p className="text-sm tracking-wide text-cyan/90 sm:text-base">
               Welcome to the world,
             </p>
-            <p className="mono text-sm tracking-[0.35em] text-cyan sm:text-base">LET&apos;S DIVE IN</p>
-            {/* Identity at rest — recruiters see the name without scrolling */}
-            <p className="mono mt-5 text-[10px] tracking-[0.3em] text-text-muted sm:text-xs">
-              NARAM CHARAN · ML ENGINEER · OPEN TO INTERNSHIPS
+            <p className="text-balance text-4xl font-semibold tracking-tight text-text glow-cyan sm:text-6xl">
+              {profile.name}
+            </p>
+            <p className="mono text-[11px] tracking-[0.22em] text-text sm:text-sm">
+              ML ENGINEER · 3RD-YEAR CS · <span className="text-gold">OPEN TO INTERNSHIPS</span>
+            </p>
+            <p className="mono mt-1.5 text-[10px] tracking-[0.35em] text-cyan/70 sm:text-xs">
+              LET&apos;S DIVE IN
             </p>
           </div>
         )}
@@ -212,10 +227,10 @@ export default function IntroDashboard() {
           </Panel>
 
           <Panel className="left-8 top-1/2 w-[250px] -translate-y-1/2">
-            <PanelHead label="MODEL ACCURACY" code="MK-02" />
+            <PanelHead label="CHURN MODEL ACCURACY" code="MK-02" />
             <div className="flex items-end justify-between">
               <span className="mono text-2xl font-bold text-gold glow-gold">98.28%</span>
-              <span className="mono text-[9px] text-text-dim">10-FOLD CV</span>
+              <span className="mono text-[9px] text-text-dim">XGBOOST · 10-FOLD CV</span>
             </div>
             <AccuracyChart />
           </Panel>
@@ -270,8 +285,8 @@ export default function IntroDashboard() {
           </Panel>
         </div>
 
-        {/* Header + scroll hint */}
-        <div className="pointer-events-none absolute left-1/2 top-6 z-20 -translate-x-1/2 mono text-[10px] tracking-[0.5em] text-cyan/70">
+        {/* Header + scroll hint (sits below the always-visible navbar) */}
+        <div className="pointer-events-none absolute left-1/2 top-16 z-20 -translate-x-1/2 mono text-[10px] tracking-[0.5em] text-cyan/70">
           J.A.R.V.I.S // MARK XLII
         </div>
         {!reduced && (
@@ -295,9 +310,9 @@ function ScanReticle() {
   return (
     <div
       aria-hidden
-      className="ia-reticle pointer-events-none absolute left-1/2 top-1/2 z-[12] -translate-x-1/2 -translate-y-1/2"
+      className="ia-reticle pointer-events-none absolute left-1/2 top-[38%] z-[12] -translate-x-1/2 -translate-y-1/2"
     >
-      <div className="relative h-[min(78vw,560px)] w-[min(78vw,560px)]">
+      <div className="relative h-[min(58vw,400px)] w-[min(58vw,400px)]">
         <svg viewBox="0 0 400 400" className="absolute inset-0 h-full w-full">
           <defs>
             <radialGradient id="rt-sweep" cx="50%" cy="50%" r="50%">
@@ -362,7 +377,7 @@ function ScanReticle() {
         <span className="mono absolute left-1/2 top-[6%] -translate-x-1/2 text-[10px] tracking-[0.4em] text-cyan/80">
           ◈ OPTICAL SCAN ◈
         </span>
-        <span className="mono absolute bottom-[7%] left-1/2 -translate-x-1/2 text-[9px] tracking-[0.35em] text-cyan/55">
+        <span className="mono absolute bottom-[7%] left-1/2 -translate-x-1/2 whitespace-nowrap text-[9px] tracking-[0.35em] text-cyan/55">
           CALIBRATING · MK XLII
         </span>
       </div>

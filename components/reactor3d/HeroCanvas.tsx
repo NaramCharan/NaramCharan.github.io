@@ -75,8 +75,8 @@ export default function HeroCanvas({
 
       <EffectComposer>
         <Bloom
-          intensity={0.7}
-          luminanceThreshold={0.72}
+          intensity={0.5}
+          luminanceThreshold={0.85}
           luminanceSmoothing={0.3}
           mipmapBlur
         />

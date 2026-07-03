@@ -129,10 +129,10 @@ export default function Reactor3D({ progress }: Props) {
     const calm = win(p, 0.8, 0.94);
     const glow = ign * (1 - 0.93 * calm);
     if (coreLightRef.current) {
-      coreLightRef.current.intensity = glow * 10 * (0.9 + Math.sin(t * 8) * 0.08);
+      coreLightRef.current.intensity = glow * 4.5 * (0.9 + Math.sin(t * 8) * 0.08);
     }
-    mat.coreGlow.emissiveIntensity = 0.3 + glow * 2.1;   // ~2.4 flash → ~0.44 idle
-    mat.cyanGlass.emissiveIntensity = 2.2 - 1.85 * calm; // coils/ring settle to ~0.35
+    mat.coreGlow.emissiveIntensity = 0.3 + glow * 1.2;   // ~1.5 flash → ~0.38 idle
+    mat.cyanGlass.emissiveIntensity = 1.6 - 1.25 * calm; // coils/ring settle to ~0.35
 
     if (tickRef.current && asm > 0.95) tickRef.current.rotation.z += 0.002;
 
@@ -152,7 +152,15 @@ export default function Reactor3D({ progress }: Props) {
 
     if (rootRef.current) {
       const intro = easeOut(win(p, 0, 0.3));
-      rootRef.current.scale.setScalar(lerp(0.62, 1, intro));
+      // As the core calms, the assembly settles: smaller + higher, parking clear
+      // of the identity copy below (the kicker line must stay readable). Narrow
+      // screens stack taller copy, so the reactor parks smaller and higher there.
+      const small = state.size.width < 640;
+      const settle = easeOut(win(p, 0.8, 0.96));
+      rootRef.current.scale.setScalar(
+        lerp(0.62, 1, intro) * lerp(1, small ? 0.58 : 0.74, settle)
+      );
+      rootRef.current.position.y = lerp(0, small ? 1.0 : 0.8, settle);
       rootRef.current.rotation.y = Math.sin(t * 0.25) * 0.06 + (1 - asm) * 0.25;
       rootRef.current.rotation.x =
         lerp(0.35, 0, easeOut(win(p, 0.3, 0.7))) + Math.sin(t * 0.2) * 0.02;

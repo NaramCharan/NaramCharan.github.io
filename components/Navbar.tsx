@@ -12,7 +12,6 @@ export default function Navbar() {
     damping: 30,
     mass: 0.3,
   });
-  const [show, setShow] = useState(false);
   const [active, setActive] = useState<string>("");
   const [open, setOpen] = useState(false);
   const menuBtnRef = useRef<HTMLButtonElement>(null);
@@ -31,14 +30,6 @@ export default function Navbar() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
-
-  // Reveal the bar once the hero is scrolled past.
-  useEffect(() => {
-    const onScroll = () => setShow(window.scrollY > window.innerHeight * 0.55);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   // Track which section is in view for the active indicator.
   useEffect(() => {
@@ -67,12 +58,8 @@ export default function Navbar() {
         style={{ scaleX: progress }}
       />
 
-      <motion.header
-        initial={false}
-        animate={{ y: show ? 0 : -72, opacity: show ? 1 : 0 }}
-        transition={{ duration: 0.4, ease: EASE }}
-        className="fixed inset-x-0 top-0 z-[58] border-b border-line bg-bg/70 backdrop-blur-md"
-      >
+      {/* Always visible — the RESUME button must be reachable without scrolling. */}
+      <header className="fixed inset-x-0 top-0 z-[58] border-b border-line bg-bg/70 backdrop-blur-md">
         <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
           <a
             href="#top"
@@ -185,7 +172,7 @@ export default function Navbar() {
             </motion.nav>
           )}
         </AnimatePresence>
-      </motion.header>
+      </header>
     </>
   );
 }

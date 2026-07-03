@@ -8,7 +8,7 @@ const links = [
   { label: "Email", value: contact.email, href: `mailto:${contact.email}`, cmd: "open --mail" },
   { label: "GitHub", value: "github.com/NaramCharan", href: contact.github, cmd: "git remote" },
   { label: "LinkedIn", value: "in/naramcharan", href: contact.linkedin, cmd: "connect --pro" },
-  { label: "WhatsApp", value: "+91 99662 14989", href: contact.whatsapp, cmd: "ping --direct" },
+  { label: "WhatsApp", value: "direct chat", href: contact.whatsapp, cmd: "ping --direct" },
 ];
 
 export default function Contact() {
