@@ -51,10 +51,18 @@ content is REAL, sourced from naramcharan.me.
 - `IntroDashboard.tsx` — **the hero**: pinned `h-[320vh]` track + sticky `h-dvh`
   stage. The 3D reactor is `reactor3d/HeroCanvas` (WebGL, absolute inset-0). A GSAP
   timeline scrubbed on the same `#top` track drives the **DOM overlays** in lockstep:
-  **A 0–28%** EDITH glasses + "Welcome to the world / LET'S DIVE IN" (visible at rest,
-  drifts out); **B 28–74%** the 3D assembly (owned by the canvas) + streaming code
-  columns; **C 74–100%** status → name → SPECIALIZING IN → tagline "types" on
-  (clip-path wipe + caret) → CTAs; 6 HUD panels stagger in. Timeline tween positions
+  **A 0–28%** at-rest identity block (2026-07-03 recruiter-first pass: "Welcome to
+  the world," is a small eyebrow; NAME at headline scale + readable role line with
+  gold OPEN TO INTERNSHIPS + "LET'S DIVE IN", all in flow so nothing overlaps;
+  drifts out on scroll); **B 28–74%** the 3D assembly (owned by the canvas) +
+  streaming code columns; **C 74–100%** status → name → SPECIALIZING IN → tagline
+  "types" on (clip-path wipe + caret, caret hidden outside its 0.85–0.96 window) →
+  CTAs; 6 HUD panels stagger in ("CHURN MODEL ACCURACY · XGBOOST" labels the 98.28%
+  so it can't be misread). The canvas is wrapped in a div with
+  `opacity: calc(0.25 + var(--p)*6)` — scattered parts stay faint at rest so they
+  can't glint over the identity text (GSAP can't target the canvas: it mounts after
+  the timeline is built). Navbar is ALWAYS visible now (no scroll gate) — the
+  RESUME button must be reachable without scrolling. Timeline tween positions
   are in scroll-fraction terms padded to ~1 (`tl.to({},{duration:.001},1)`) so
   position ≈ scroll progress. `.from()` immediateRender hides identity at load; DOM
   renders the FINAL readable state (SSR/SEO safe). **Reduced motion** skips WebGL
@@ -74,7 +82,11 @@ content is REAL, sourced from naramcharan.me.
   nodes, 4 robotic arms; each part lerps from a scattered/scaled start to its locked
   pose across its own progress window (read in `useFrame`, no React re-render); core
   `pointLight` + emissive **ignite to a flash then CALM** (`win(p,0.8,0.94)`) so the
-  name/copy read in segment C. `parts.tsx`: shared PBR materials (dark/bright metal,
+  name/copy read in segment C (toned 2026-07-03: core light ×4.5, core emissive
+  flash ~1.5, coil glass 1.6, Bloom 0.5 @ luminanceThreshold 0.85 — never washes the
+  viewport gray). As the core calms the root also **settles** — scales to 0.74
+  (0.58 under 640px) and rises (+0.8 / +1.0 world y) so the tick ring parks clear
+  of the "3rd-year CS…" kicker line. `parts.tsx`: shared PBR materials (dark/bright metal,
   copper, cyan glass, core glow) + the extruded-triangle geometry helper. **Quirk:**
   in the hidden preview tab rAF is throttled → the R3F loop + ScrollTrigger freeze;
   each `preview_screenshot` pumps a few frames (scroll via eval →
@@ -132,3 +144,16 @@ Build passes clean; verified in preview at desktop + mobile.
   framer-motion styles/scroll scrubbing appear frozen in evals. Each
   `preview_screenshot` pumps a few frames: scroll via eval → screenshot (pump) →
   eval to read the now-updated styles. Don't mistake the freeze for broken code.
+- Quirk (2026-07-03): preview screenshots go **solid black whenever the page is
+  scrolled** — only scroll-0 captures work. Verify scrolled hero states in a real
+  tab via `claude-in-chrome` instead: navigate to localhost:3000, scroll with
+  `scrollTo({top, behavior:'instant'})` (html has smooth scroll-behavior, which
+  never finishes in a hidden tab), and screenshot twice (captures pump rAF there
+  too). After a reload that restores scroll, jiggle the scroll ±30px or the canvas
+  ScrollTrigger never fires and the reactor renders at p=0.
+- Quirk: editing HeroCanvas/Reactor3D under HMR often throws a bogus
+  "Cannot read properties of null (reading 'alpha')" at `<Canvas>` — it's an HMR
+  artifact; a fresh page load is always clean.
+- Next.js 16 refuses two dev servers in the same dir; if another session holds the
+  lock, kill its PID (shown in the error) before `preview_start`. launch.json has
+  `autoPort: true`.
