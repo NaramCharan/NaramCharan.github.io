@@ -65,16 +65,37 @@ function SystemCard({ s, i }: { s: SkillSystem; i: number }) {
           </span>
         </div>
         <h3 className="text-lg font-semibold text-text">{s.system}</h3>
-        <ul className="mt-3 flex flex-wrap gap-2">
+        {/* Chips cascade in one-by-one after the card lands */}
+        <motion.ul
+          className="mt-3 flex flex-wrap gap-2"
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-60px" }}
+          variants={{
+            hidden: {},
+            show: {
+              transition: { staggerChildren: 0.05, delayChildren: 0.25 + i * 0.1 },
+            },
+          }}
+        >
           {s.items.map((it) => (
-            <li
+            <motion.li
               key={it}
-              className="mono rounded bg-cyan/8 px-2 py-1 text-[11px] text-cyan/90 ring-1 ring-inset ring-cyan/20"
+              variants={{
+                hidden: { opacity: 0, y: 8, scale: 0.92 },
+                show: {
+                  opacity: 1,
+                  y: 0,
+                  scale: 1,
+                  transition: { duration: 0.45, ease: EASE },
+                },
+              }}
+              className="mono rounded bg-cyan/8 px-2 py-1 text-[11px] text-cyan/90 ring-1 ring-inset ring-cyan/20 transition-colors duration-200 hover:bg-cyan/15 hover:text-cyan-bright"
             >
               {it}
-            </li>
+            </motion.li>
           ))}
-        </ul>
+        </motion.ul>
       </div>
     </motion.div>
   );

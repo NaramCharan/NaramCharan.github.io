@@ -2,7 +2,18 @@
 
 import { motion } from "framer-motion";
 import { contact, profile } from "@/lib/content";
+import { EASE } from "@/lib/motion";
 import SectionHeading from "./SectionHeading";
+
+// Terminal output "prints" line-by-line once the panel scrolls into view.
+const terminalSeq = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.16, delayChildren: 0.35 } },
+};
+const terminalLine = {
+  hidden: { opacity: 0, y: 4 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.3, ease: EASE } },
+};
 
 const links = [
   { label: "Email", value: contact.email, href: `mailto:${contact.email}`, cmd: "open --mail" },
@@ -38,18 +49,27 @@ export default function Contact() {
         </div>
 
         {/* Terminal body */}
-        <div className="space-y-1.5 p-5 sm:p-6">
-          <p className="mono text-sm text-cyan/80">
+        <motion.div
+          className="space-y-1.5 p-5 sm:p-6"
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-60px" }}
+          variants={terminalSeq}
+        >
+          <motion.p variants={terminalLine} className="mono text-sm text-cyan/80">
             $ whoami
-            <br />
+          </motion.p>
+          <motion.p variants={terminalLine} className="mono text-sm">
             <span className="text-text">{profile.fullName}</span>
             <span className="text-text-muted"> — {profile.role}</span>
-          </p>
-          <p className="mono pt-2 text-sm text-cyan/80">$ list --channels</p>
+          </motion.p>
+          <motion.p variants={terminalLine} className="mono pt-2 text-sm text-cyan/80">
+            $ list --channels
+          </motion.p>
 
           <ul className="divide-y divide-line/60 pt-1">
             {links.map((l) => (
-              <li key={l.label}>
+              <motion.li key={l.label} variants={terminalLine}>
                 <a
                   href={l.href}
                   target={l.href.startsWith("http") ? "_blank" : undefined}
@@ -67,14 +87,17 @@ export default function Contact() {
                     →
                   </span>
                 </a>
-              </li>
+              </motion.li>
             ))}
           </ul>
 
-          <p className="mono flex items-center pt-3 text-sm text-cyan/80">
+          <motion.p
+            variants={terminalLine}
+            className="mono flex items-center pt-3 text-sm text-cyan/80"
+          >
             $ <span className="ml-1 inline-block h-4 w-2 animate-blink bg-cyan" />
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
       </motion.div>
 
       <p className="mt-10 text-center mono text-[11px] tracking-[0.25em] text-text-muted">
