@@ -219,6 +219,21 @@ svg[data-assembling="true"] .ar-part {
 .animate-pulse-core { animation: pulse-core 3.4s ease-in-out infinite; }
 .animate-blink { animation: blink 1.1s steps(2) infinite; }
 
+/* Hero pointer parallax — the stage writes --par-x/--par-y (-1..1) on mouse
+   move; each layer sets its own depth via --par-m (px at full deflection).
+   The slow eased transition is what gives the HUD its floaty JARVIS drift. */
+@media (pointer: fine) {
+  .par-layer {
+    transform: translate3d(
+      calc(var(--par-x, 0) * var(--par-m, 8) * 1px),
+      calc(var(--par-y, 0) * var(--par-m, 8) * 0.7px),
+      0
+    );
+    transition: transform 0.6s var(--ease-out-expo);
+    will-change: transform;
+  }
+}
+
 /* Focus visibility (a11y) */
 :where(a, button, [tabindex]):focus-visible {
   outline: 2px solid var(--color-cyan-bright);

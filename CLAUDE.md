@@ -120,16 +120,19 @@ All content in `lib/content.ts` is from the **real resume** (`public/NARAM_RESUM
 the actual file). Key authoritative facts: name "Naramreddy Charan Kumar Reddy";
 CGPA **8.98/10** (user-corrected 2026-07-02; earlier 8.89/8.7 mentions are stale);
 NCF uses **PyTorch, no Keras** (resume PDF edited TensorFlow→PyTorch; backup at
-iCloud `NARAM_RESUME.pdf.bak-tensorflow`); Walmart **95.5% R²**; skill groups = ML /
+iCloud `NARAM_RESUME.pdf.bak-tensorflow`); Walmart **95.55% R² with LightGBM**
+(user-supplied README 2026-07-07 — earlier "95.5% Random Forest" is stale; the
+churn project's final numbers are 98.28% acc · **94.74% F1** · 91.58% recall,
+XGBoost chosen over a 98.76% PyTorch net on compute/interpretability); skill groups = ML /
 Deep Learning & GenAI / Data Intelligence / Engineering Core; certs (newest first) =
 **Claude Code (DeepLearning.AI·Anthropic, Jul 2026)**, Stanford ML, IBM SQL,
 Michigan Python, Google·Vanderbilt Prompt Eng — all with real VERIFY links.
 
 ## Open items / TODO
-- **Merge `feat/reactor-assembly` → main and push to GitHub**, replacing
-  https://github.com/NaramCharan/NaramCharan.github.io so naramcharan.me serves this
-  site (needs `output: 'export'` in next.config.ts + `public/CNAME`; confirm with the
-  user before force-replacing the live repo).
+- (none — the site is LIVE at naramcharan.me, deployed from this repo's `main` via
+  `.github/workflows/deploy.yml` → GitHub Pages. Every push to `main` redeploys.
+  Note: the permission classifier blocks direct pushes to `main` and self-merges —
+  ship changes via a feature branch + PR and let the user click merge.)
 
 ## Status
 Built to address the "$10K checklist" (typography, restrained color, breathing

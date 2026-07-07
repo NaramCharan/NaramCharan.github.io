@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { profile, education, certifications } from "@/lib/content";
+import { EASE } from "@/lib/motion";
 import SectionHeading from "./SectionHeading";
 
 export default function About() {
@@ -68,11 +69,51 @@ export default function About() {
           <div className="mb-4 mono text-[10px] tracking-[0.3em] text-gold">
             CERTIFICATIONS
           </div>
-          <ul className="relative space-y-3 border-l border-line pl-6">
+          {/* One observer on the (full-size) list; the zero-size spine/dots
+              animate as variant children — IO never fires on 0×0 elements. */}
+          <motion.ul
+            className="relative space-y-3 pl-6"
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-40px" }}
+            variants={{ hidden: {}, show: { transition: { staggerChildren: 0.09 } } }}
+          >
+            {/* Timeline spine draws itself top-to-bottom on reveal */}
+            <motion.span
+              aria-hidden
+              variants={{
+                hidden: { scaleY: 0 },
+                show: { scaleY: 1, transition: { duration: 1.1, ease: EASE } },
+              }}
+              className="absolute left-0 top-0 h-full w-px origin-top bg-gradient-to-b from-cyan/70 via-line to-transparent"
+            />
             {certifications.map((c) => (
-              <li key={c.name} className="relative">
-                <span
+              <motion.li
+                key={c.name}
+                variants={{
+                  hidden: { opacity: 0, x: -14 },
+                  show: {
+                    opacity: 1,
+                    x: 0,
+                    transition: { duration: 0.5, ease: EASE },
+                  },
+                }}
+                className="relative"
+              >
+                <motion.span
                   aria-hidden
+                  variants={{
+                    hidden: { scale: 0 },
+                    show: {
+                      scale: 1,
+                      transition: {
+                        type: "spring",
+                        stiffness: 320,
+                        damping: 18,
+                        delay: 0.15,
+                      },
+                    },
+                  }}
                   className="absolute -left-[26px] top-3.5 h-2.5 w-2.5 rounded-full border border-cyan bg-bg shadow-[0_0_8px_rgba(34,211,238,0.7)]"
                 />
                 <a
@@ -104,9 +145,9 @@ export default function About() {
                     {c.note} · VERIFY →
                   </p>
                 </a>
-              </li>
+              </motion.li>
             ))}
-          </ul>
+          </motion.ul>
         </motion.div>
       </div>
     </section>

@@ -5,8 +5,12 @@ import { usePrefersReducedMotion } from "./useReducedMotion";
 
 const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ#%&<>/\\";
 
-/** Reveals `text` with a brief scramble/decode effect on mount. */
-export function useDecode(text: string, speed = 32): string {
+/**
+ * Reveals `text` with a brief scramble/decode effect.
+ * Pass `start=false` to defer until a trigger (e.g. scrolled into view) —
+ * until then it returns "" so callers can fall back to the plain text.
+ */
+export function useDecode(text: string, speed = 32, start = true): string {
   const reduced = usePrefersReducedMotion();
   const [out, setOut] = useState(reduced ? text : "");
 
@@ -15,6 +19,7 @@ export function useDecode(text: string, speed = 32): string {
       setOut(text);
       return;
     }
+    if (!start) return;
     let frame = 0;
     const total = text.length;
     const id = setInterval(() => {
@@ -30,7 +35,7 @@ export function useDecode(text: string, speed = 32): string {
       if (revealed >= total) clearInterval(id);
     }, speed);
     return () => clearInterval(id);
-  }, [text, speed, reduced]);
+  }, [text, speed, reduced, start]);
 
   return out;
 }

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { projects, type Project } from "@/lib/content";
 import { EASE } from "@/lib/motion";
+import { useTilt } from "@/lib/useTilt";
 import SectionHeading from "./SectionHeading";
 import ProjectHologram from "./ProjectHologram";
 
@@ -16,13 +17,23 @@ function ProjectCard({
   i: number;
   onBrief: (p: Project) => void;
 }) {
+  const tilt = useTilt(3.5);
+
   return (
     <motion.article
+      ref={tilt.ref as React.Ref<HTMLElement>}
+      onPointerMove={tilt.onPointerMove}
+      onPointerLeave={tilt.onPointerLeave}
+      style={{
+        rotateX: tilt.rotateX,
+        rotateY: tilt.rotateY,
+        transformPerspective: 900,
+      }}
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-70px" }}
       transition={{ duration: 0.7, ease: EASE, delay: (i % 2) * 0.1 }}
-      className={`group relative flex flex-col overflow-hidden rounded-xl border border-line bg-surface/60 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-cyan/60 hover:bg-surface-2/70 hover:shadow-[0_0_36px_-6px_rgba(34,211,238,0.35)] sm:p-7 ${
+      className={`group relative flex flex-col overflow-hidden rounded-xl border border-line bg-surface/60 p-6 transition-colors duration-300 hover:border-cyan/60 hover:bg-surface-2/70 hover:shadow-[0_0_36px_-6px_rgba(34,211,238,0.35)] sm:p-7 ${
         p.featured ? "md:col-span-2" : ""
       }`}
     >
@@ -30,6 +41,15 @@ function ProjectCard({
       <span
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan to-transparent opacity-0 [animation:scan-sweep_1.4s_ease-in-out_infinite] group-hover:opacity-100"
+      />
+      {/* Cursor-following spotlight (position fed by useTilt via --mx/--my) */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        style={{
+          background:
+            "radial-gradient(340px circle at var(--mx, 50%) var(--my, 50%), rgba(34,211,238,0.09), transparent 65%)",
+        }}
       />
 
       <div className="mb-4 flex flex-wrap items-center gap-2">

@@ -1,7 +1,9 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useInView } from "framer-motion";
 import { EASE } from "@/lib/motion";
+import { useDecode } from "@/lib/useDecode";
 
 export default function SectionHeading({
   index,
@@ -12,6 +14,12 @@ export default function SectionHeading({
   title: string;
   subtitle?: string;
 }) {
+  const ref = useRef<HTMLHeadingElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-80px" });
+  // Scramble-decodes once scrolled into view; "" until then, so we fall
+  // back to the plain title (invisible anyway at whileInView opacity 0).
+  const decoded = useDecode(title, 28, inView);
+
   return (
     <div className="mb-14">
       <motion.div
@@ -34,13 +42,17 @@ export default function SectionHeading({
         </span>
       </motion.div>
       <motion.h2
+        ref={ref}
+        aria-label={title}
         initial={{ opacity: 0, y: 18 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-80px" }}
         transition={{ duration: 0.7, ease: EASE, delay: 0.05 }}
         className="text-4xl font-semibold tracking-tight sm:text-5xl"
       >
-        <span className="glow-cyan">{title}</span>
+        <span aria-hidden className="glow-cyan">
+          {decoded || title}
+        </span>
       </motion.h2>
       {subtitle && (
         <motion.p

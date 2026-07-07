@@ -7,7 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { AnimatePresence, motion } from "framer-motion";
 import { profile } from "@/lib/content";
 import { usePrefersReducedMotion } from "@/lib/useReducedMotion";
-import { useRotate } from "@/lib/useDecode";
+import { useDecode, useRotate } from "@/lib/useDecode";
 import { EASE } from "@/lib/motion";
 import ArcReactorStatic from "./ArcReactorStatic";
 
@@ -49,7 +49,7 @@ const CODE_LINES = [
   "assert latency_ms < 10",
   "study = optuna.create_study()",
   "study.optimize(objective, n_trials=120)",
-  "r2_score(y_val, y_pred)  # 0.955",
+  "r2_score(y_val, y_pred)  # 0.9555",
 ];
 
 /**
@@ -67,7 +67,28 @@ const CODE_LINES = [
 export default function IntroDashboard() {
   const reduced = usePrefersReducedMotion();
   const trackRef = useRef<HTMLElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
   const specialty = useRotate(SPECIALTIES);
+  // JARVIS boot: the at-rest name scrambles in on load.
+  const bootName = useDecode(profile.name, 42);
+
+  // Pointer parallax — writes --par-x/--par-y on the stage; the .par-layer
+  // wrappers (each with its own --par-m depth) drift in CSS. GSAP never
+  // touches these wrappers, so the scroll timeline and parallax can't fight.
+  const onStagePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (reduced || e.pointerType !== "mouse") return;
+    const el = stageRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    el.style.setProperty("--par-x", (((e.clientX - r.left) / r.width - 0.5) * 2).toFixed(3));
+    el.style.setProperty("--par-y", (((e.clientY - r.top) / r.height - 0.5) * 2).toFixed(3));
+  };
+  const onStagePointerLeave = () => {
+    const el = stageRef.current;
+    if (!el) return;
+    el.style.setProperty("--par-x", "0");
+    el.style.setProperty("--par-y", "0");
+  };
 
   useLayoutEffect(() => {
     const track = trackRef.current;
@@ -108,7 +129,12 @@ export default function IntroDashboard() {
       aria-label="Intro"
       className={reduced ? "relative" : "relative h-[320vh]"}
     >
-      <div className="sticky top-0 flex h-dvh flex-col items-center justify-center overflow-hidden bg-bg">
+      <div
+        ref={stageRef}
+        onPointerMove={onStagePointerMove}
+        onPointerLeave={onStagePointerLeave}
+        className="sticky top-0 flex h-dvh flex-col items-center justify-center overflow-hidden bg-bg"
+      >
         {/* WebGL reactor (or static fallback under reduced motion) */}
         {reduced ? (
           <div className="relative z-10 h-56 w-56 sm:h-64 sm:w-64">
@@ -136,20 +162,45 @@ export default function IntroDashboard() {
         {!reduced && (
           <div
             aria-hidden
-            className="ia-welcome pointer-events-none absolute inset-x-0 bottom-[12%] z-20 flex flex-col items-center gap-2.5 px-6 text-center"
+            className="ia-welcome pointer-events-none absolute inset-x-0 bottom-[12%] z-20 px-6"
           >
-            <p className="text-sm tracking-wide text-cyan/90 sm:text-base">
-              Welcome to the world,
-            </p>
-            <p className="text-balance text-4xl font-semibold tracking-tight text-text glow-cyan sm:text-6xl">
-              {profile.name}
-            </p>
-            <p className="mono text-[11px] tracking-[0.22em] text-text sm:text-sm">
-              ML ENGINEER · 3RD-YEAR CS · <span className="text-gold">OPEN TO INTERNSHIPS</span>
-            </p>
-            <p className="mono mt-1.5 text-[10px] tracking-[0.35em] text-cyan/70 sm:text-xs">
-              LET&apos;S DIVE IN
-            </p>
+            {/* Inner wrapper: parallax + boot-in stagger live here, so GSAP
+                keeps sole ownership of .ia-welcome's own transform/opacity. */}
+            <motion.div
+              className="par-layer flex flex-col items-center gap-2.5 text-center"
+              style={{ "--par-m": 6 } as React.CSSProperties}
+              initial="boot"
+              animate="on"
+              variants={{
+                boot: {},
+                on: { transition: { staggerChildren: 0.16, delayChildren: 0.25 } },
+              }}
+            >
+              <motion.p
+                variants={{ boot: { opacity: 0, y: 12 }, on: { opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE } } }}
+                className="text-sm tracking-wide text-cyan/90 sm:text-base"
+              >
+                Welcome to the world,
+              </motion.p>
+              <motion.p
+                variants={{ boot: { opacity: 0, y: 14 }, on: { opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE } } }}
+                className="text-balance text-4xl font-semibold tracking-tight text-text glow-cyan sm:text-6xl"
+              >
+                {bootName || " "}
+              </motion.p>
+              <motion.p
+                variants={{ boot: { opacity: 0, y: 10 }, on: { opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE } } }}
+                className="mono text-[11px] tracking-[0.22em] text-text sm:text-sm"
+              >
+                ML ENGINEER · 3RD-YEAR CS · <span className="text-gold">OPEN TO INTERNSHIPS</span>
+              </motion.p>
+              <motion.p
+                variants={{ boot: { opacity: 0 }, on: { opacity: 1, transition: { duration: 0.9, ease: EASE } } }}
+                className="mono mt-1.5 text-[10px] tracking-[0.35em] text-cyan/70 sm:text-xs"
+              >
+                LET&apos;S DIVE IN
+              </motion.p>
+            </motion.div>
           </div>
         )}
 
@@ -166,7 +217,10 @@ export default function IntroDashboard() {
         </div>
 
         {/* Segment C — identity (bottom-centre, under the reactor) */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-[6%] z-10 flex flex-col items-center px-6 text-center">
+        <div
+          className="par-layer pointer-events-none absolute inset-x-0 bottom-[6%] z-10 flex flex-col items-center px-6 text-center"
+          style={{ "--par-m": 5 } as React.CSSProperties}
+        >
           <p className="ia-status mono text-[11px] tracking-[0.4em] text-cyan/80 sm:text-xs">
             {reduced ? profile.status : profile.status}
           </p>
@@ -213,8 +267,12 @@ export default function IntroDashboard() {
           </div>
         </div>
 
-        {/* ── HUD panels (desktop, Segment C) ─────────────────────── */}
-        <div aria-hidden className="pointer-events-none absolute inset-0 z-10 hidden lg:block">
+        {/* ── HUD panels (desktop, Segment C) — far layer, drifts opposite ── */}
+        <div
+          aria-hidden
+          className="par-layer pointer-events-none absolute inset-0 z-10 hidden lg:block"
+          style={{ "--par-m": -10 } as React.CSSProperties}
+        >
           <Panel className="left-8 top-24 w-[220px]">
             <PanelHead label="SUIT SYSTEMS" code="PWR" />
             <div className="flex items-center gap-4">
@@ -238,7 +296,7 @@ export default function IntroDashboard() {
           <Panel className="bottom-16 left-8 w-[260px]">
             <PanelHead label="STORE-DEPT FORECAST" code="MK-01" />
             <ForecastBars />
-            <p className="mono mt-2 text-[9px] tracking-wide text-text-dim">95.5% VALIDATION R²</p>
+            <p className="mono mt-2 text-[9px] tracking-wide text-text-dim">95.55% VALIDATION R² · LIGHTGBM</p>
           </Panel>
 
           <Panel className="right-8 top-20 w-[260px]">
@@ -312,7 +370,11 @@ function ScanReticle() {
       aria-hidden
       className="ia-reticle pointer-events-none absolute left-1/2 top-[38%] z-[12] -translate-x-1/2 -translate-y-1/2"
     >
-      <div className="relative h-[min(58vw,400px)] w-[min(58vw,400px)]">
+      {/* Nearest layer — the optical scanner tracks the cursor the most */}
+      <div
+        className="par-layer relative h-[min(58vw,400px)] w-[min(58vw,400px)]"
+        style={{ "--par-m": 14 } as React.CSSProperties}
+      >
         <svg viewBox="0 0 400 400" className="absolute inset-0 h-full w-full">
           <defs>
             <radialGradient id="rt-sweep" cx="50%" cy="50%" r="50%">
