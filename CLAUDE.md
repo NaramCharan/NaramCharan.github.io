@@ -126,10 +126,10 @@ Deep Learning & GenAI / Data Intelligence / Engineering Core; certs (newest firs
 Michigan Python, Google·Vanderbilt Prompt Eng — all with real VERIFY links.
 
 ## Open items / TODO
-- **Merge `feat/reactor-assembly` → main and push to GitHub**, replacing
-  https://github.com/NaramCharan/NaramCharan.github.io so naramcharan.me serves this
-  site (needs `output: 'export'` in next.config.ts + `public/CNAME`; confirm with the
-  user before force-replacing the live repo).
+- (none — the site is LIVE at naramcharan.me, deployed from this repo's `main` via
+  `.github/workflows/deploy.yml` → GitHub Pages. Every push to `main` redeploys.
+  Note: the permission classifier blocks direct pushes to `main` and self-merges —
+  ship changes via a feature branch + PR and let the user click merge.)
 
 ## Status
 Built to address the "$10K checklist" (typography, restrained color, breathing
