@@ -3,7 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { Environment, Lightformer } from "@react-three/drei";
-import { EffectComposer, Bloom } from "@react-three/postprocessing";
+import { EffectComposer, Bloom, Vignette, ChromaticAberration } from "@react-three/postprocessing";
+import { BlendFunction } from "postprocessing";
+import * as THREE from "three";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Reactor3D from "./Reactor3D";
@@ -57,9 +59,13 @@ export default function HeroCanvas({
       gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
     >
       <color attach="background" args={["#05080f"]} />
-      <ambientLight intensity={0.35} />
-      <directionalLight position={[4, 6, 5]} intensity={1.6} color="#bfefff" />
+      <fog attach="fog" args={["#05080f", 10, 22]} />
+      <ambientLight intensity={0.3} />
+      <directionalLight position={[4, 6, 5]} intensity={1.8} color="#bfefff" />
       <directionalLight position={[-5, -2, 3]} intensity={0.6} color="#2a6b7a" />
+      {/* Rim/kicker light from behind-below — separates the dark bezel edge
+          from the black background like a studio product shot. */}
+      <directionalLight position={[-2, -6, -6]} intensity={1.1} color="#3fa6bd" />
       <spotLight position={[0, 0, 8]} angle={0.5} penumbra={1} intensity={1.2} color="#7de7f5" />
 
       {/* Framed environment (metal reflections, no network fetch) */}
@@ -67,19 +73,38 @@ export default function HeroCanvas({
         <Lightformer intensity={2} color="#7de7f5" position={[0, 3, 4]} scale={[6, 3, 1]} />
         <Lightformer intensity={1.2} color="#ffb23e" position={[-4, -2, 2]} scale={[4, 4, 1]} />
         <Lightformer intensity={1.5} color="#22d3ee" position={[4, -1, 2]} scale={[3, 3, 1]} />
+        <Lightformer intensity={0.8} color="#ffffff" position={[0, -4, 3]} scale={[5, 2, 1]} />
       </Environment>
 
       <group position={[0, 0.35, 0]}>
         <Reactor3D progress={progress} />
       </group>
 
-      <EffectComposer>
+      <EffectComposer multisampling={0}>
+        {/* Two-pass bloom: a tight hot core plus a much wider, softer bleed —
+            the huge soft halo is what reads as "real light in a dark room"
+            instead of a clean CG glow. */}
         <Bloom
-          intensity={0.5}
-          luminanceThreshold={0.85}
-          luminanceSmoothing={0.3}
+          intensity={0.55}
+          luminanceThreshold={0.82}
+          luminanceSmoothing={0.25}
           mipmapBlur
+          radius={0.5}
         />
+        <Bloom
+          intensity={0.9}
+          luminanceThreshold={0.4}
+          luminanceSmoothing={0.9}
+          mipmapBlur
+          radius={0.9}
+        />
+        <ChromaticAberration
+          offset={new THREE.Vector2(0.0006, 0.0006)}
+          radialModulation={true}
+          modulationOffset={0.4}
+          blendFunction={BlendFunction.NORMAL}
+        />
+        <Vignette eskil={false} offset={0.28} darkness={0.62} blendFunction={BlendFunction.NORMAL} />
       </EffectComposer>
     </Canvas>
   );

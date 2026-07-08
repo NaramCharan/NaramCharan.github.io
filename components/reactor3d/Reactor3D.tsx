@@ -192,7 +192,7 @@ export default function Reactor3D({ progress }: Props) {
 
   return (
     <group ref={rootRef}>
-      {/* 1 — Outer bezel: machined rim + thin cyan edge light */}
+      {/* 1 — Outer bezel: machined rim + thin cyan edge light + hex bolts */}
       <group ref={bezelRef} scale={0.001}>
         <mesh material={mat.darkMetal}>
           <torusGeometry args={[2.15, 0.14, 20, 80]} />
@@ -204,6 +204,21 @@ export default function Reactor3D({ progress }: Props) {
         <mesh material={mat.cyanGlass}>
           <torusGeometry args={[2.15, 0.05, 12, 80]} />
         </mesh>
+        {/* hex bolt heads sunk into the rim face — the hand-machined-hardware
+            tell that reads as a real assembled prop, not a CG primitive */}
+        {Array.from({ length: 12 }).map((_, i) => {
+          const a = (i / 12) * Math.PI * 2;
+          return (
+            <mesh
+              key={i}
+              material={mat.brightMetal}
+              position={[Math.cos(a) * 2.06, Math.sin(a) * 2.06, -0.02]}
+              rotation={[Math.PI / 2, 0, a]}
+            >
+              <cylinderGeometry args={[0.045, 0.045, 0.05, 6]} />
+            </mesh>
+          );
+        })}
       </group>
 
       {/* 2 — Tick ring */}
