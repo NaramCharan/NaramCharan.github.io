@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Space_Grotesk, Sora, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { profile, contact, education } from "@/lib/content";
@@ -25,6 +25,12 @@ const mono = JetBrains_Mono({
   subsets: ["latin"],
   display: "swap",
 });
+
+// Mobile browser chrome matches the OLED navy; declares the page dark-only.
+export const viewport: Viewport = {
+  themeColor: "#05080f",
+  colorScheme: "dark",
+};
 
 export const metadata: Metadata = {
   title: "Naram Charan — ML & Data Science Engineer",
