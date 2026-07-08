@@ -3,7 +3,11 @@
 import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import { useReactorMaterials, useTriangleGeometry } from "./parts";
+import {
+  useReactorMaterials,
+  useTriangleGeometry,
+  useTrapezoidGeometry,
+} from "./parts";
 
 /**
  * The 3D Mark XLII arc reactor, assembled by a scroll-progress ref (0..1).
@@ -27,7 +31,8 @@ const win = (p: number, a: number, b: number) =>
   Math.min(1, Math.max(0, (p - a) / (b - a)));
 const lerp = THREE.MathUtils.lerp;
 
-const COIL_COUNT = 18;
+const COIL_COUNT = 10; // radial copper coil segments (real arc-reactor spoke count)
+const COIL_R = 1.4; // lock radius of the coil band
 const CORNER_ANGLES = [
   -Math.PI / 2,
   -Math.PI / 2 + (2 * Math.PI) / 3,
@@ -37,6 +42,7 @@ const CORNER_ANGLES = [
 export default function Reactor3D({ progress }: Props) {
   const mat = useReactorMaterials();
   const triGeo = useTriangleGeometry(1.15, 0.28);
+  const coilGeo = useTrapezoidGeometry(0.28, 0.5, 0.66, 0.18);
 
   const rootRef = useRef<THREE.Group>(null);
   const bezelRef = useRef<THREE.Group>(null);
@@ -67,6 +73,13 @@ export default function Reactor3D({ progress }: Props) {
   );
 
   useFrame((state) => {
+    // Dev-only: pin assembly progress via window.__pin to inspect the locked
+    // pose without scrolling (preview screenshots black out when scrolled).
+    // Stripped from the production static export.
+    if (process.env.NODE_ENV !== "production") {
+      const pin = (globalThis as { __pin?: number }).__pin;
+      if (typeof pin === "number") progress.current = pin;
+    }
     const p = progress.current;
     const t = state.clock.elapsedTime;
     const asm = win(p, 0.3, 0.72);
@@ -99,11 +112,12 @@ export default function Reactor3D({ progress }: Props) {
         const start = 0.4 + (i / COIL_COUNT) * 0.16;
         const k = easeOut(win(p, start, start + 0.16));
         child.position.set(
-          lerp(s.from.x, Math.cos(s.angle) * 1.62, k),
-          lerp(s.from.y, Math.sin(s.angle) * 1.62, k),
+          lerp(s.from.x, Math.cos(s.angle) * COIL_R, k),
+          lerp(s.from.y, Math.sin(s.angle) * COIL_R, k),
           lerp(s.from.z, 0, k)
         );
-        child.rotation.z = lerp(s.spin, s.angle + Math.PI / 2, k);
+        // wide end points radially outward (local +Y → outward = angle − 90°)
+        child.rotation.z = lerp(s.spin, s.angle - Math.PI / 2, k);
         child.scale.setScalar(Math.max(0.001, k));
       });
     }
@@ -171,10 +185,14 @@ export default function Reactor3D({ progress }: Props) {
 
   return (
     <group ref={rootRef}>
-      {/* 1 — Outer bezel */}
+      {/* 1 — Outer bezel: machined rim + thin cyan edge light */}
       <group ref={bezelRef} scale={0.001}>
         <mesh material={mat.darkMetal}>
           <torusGeometry args={[2.15, 0.14, 20, 80]} />
+        </mesh>
+        {/* flat milled rim face, catches the environment light */}
+        <mesh material={mat.steel} position={[0, 0, -0.06]}>
+          <ringGeometry args={[1.98, 2.15, 80]} />
         </mesh>
         <mesh material={mat.cyanGlass}>
           <torusGeometry args={[2.15, 0.05, 12, 80]} />
@@ -198,22 +216,51 @@ export default function Reactor3D({ progress }: Props) {
         })}
       </group>
 
-      {/* 3 — Coil housing */}
+      {/* 3 — Coil housing: outer wall + recessed well floor + concentric
+             machined rings + glowing radial slots the core light bleeds through */}
       <group ref={housingRef} scale={0.001}>
+        {/* outer wall of the well */}
         <mesh material={mat.darkMetal}>
-          <torusGeometry args={[1.78, 0.2, 20, 72]} />
+          <torusGeometry args={[1.82, 0.16, 20, 72]} />
         </mesh>
+        {/* recessed floor, set back in z so the coils sit in a well */}
+        <mesh material={mat.darkMetal} position={[0, 0, -0.16]} rotation={[Math.PI / 2, 0, 0]}>
+          <cylinderGeometry args={[1.82, 1.82, 0.12, 72]} />
+        </mesh>
+        <mesh material={mat.steel} position={[0, 0, -0.09]}>
+          <ringGeometry args={[0.62, 1.78, 72]} />
+        </mesh>
+        {/* concentric machined rings between the core and the coil band */}
+        <mesh material={mat.steel}>
+          <torusGeometry args={[1.08, 0.035, 12, 64]} />
+        </mesh>
+        <mesh material={mat.brightMetal}>
+          <torusGeometry args={[0.86, 0.03, 12, 64]} />
+        </mesh>
+        {/* glowing radial slots — offset half a step so they sit between coils */}
+        {Array.from({ length: COIL_COUNT }).map((_, i) => {
+          const a = ((i + 0.5) / COIL_COUNT) * Math.PI * 2;
+          return (
+            <mesh
+              key={i}
+              material={mat.cyanGlass}
+              position={[Math.cos(a) * COIL_R, Math.sin(a) * COIL_R, -0.04]}
+              rotation={[0, 0, a - Math.PI / 2]}
+            >
+              <boxGeometry args={[0.04, 0.62, 0.02]} />
+            </mesh>
+          );
+        })}
       </group>
 
-      {/* Coils — copper windings with cyan faces */}
+      {/* Coils — radial copper winding segments with a lit inner strip */}
       <group ref={coilsRef}>
         {coilStarts.map((_, i) => (
           <group key={i} scale={0.001}>
-            <mesh material={mat.copper} rotation={[Math.PI / 2, 0, 0]}>
-              <cylinderGeometry args={[0.11, 0.11, 0.34, 16]} />
-            </mesh>
-            <mesh material={mat.cyanGlass} position={[0, 0, 0.19]}>
-              <boxGeometry args={[0.12, 0.24, 0.03]} />
+            <mesh geometry={coilGeo} material={mat.copper} />
+            {/* cyan winding highlight down the face of each segment */}
+            <mesh material={mat.cyanGlass} position={[0, 0, 0.11]}>
+              <boxGeometry args={[0.05, 0.5, 0.02]} />
             </mesh>
           </group>
         ))}
@@ -240,9 +287,33 @@ export default function Reactor3D({ progress }: Props) {
         ))}
       </group>
 
-      {/* 6 — Core */}
+      {/* 6 — Core assembly: segmented tooth ring + hub + glowing triangle heart
+             + fine central disc — the detailed heart of the reactor */}
       <group ref={coreRef} scale={0.001}>
-        <mesh geometry={triGeo} material={mat.coreGlow} rotation={[0, 0, Math.PI]} scale={0.5} position={[0, 0, 0.22]} />
+        {/* gear-tooth ring — the classic arc-reactor segmented collar */}
+        {Array.from({ length: 16 }).map((_, i) => {
+          const a = (i / 16) * Math.PI * 2;
+          return (
+            <mesh
+              key={i}
+              material={mat.steel}
+              position={[Math.cos(a) * 0.66, Math.sin(a) * 0.66, 0.14]}
+              rotation={[0, 0, a]}
+            >
+              <boxGeometry args={[0.1, 0.13, 0.1]} />
+            </mesh>
+          );
+        })}
+        {/* bright hub ring holding the core */}
+        <mesh material={mat.brightMetal} position={[0, 0, 0.16]}>
+          <torusGeometry args={[0.6, 0.05, 14, 48]} />
+        </mesh>
+        {/* the Mark XLII "new element" triangle — the emissive heart */}
+        <mesh geometry={triGeo} material={mat.coreGlow} rotation={[0, 0, Math.PI]} scale={0.44} position={[0, 0, 0.22]} />
+        {/* fine central disc — the reactor's bright mesh eye */}
+        <mesh material={mat.coreGlow} position={[0, 0, 0.3]} rotation={[Math.PI / 2, 0, 0]}>
+          <cylinderGeometry args={[0.16, 0.16, 0.06, 24]} />
+        </mesh>
         <pointLight ref={coreLightRef} color="#7de7f5" distance={9} intensity={0} position={[0, 0, 0.6]} />
       </group>
 

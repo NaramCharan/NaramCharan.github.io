@@ -39,8 +39,46 @@ export function useReactorMaterials() {
       metalness: 0,
       roughness: 0.1,
     });
-    return { darkMetal, brightMetal, copper, cyanGlass, coreGlow };
+    // Machined steel for the concentric rings + core tooth-ring — reads as a
+    // milled part catching the rim light, distinct from the near-black darkMetal.
+    const steel = new THREE.MeshStandardMaterial({
+      color: "#2a4a55",
+      metalness: 1,
+      roughness: 0.26,
+    });
+    return { darkMetal, brightMetal, copper, cyanGlass, coreGlow, steel };
   }, []);
+}
+
+/**
+ * A single radial coil segment — a trapezoid (narrow inner edge, wide outer
+ * edge) extruded in z, so ten of them fan around the ring like the copper
+ * windings of a real arc reactor. Length runs along local +Y (outward).
+ */
+export function useTrapezoidGeometry(
+  innerW = 0.3,
+  outerW = 0.46,
+  length = 0.62,
+  depth = 0.16
+) {
+  return useMemo(() => {
+    const h = length / 2;
+    const shape = new THREE.Shape();
+    shape.moveTo(-innerW / 2, -h);
+    shape.lineTo(innerW / 2, -h);
+    shape.lineTo(outerW / 2, h);
+    shape.lineTo(-outerW / 2, h);
+    shape.closePath();
+    const geo = new THREE.ExtrudeGeometry(shape, {
+      depth,
+      bevelEnabled: true,
+      bevelThickness: 0.03,
+      bevelSize: 0.03,
+      bevelSegments: 1,
+    });
+    geo.center();
+    return geo;
+  }, [innerW, outerW, length, depth]);
 }
 
 /* Downward-pointing triangular prism (the Mark XLII "new element" core rotor). */
