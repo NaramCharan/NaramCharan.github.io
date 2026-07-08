@@ -43,6 +43,8 @@ export default function Reactor3D({ progress }: Props) {
   const mat = useReactorMaterials();
   const triGeo = useTriangleGeometry(1.15, 0.28);
   const coilGeo = useTrapezoidGeometry(0.28, 0.5, 0.66, 0.18);
+  // glowing wedge between coils — the prop's actual light source
+  const slotGeo = useTrapezoidGeometry(0.1, 0.18, 0.6, 0.05);
 
   const rootRef = useRef<THREE.Group>(null);
   const bezelRef = useRef<THREE.Group>(null);
@@ -145,8 +147,13 @@ export default function Reactor3D({ progress }: Props) {
     if (coreLightRef.current) {
       coreLightRef.current.intensity = glow * 4.5 * (0.9 + Math.sin(t * 8) * 0.08);
     }
-    mat.coreGlow.emissiveIntensity = 0.3 + glow * 1.2;   // ~1.5 flash → ~0.38 idle
-    mat.cyanGlass.emissiveIntensity = 1.6 - 1.25 * calm; // coils/ring settle to ~0.35
+    // Core idles hotter than before (white-hot heart), still calm enough for copy.
+    mat.coreGlow.emissiveIntensity = 0.45 + ign * (1.15 - 0.5 * calm); // flash 1.6 → idle ~1.1
+    mat.cyanGlass.emissiveIntensity = 1.6 - 1.25 * calm; // bezel edge settles to ~0.35
+    // The gap-glow is the reactor's real light: dark until ignition, flash,
+    // then stays luminous at idle with a faint plasma flicker.
+    mat.slotGlow.emissiveIntensity =
+      (0.4 + ign * (2.6 - 0.6 * calm)) * (1 + Math.sin(t * 5.3) * 0.04); // flash ~3 → idle ~2.4
 
     if (tickRef.current && asm > 0.95) tickRef.current.rotation.z += 0.002;
 
@@ -237,31 +244,51 @@ export default function Reactor3D({ progress }: Props) {
         <mesh material={mat.brightMetal}>
           <torusGeometry args={[0.86, 0.03, 12, 64]} />
         </mesh>
-        {/* glowing radial slots — offset half a step so they sit between coils */}
+        {/* glowing wedge slots — offset half a step so the light spills from
+            BETWEEN the coils (the real prop's brightest element) */}
         {Array.from({ length: COIL_COUNT }).map((_, i) => {
           const a = ((i + 0.5) / COIL_COUNT) * Math.PI * 2;
           return (
             <mesh
               key={i}
-              material={mat.cyanGlass}
-              position={[Math.cos(a) * COIL_R, Math.sin(a) * COIL_R, -0.04]}
+              geometry={slotGeo}
+              material={mat.slotGlow}
+              position={[Math.cos(a) * COIL_R, Math.sin(a) * COIL_R, -0.01]}
               rotation={[0, 0, a - Math.PI / 2]}
+            />
+          );
+        })}
+        {/* inner aperture ring — small glowing windows between core and coils */}
+        {Array.from({ length: COIL_COUNT }).map((_, i) => {
+          const a = ((i + 0.5) / COIL_COUNT) * Math.PI * 2;
+          return (
+            <mesh
+              key={`ap${i}`}
+              material={mat.slotGlow}
+              position={[Math.cos(a) * 0.96, Math.sin(a) * 0.96, -0.02]}
+              rotation={[Math.PI / 2, 0, 0]}
             >
-              <boxGeometry args={[0.04, 0.62, 0.02]} />
+              <cylinderGeometry args={[0.05, 0.05, 0.03, 16]} />
             </mesh>
           );
         })}
       </group>
 
-      {/* Coils — radial copper winding segments with a lit inner strip */}
+      {/* Coils — dark wire-wound copper segments (the glow lives in the gaps).
+          Four wrap bands across each face sell the wound-wire look. */}
       <group ref={coilsRef}>
         {coilStarts.map((_, i) => (
           <group key={i} scale={0.001}>
             <mesh geometry={coilGeo} material={mat.copper} />
-            {/* cyan winding highlight down the face of each segment */}
-            <mesh material={mat.cyanGlass} position={[0, 0, 0.11]}>
-              <boxGeometry args={[0.05, 0.5, 0.02]} />
-            </mesh>
+            {[-0.18, -0.06, 0.06, 0.18].map((y, b) => (
+              <mesh
+                key={b}
+                material={mat.copperDark}
+                position={[0, y, 0]}
+              >
+                <boxGeometry args={[0.37 + b * 0.05, 0.045, 0.27]} />
+              </mesh>
+            ))}
           </group>
         ))}
       </group>
@@ -307,6 +334,10 @@ export default function Reactor3D({ progress }: Props) {
         {/* bright hub ring holding the core */}
         <mesh material={mat.brightMetal} position={[0, 0, 0.16]}>
           <torusGeometry args={[0.6, 0.05, 14, 48]} />
+        </mesh>
+        {/* concentric glow ring inside the collar — the prop's ringed core */}
+        <mesh material={mat.slotGlow} position={[0, 0, 0.18]}>
+          <torusGeometry args={[0.44, 0.022, 10, 48]} />
         </mesh>
         {/* the Mark XLII "new element" triangle — the emissive heart */}
         <mesh geometry={triGeo} material={mat.coreGlow} rotation={[0, 0, Math.PI]} scale={0.44} position={[0, 0, 0.22]} />

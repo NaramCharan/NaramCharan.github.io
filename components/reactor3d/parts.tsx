@@ -46,7 +46,23 @@ export function useReactorMaterials() {
       metalness: 1,
       roughness: 0.26,
     });
-    return { darkMetal, brightMetal, copper, cyanGlass, coreGlow, steel };
+    // The cold white-blue plasma spilling from between the coils — the real
+    // prop's light source. Kept separate from cyanGlass so the gap-glow can
+    // stay luminous at idle while decorative cyan bits calm down.
+    const slotGlow = new THREE.MeshStandardMaterial({
+      color: "#eafdff",
+      emissive: "#a8ecf9",
+      emissiveIntensity: 0.5,
+      metalness: 0,
+      roughness: 0.4,
+    });
+    // Darker enamelled copper for the wire-wrap bands across each coil.
+    const copperDark = new THREE.MeshStandardMaterial({
+      color: "#7a4517",
+      metalness: 1,
+      roughness: 0.45,
+    });
+    return { darkMetal, brightMetal, copper, cyanGlass, coreGlow, steel, slotGlow, copperDark };
   }, []);
 }
 
