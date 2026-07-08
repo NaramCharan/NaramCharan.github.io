@@ -6,22 +6,28 @@ import * as THREE from "three";
 /* Shared materials — memoised so all instances share GPU programs. */
 export function useReactorMaterials() {
   return useMemo(() => {
-    const darkMetal = new THREE.MeshStandardMaterial({
+    const darkMetal = new THREE.MeshPhysicalMaterial({
       color: "#0c1a22",
       metalness: 0.95,
       roughness: 0.34,
+      clearcoat: 0.4,
+      clearcoatRoughness: 0.25,
     });
-    const brightMetal = new THREE.MeshStandardMaterial({
+    const brightMetal = new THREE.MeshPhysicalMaterial({
       color: "#173a44",
       metalness: 1,
-      roughness: 0.22,
+      roughness: 0.2,
+      clearcoat: 0.6,
+      clearcoatRoughness: 0.15,
     });
-    const copper = new THREE.MeshStandardMaterial({
+    const copper = new THREE.MeshPhysicalMaterial({
       color: "#c9772e",
       metalness: 1,
-      roughness: 0.32,
+      roughness: 0.36,
       emissive: "#3a1e08",
       emissiveIntensity: 0.4,
+      clearcoat: 0.3,
+      clearcoatRoughness: 0.4,
     });
     const cyanGlass = new THREE.MeshStandardMaterial({
       color: "#22d3ee",
@@ -41,12 +47,30 @@ export function useReactorMaterials() {
     });
     // Machined steel for the concentric rings + core tooth-ring — reads as a
     // milled part catching the rim light, distinct from the near-black darkMetal.
-    const steel = new THREE.MeshStandardMaterial({
+    const steel = new THREE.MeshPhysicalMaterial({
       color: "#2a4a55",
       metalness: 1,
-      roughness: 0.26,
+      roughness: 0.24,
+      clearcoat: 0.5,
+      clearcoatRoughness: 0.2,
     });
-    return { darkMetal, brightMetal, copper, cyanGlass, coreGlow, steel };
+    // The cold white-blue plasma spilling from between the coils — the real
+    // prop's light source. Kept separate from cyanGlass so the gap-glow can
+    // stay luminous at idle while decorative cyan bits calm down.
+    const slotGlow = new THREE.MeshStandardMaterial({
+      color: "#eafdff",
+      emissive: "#a8ecf9",
+      emissiveIntensity: 0.5,
+      metalness: 0,
+      roughness: 0.4,
+    });
+    // Darker enamelled copper for the wire-wrap bands across each coil.
+    const copperDark = new THREE.MeshStandardMaterial({
+      color: "#7a4517",
+      metalness: 1,
+      roughness: 0.45,
+    });
+    return { darkMetal, brightMetal, copper, cyanGlass, coreGlow, steel, slotGlow, copperDark };
   }, []);
 }
 
