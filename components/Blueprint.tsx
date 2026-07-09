@@ -270,6 +270,44 @@ export default function Blueprint() {
               kNN · L2
             </text>
 
+            {/* ── Data pulses — dashes flow along the pipeline once drawn,
+                   so the schematic clearly reads as live, not a still. ── */}
+            {!reduced && (
+              <motion.g
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 1.4 }}
+              >
+                {[140, 230].map((y) => (
+                  <path
+                    key={`flow-in-${y}`}
+                    className="animate-dash-flow"
+                    d={`M136 ${y} C 220 ${y}, 240 185, 300 185`}
+                    fill="none"
+                    stroke="#7de7f5"
+                    strokeWidth="1.6"
+                    strokeOpacity="0.85"
+                    strokeLinecap="round"
+                    strokeDasharray="3 13"
+                  />
+                ))}
+                {[110, 160, 210, 260].map((y) => (
+                  <path
+                    key={`flow-out-${y}`}
+                    className="animate-dash-flow"
+                    d={`M609 ${y} C 700 ${y}, 720 185, 770 185`}
+                    fill="none"
+                    stroke="#7de7f5"
+                    strokeWidth="1.4"
+                    strokeOpacity="0.7"
+                    strokeLinecap="round"
+                    strokeDasharray="3 13"
+                  />
+                ))}
+              </motion.g>
+            )}
+
             {/* ── Annotation callouts (real specs) ───────── */}
             <motion.g
               initial={reduced ? false : { opacity: 0 }}

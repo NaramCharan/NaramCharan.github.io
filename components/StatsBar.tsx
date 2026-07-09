@@ -1,8 +1,20 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 import { stats } from "@/lib/content";
+import { EASE } from "@/lib/motion";
 import { usePrefersReducedMotion } from "@/lib/useReducedMotion";
+
+// Stats rise in one-by-one; each number then counts up once its cell is seen.
+const statSeq = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.12 } },
+};
+const statItem = {
+  hidden: { opacity: 0, y: 18 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: EASE } },
+};
 
 function CountUp({
   target,
@@ -53,12 +65,19 @@ export default function StatsBar() {
       aria-label="Key metrics"
       className="relative border-y border-line bg-surface/40 py-10"
     >
-      <ul className="mx-auto grid max-w-6xl grid-cols-2 gap-y-8 px-5 sm:grid-cols-4 sm:gap-0">
+      <motion.ul
+        className="mx-auto grid max-w-6xl grid-cols-2 gap-y-8 px-5 sm:grid-cols-4 sm:gap-0"
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, margin: "-60px" }}
+        variants={statSeq}
+      >
         {stats.map((s, i) => {
           const decimals = Number.isInteger(s.value) ? 0 : 2;
           return (
-            <li
+            <motion.li
               key={s.label}
+              variants={statItem}
               className={`flex flex-col items-center text-center sm:px-4 ${
                 i < stats.length - 1 ? "sm:border-r sm:border-line" : ""
               }`}
@@ -71,10 +90,10 @@ export default function StatsBar() {
               <span className="mt-2 text-xs text-text-muted sm:text-sm">
                 {s.label}
               </span>
-            </li>
+            </motion.li>
           );
         })}
-      </ul>
+      </motion.ul>
     </section>
   );
 }
