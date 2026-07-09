@@ -9,6 +9,7 @@ import { profile } from "@/lib/content";
 import { usePrefersReducedMotion } from "@/lib/useReducedMotion";
 import { useDecode, useRotate } from "@/lib/useDecode";
 import { EASE } from "@/lib/motion";
+import { triggerResumeDownload } from "@/lib/resume";
 import ArcReactorStatic from "./ArcReactorStatic";
 
 // Split the three.js bundle out of the initial load — the canvas streams in
@@ -260,6 +261,9 @@ export default function IntroDashboard() {
             </a>
             <a
               href={profile.resume}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => triggerResumeDownload(profile.resume)}
               className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-gold/60 bg-gold/15 px-7 py-3 text-sm font-semibold text-gold transition-all duration-300 hover:bg-gold/25 hover:shadow-[0_0_26px_rgba(255,178,62,0.35)]"
             >
               Download Resume
