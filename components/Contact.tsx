@@ -14,6 +14,15 @@ const terminalLine = {
   hidden: { opacity: 0, y: 4 },
   show: { opacity: 1, y: 0, transition: { duration: 0.3, ease: EASE } },
 };
+// Commands "type" on left-to-right (clip wipe) — clearer terminal feel than a fade.
+const terminalCmd = {
+  hidden: { opacity: 0, clipPath: "inset(0 100% 0 0)" },
+  show: {
+    opacity: 1,
+    clipPath: "inset(0 -5% 0 0)",
+    transition: { duration: 0.5, ease: "linear" as const },
+  },
+};
 
 // Gmail compose (not mailto:) — mailto hands off to whatever mail client is
 // registered on the visitor's machine, which is often unset or the wrong
@@ -62,14 +71,14 @@ export default function Contact() {
           viewport={{ once: true, margin: "-60px" }}
           variants={terminalSeq}
         >
-          <motion.p variants={terminalLine} className="mono text-sm text-cyan/80">
+          <motion.p variants={terminalCmd} className="mono text-sm text-cyan/80">
             $ whoami
           </motion.p>
           <motion.p variants={terminalLine} className="mono text-sm">
             <span className="text-text">{profile.fullName}</span>
             <span className="text-text-muted"> — {profile.role}</span>
           </motion.p>
-          <motion.p variants={terminalLine} className="mono pt-2 text-sm text-cyan/80">
+          <motion.p variants={terminalCmd} className="mono pt-2 text-sm text-cyan/80">
             $ list --channels
           </motion.p>
 

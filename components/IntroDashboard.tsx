@@ -105,6 +105,13 @@ export default function IntroDashboard() {
         .to(".ia-reticle", { autoAlpha: 0, scale: 1.6, duration: 0.12, ease: "power1.in" }, 0.06)
         .to(".ia-welcome", { autoAlpha: 0, y: -40, scale: 1.05, duration: 0.1, ease: "power1.in" }, 0.15)
         .fromTo(".ia-code", { autoAlpha: 0 }, { autoAlpha: 0.55, duration: 0.08 }, 0.3)
+        // each code line streams in on its own beat (container caps opacity)
+        .fromTo(
+          ".ia-code span",
+          { autoAlpha: 0, y: 10 },
+          { autoAlpha: 1, y: 0, duration: 0.03, stagger: 0.012 },
+          0.31
+        )
         .to(".ia-code", { autoAlpha: 0, duration: 0.08 }, 0.66)
         .from(".ia-status", { autoAlpha: 0, y: 14, duration: 0.06 }, 0.74)
         .from(".ia-name", { autoAlpha: 0, y: 28, duration: 0.09 }, 0.77)
@@ -114,7 +121,13 @@ export default function IntroDashboard() {
         .fromTo(".ia-caret", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.01 }, 0.85)
         .to(".ia-caret", { autoAlpha: 0, duration: 0.02 }, 0.96)
         .from(".ia-ctas", { autoAlpha: 0, y: 16, duration: 0.06 }, 0.9)
-        .from(".ia-panel", { autoAlpha: 0, y: 14, duration: 0.06, stagger: 0.02 }, 0.78)
+        // panels boot one-by-one — scale + wider stagger makes each land legibly
+        // (last one settles by ~0.955 so the full HUD reads before track end)
+        .from(
+          ".ia-panel",
+          { autoAlpha: 0, y: 18, scale: 0.94, duration: 0.07, stagger: 0.025 },
+          0.76
+        )
         .to({}, { duration: 0.001 }, 1); // pad so positions ≈ scroll fraction
 
       ScrollTrigger.refresh();
@@ -128,6 +141,7 @@ export default function IntroDashboard() {
       id="top"
       ref={trackRef}
       aria-label="Intro"
+      data-seg="a"
       className={reduced ? "relative" : "relative h-[320vh]"}
     >
       <div
@@ -357,6 +371,28 @@ export default function IntroDashboard() {
             <svg viewBox="0 0 24 24" className="h-4 w-4 animate-bounce text-cyan/70" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
               <path d="M12 5v14M5 12l7 7 7-7" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
+          </div>
+        )}
+
+        {/* Phase rail — takes over the scroll hint's slot once scrolling starts.
+            Which phase is lit + the bar's fill are driven entirely by the
+            data-seg/--p the canvas stamps on the track (see .seg-rail CSS). */}
+        {!reduced && (
+          <div
+            aria-hidden
+            className="seg-rail pointer-events-none absolute bottom-7 left-1/2 z-20 flex -translate-x-1/2 flex-col items-center gap-2"
+          >
+            <div className="flex items-center gap-4 mono text-[9px] tracking-[0.3em] sm:gap-6 sm:text-[10px]">
+              <span className="seg-item seg-a">01 SCAN</span>
+              <span className="seg-item seg-b">02 ASSEMBLE</span>
+              <span className="seg-item seg-c">03 ONLINE</span>
+            </div>
+            <div className="h-px w-52 overflow-hidden rounded-full bg-cyan/15 sm:w-64">
+              <div
+                className="h-full w-full origin-left bg-gradient-to-r from-cyan via-cyan-bright to-gold"
+                style={{ transform: "scaleX(var(--p, 0))" }}
+              />
+            </div>
           </div>
         )}
 

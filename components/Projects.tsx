@@ -29,8 +29,10 @@ function ProjectCard({
         rotateY: tilt.rotateY,
         transformPerspective: 900,
       }}
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      // Hologram materialization — blur resolving to sharp reads far more
+      // clearly than a plain fade, and fits the FRIDAY projection theme.
+      initial={{ opacity: 0, y: 24, scale: 0.98, filter: "blur(8px)" }}
+      whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
       viewport={{ once: true, margin: "-70px" }}
       transition={{ duration: 0.7, ease: EASE, delay: (i % 2) * 0.1 }}
       className={`group relative flex flex-col overflow-hidden rounded-xl border border-line bg-surface/60 p-6 transition-colors duration-300 hover:border-cyan/60 hover:bg-surface-2/70 hover:shadow-[0_0_36px_-6px_rgba(34,211,238,0.35)] sm:p-7 ${
