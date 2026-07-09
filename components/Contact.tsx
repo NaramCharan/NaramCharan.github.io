@@ -15,8 +15,14 @@ const terminalLine = {
   show: { opacity: 1, y: 0, transition: { duration: 0.3, ease: EASE } },
 };
 
+// Gmail compose (not mailto:) — mailto hands off to whatever mail client is
+// registered on the visitor's machine, which is often unset or the wrong
+// app. This opens Gmail directly in a new tab with the recipient filled in,
+// so the visitor lands straight in a ready-to-send compose window.
+const gmailCompose = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(contact.email)}`;
+
 const links = [
-  { label: "Email", value: contact.email, href: `mailto:${contact.email}`, cmd: "open --mail" },
+  { label: "Email", value: contact.email, href: gmailCompose, cmd: "open --mail" },
   { label: "GitHub", value: "github.com/NaramCharan", href: contact.github, cmd: "git remote" },
   { label: "LinkedIn", value: "in/naramcharan", href: contact.linkedin, cmd: "connect --pro" },
   { label: "WhatsApp", value: "direct chat", href: contact.whatsapp, cmd: "ping --direct" },
