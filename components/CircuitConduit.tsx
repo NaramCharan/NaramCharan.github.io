@@ -5,7 +5,10 @@ import { animate } from "animejs";
 import { usePrefersReducedMotion } from "@/lib/useReducedMotion";
 
 // Sections the conduit taps into (ids must exist in page.tsx order).
+// It begins at METRICS — the power handoff from the reactor — and
+// terminates at LINK, where the final node pings gold.
 const TAPS = [
+  { id: "metrics", label: "00 POWER" },
   { id: "projects", label: "01 PROJECTS" },
   { id: "skills", label: "02 SYSTEMS" },
   { id: "about", label: "03 ORIGIN" },
@@ -114,8 +117,8 @@ export default function CircuitConduit() {
     <div
       ref={wrapRef}
       aria-hidden
-      className="pointer-events-none absolute z-0 hidden w-40 xl:block"
-      style={{ top: geo.top, height: geo.height, left: 14 }}
+      className="pointer-events-none absolute left-0.5 z-0 w-40 xl:left-3.5"
+      style={{ top: geo.top, height: geo.height }}
     >
       <svg
         width="24"
@@ -148,17 +151,18 @@ export default function CircuitConduit() {
         </g>
       </svg>
 
-      {/* section nodes + labels */}
+      {/* section nodes + labels (labels desktop-only; the line + nodes run
+          on every screen so mobile keeps the signature) */}
       {geo.nodes.map((n, i) => (
         <div key={n.label} className="absolute left-0" style={{ top: n.y }}>
           <span
             data-node={i}
             className={`conduit-node absolute left-[7.5px] top-[-4.5px] block h-[9px] w-[9px] rotate-45 border border-cyan/60 bg-bg ${
-              reduced ? "conduit-lit" : ""
-            }`}
+              i === geo.nodes.length - 1 ? "conduit-final" : ""
+            } ${reduced ? "conduit-lit" : ""}`}
           />
           <span
-            className={`conduit-label mono absolute left-[22px] top-2 text-[9px] tracking-[0.3em] text-cyan/70 [writing-mode:vertical-rl] ${
+            className={`conduit-label mono absolute left-[22px] top-2 hidden text-[9px] tracking-[0.3em] text-cyan/70 [writing-mode:vertical-rl] xl:block ${
               reduced ? "opacity-100" : ""
             }`}
           >

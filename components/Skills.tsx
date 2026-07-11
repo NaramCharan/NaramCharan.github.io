@@ -20,7 +20,13 @@ function SystemEmblem({ icon }: { icon: SkillSystem["icon"] }) {
     const el = dragRef.current;
     if (!el || reduced) return;
     const d = createDraggable(el, {
+      // swells slightly in your hand, then springs home on release —
+      // the grab feedback is what makes it feel physical, not scripted
+      onGrab: () => {
+        animate(el, { scale: 1.08, duration: 220, ease: "outQuad" });
+      },
       onRelease: (self) => {
+        animate(el, { scale: 1, duration: 320, ease: "outQuad" });
         animate(self, {
           x: 0,
           y: 0,

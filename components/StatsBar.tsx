@@ -31,12 +31,23 @@ function Odometer({ text, play }: { text: string; play: boolean }) {
     if (!el || !play) return;
     const strips = el.querySelectorAll<HTMLElement>(".od-strip");
     strips.forEach((strip, i) => {
-      animate(strip, {
+      const params = {
         translateY: `${-Number(strip.dataset.digit)}em`,
         duration: 1600,
         delay: i * 90,
         ease: "outExpo",
-      });
+      };
+      if (i === strips.length - 1) {
+        // the whole number gives a little spring pop the moment it lands
+        animate(strip, {
+          ...params,
+          onComplete: () => {
+            animate(el, { scale: [1, 1.07, 1], duration: 450, ease: "outBack(3)" });
+          },
+        });
+      } else {
+        animate(strip, params);
+      }
     });
   }, [play]);
 
@@ -77,9 +88,21 @@ export default function StatsBar() {
 
   return (
     <section
+      id="metrics"
       aria-label="Key metrics"
       className="relative border-y border-line bg-surface/40 py-10"
     >
+      {/* Power handoff — the reactor's charge sweeps in along the top edge
+          as the section reveals, then the odometers roll. Stitches the
+          cinematic hero to the playful world below. */}
+      <motion.span
+        aria-hidden
+        className="absolute inset-x-0 top-[-1px] h-px origin-left bg-gradient-to-r from-cyan via-cyan-bright to-gold shadow-[0_0_12px_rgba(34,211,238,0.8)]"
+        initial={{ scaleX: 0 }}
+        whileInView={{ scaleX: 1 }}
+        viewport={{ once: true, margin: "-60px" }}
+        transition={{ duration: 0.9, ease: EASE }}
+      />
       <motion.ul
         ref={listRef}
         className="mx-auto grid max-w-6xl grid-cols-2 gap-y-8 px-5 sm:grid-cols-4 sm:gap-0"
