@@ -189,6 +189,24 @@ h1 { letter-spacing: -0.035em; }
 .animate-radar { animation: radar-sweep 6s linear infinite; }
 .animate-ticker { animation: ticker 28s linear infinite; }
 
+/* Circuit conduit — section nodes go from dormant to lit as the charge
+   front passes; each node's label fades in alongside it. */
+.conduit-node {
+  transition: background-color 0.4s, border-color 0.4s, box-shadow 0.4s;
+}
+.conduit-node.conduit-lit {
+  background-color: var(--color-cyan);
+  border-color: var(--color-cyan-bright);
+  box-shadow: 0 0 10px rgba(34, 211, 238, 0.8);
+}
+.conduit-label {
+  opacity: 0;
+  transition: opacity 0.5s ease 0.15s;
+}
+.conduit-node.conduit-lit + .conduit-label {
+  opacity: 1;
+}
+
 /* Data pulses flowing along the Blueprint schematic connections */
 @keyframes dash-flow {
   to { stroke-dashoffset: -32; }

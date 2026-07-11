@@ -7,6 +7,7 @@ import { EASE } from "@/lib/motion";
 import { useTilt } from "@/lib/useTilt";
 import SectionHeading from "./SectionHeading";
 import ProjectHologram from "./ProjectHologram";
+import MiniDemo from "./MiniDemo";
 
 function ProjectCard({
   p,
@@ -80,6 +81,9 @@ function ProjectCard({
       <p className="mt-2 text-sm leading-relaxed text-text-muted">
         {p.description}
       </p>
+
+      {/* Live mini-demo — a tiny working visual of what this system does */}
+      <MiniDemo id={p.id} />
 
       {/* Key results — always visible (desktop + mobile) */}
       <div className="mt-4">

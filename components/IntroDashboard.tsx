@@ -10,6 +10,7 @@ import { usePrefersReducedMotion } from "@/lib/useReducedMotion";
 import { useDecode, useRotate } from "@/lib/useDecode";
 import { EASE } from "@/lib/motion";
 import { triggerResumeDownload } from "@/lib/resume";
+import { useMagnetic } from "@/lib/useMagnetic";
 import ArcReactorStatic from "./ArcReactorStatic";
 
 // Split the three.js bundle out of the initial load — the canvas streams in
@@ -72,6 +73,8 @@ export default function IntroDashboard() {
   const specialty = useRotate(SPECIALTIES);
   // JARVIS boot: the at-rest name scrambles in on load.
   const bootName = useDecode(profile.name, 42);
+  const magProjects = useMagnetic();
+  const magResume = useMagnetic();
 
   // Pointer parallax — writes --par-x/--par-y on the stage; the .par-layer
   // wrappers (each with its own --par-m depth) drift in CSS. GSAP never
@@ -267,6 +270,7 @@ export default function IntroDashboard() {
           </p>
           <div className="ia-ctas pointer-events-auto mt-6 flex flex-col gap-3 sm:flex-row">
             <a
+              ref={magProjects}
               href="#projects"
               className="group inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-cyan/50 bg-cyan/10 px-7 py-3 text-sm font-medium text-cyan transition-all duration-300 hover:bg-cyan/20 hover:shadow-[0_0_26px_rgba(34,211,238,0.35)]"
             >
@@ -274,6 +278,7 @@ export default function IntroDashboard() {
               <span className="transition-transform duration-300 group-hover:translate-x-0.5">→</span>
             </a>
             <a
+              ref={magResume}
               href={profile.resume}
               target="_blank"
               rel="noopener noreferrer"

@@ -1,61 +1,102 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
+import { animate, createDraggable, createSpring } from "animejs";
 import { skillSystems, type SkillSystem } from "@/lib/content";
 import { EASE } from "@/lib/motion";
+import { usePrefersReducedMotion } from "@/lib/useReducedMotion";
 import SectionHeading from "./SectionHeading";
+import DotGrid from "./DotGrid";
 import { SystemIcon } from "./SystemIcons";
 
 function SystemEmblem({ icon }: { icon: SkillSystem["icon"] }) {
+  const reduced = usePrefersReducedMotion();
+  const dragRef = useRef<HTMLDivElement>(null);
+
+  // The reticle is a toy: grab it, throw it, it springs back home
+  // (anime.js Draggable + spring release). Mouse/touch only, decorative.
+  useEffect(() => {
+    const el = dragRef.current;
+    if (!el || reduced) return;
+    const d = createDraggable(el, {
+      onRelease: (self) => {
+        animate(self, {
+          x: 0,
+          y: 0,
+          duration: 900,
+          ease: createSpring({ stiffness: 140, damping: 9 }),
+        });
+      },
+    });
+    return () => {
+      d.revert();
+    };
+  }, [reduced]);
+
   return (
     <div className="relative h-24 w-24 shrink-0">
-      {/* Rotating reticle ring (decorative, replaces the numeric gauge) */}
-      <svg viewBox="0 0 96 96" className="absolute inset-0 h-full w-full">
-        <circle cx="48" cy="48" r="44" fill="none" stroke="#0f1828" strokeWidth="2" />
-        <motion.circle
-          cx="48"
-          cy="48"
-          r="44"
-          fill="none"
-          stroke="#22d3ee"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeDasharray="14 10"
-          initial={{ rotate: 0, opacity: 0 }}
-          whileInView={{ rotate: 360, opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ rotate: { duration: 24, repeat: Infinity, ease: "linear" }, opacity: { duration: 0.6 } }}
-          style={{ transformOrigin: "center", filter: "drop-shadow(0 0 4px rgba(34,211,238,0.5))" }}
-        />
-        {/* corner ticks */}
-        {[0, 90, 180, 270].map((deg) => (
-          <line
-            key={deg}
-            x1="48"
-            y1="6"
-            x2="48"
-            y2="12"
-            stroke="#ffb23e"
+      <div ref={dragRef} className="absolute inset-0 cursor-grab active:cursor-grabbing">
+        {/* Rotating reticle ring (decorative, replaces the numeric gauge) */}
+        <svg viewBox="0 0 96 96" className="absolute inset-0 h-full w-full">
+          <circle cx="48" cy="48" r="44" fill="none" stroke="#0f1828" strokeWidth="2" />
+          <motion.circle
+            cx="48"
+            cy="48"
+            r="44"
+            fill="none"
+            stroke="#22d3ee"
             strokeWidth="2"
-            transform={`rotate(${deg} 48 48)`}
+            strokeLinecap="round"
+            strokeDasharray="14 10"
+            initial={{ rotate: 0, opacity: 0 }}
+            whileInView={{ rotate: 360, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ rotate: { duration: 24, repeat: Infinity, ease: "linear" }, opacity: { duration: 0.6 } }}
+            style={{ transformOrigin: "center", filter: "drop-shadow(0 0 4px rgba(34,211,238,0.5))" }}
           />
-        ))}
-      </svg>
-      <div className="absolute inset-0 flex items-center justify-center text-cyan glow-cyan">
-        <SystemIcon name={icon} className="h-9 w-9" />
+          {/* corner ticks */}
+          {[0, 90, 180, 270].map((deg) => (
+            <line
+              key={deg}
+              x1="48"
+              y1="6"
+              x2="48"
+              y2="12"
+              stroke="#ffb23e"
+              strokeWidth="2"
+              transform={`rotate(${deg} 48 48)`}
+            />
+          ))}
+        </svg>
+        <div className="absolute inset-0 flex items-center justify-center text-cyan glow-cyan">
+          <SystemIcon name={icon} className="h-9 w-9" />
+        </div>
       </div>
     </div>
   );
 }
 
 function SystemCard({ s, i }: { s: SkillSystem; i: number }) {
+  const reduced = usePrefersReducedMotion();
+
+  // Chips pop with a little spring when the pointer lands on them.
+  const popChip = (e: React.PointerEvent<HTMLLIElement>) => {
+    if (reduced || e.pointerType !== "mouse") return;
+    animate(e.currentTarget, {
+      scale: [1, 1.14, 1],
+      duration: 420,
+      ease: "outBack(2.5)",
+    });
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 22 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-70px" }}
       transition={{ duration: 0.7, ease: EASE, delay: i * 0.1 }}
-      className="flex gap-5 rounded-xl border border-line bg-surface/50 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-cyan/50 sm:p-7"
+      className="flex gap-5 rounded-xl border border-line bg-surface/50 p-6 backdrop-blur-[2px] transition-all duration-300 hover:-translate-y-1 hover:border-cyan/50 sm:p-7"
     >
       <SystemEmblem icon={s.icon} />
       <div className="min-w-0">
@@ -81,6 +122,7 @@ function SystemCard({ s, i }: { s: SkillSystem; i: number }) {
           {s.items.map((it) => (
             <motion.li
               key={it}
+              onPointerEnter={popChip}
               variants={{
                 hidden: { opacity: 0, y: 8, scale: 0.92 },
                 show: {
@@ -107,11 +149,14 @@ export default function Skills() {
       id="skills"
       className="relative scroll-mt-20 border-y border-line bg-bg-2/40 py-28"
     >
-      <div className="mx-auto max-w-6xl px-6">
+      {/* Interactive HUD dot field — ripples from clicks, glows under the
+          cursor, pulses on its own. Content sits above on z-10. */}
+      <DotGrid />
+      <div className="relative z-10 mx-auto max-w-6xl px-6">
         <SectionHeading
           index="02"
           title="Suit Systems"
-          subtitle="Core subsystems and their capabilities — the stack that powers every build."
+          subtitle="Core subsystems and their capabilities — the stack that powers every build. (Go ahead — poke the grid, grab a reticle.)"
         />
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
           {skillSystems.map((s, i) => (
