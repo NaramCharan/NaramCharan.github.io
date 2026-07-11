@@ -1,10 +1,16 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import { animate, stagger } from "animejs";
 import { EASE } from "@/lib/motion";
-import { useDecode } from "@/lib/useDecode";
+import { usePrefersReducedMotion } from "@/lib/useReducedMotion";
 
+/**
+ * Section headings break into characters that flip up into place one-by-one
+ * (the anime.js split-text signature). The plain title is always in the DOM
+ * for SSR/SEO; chars start hidden via inline style and cascade in on view.
+ */
 export default function SectionHeading({
   index,
   title,
@@ -14,11 +20,27 @@ export default function SectionHeading({
   title: string;
   subtitle?: string;
 }) {
+  const reduced = usePrefersReducedMotion();
   const ref = useRef<HTMLHeadingElement>(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
-  // Scramble-decodes once scrolled into view; "" until then, so we fall
-  // back to the plain title (invisible anyway at whileInView opacity 0).
-  const decoded = useDecode(title, 28, inView);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || !inView) return;
+    const chars = el.querySelectorAll<HTMLElement>(".sh-char");
+    if (reduced) {
+      chars.forEach((c) => (c.style.opacity = "1"));
+      return;
+    }
+    animate(chars, {
+      opacity: [0, 1],
+      translateY: ["0.55em", "0em"],
+      rotateX: [-90, 0],
+      duration: 750,
+      delay: stagger(30),
+      ease: "outExpo",
+    });
+  }, [inView, reduced]);
 
   return (
     <div className="mb-14">
@@ -41,19 +63,28 @@ export default function SectionHeading({
           SYSTEM MODULE
         </span>
       </motion.div>
-      <motion.h2
+      <h2
         ref={ref}
         aria-label={title}
-        initial={{ opacity: 0, y: 18 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-80px" }}
-        transition={{ duration: 0.7, ease: EASE, delay: 0.05 }}
         className="text-4xl font-semibold tracking-tight sm:text-5xl"
+        style={{ perspective: "600px" }}
       >
         <span aria-hidden className="glow-cyan">
-          {decoded || title}
+          {title.split("").map((ch, i) =>
+            ch === " " ? (
+              <span key={i}> </span>
+            ) : (
+              <span
+                key={i}
+                className="sh-char inline-block will-change-transform"
+                style={{ opacity: 0, transformStyle: "preserve-3d" }}
+              >
+                {ch}
+              </span>
+            )
+          )}
         </span>
-      </motion.h2>
+      </h2>
       {subtitle && (
         <motion.p
           initial={{ opacity: 0 }}

@@ -5,8 +5,10 @@ import { AnimatePresence, motion, useScroll, useSpring } from "framer-motion";
 import { navLinks, profile } from "@/lib/content";
 import { EASE } from "@/lib/motion";
 import { triggerResumeDownload } from "@/lib/resume";
+import { useMagnetic } from "@/lib/useMagnetic";
 
 export default function Navbar() {
+  const magnetic = useMagnetic();
   const { scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, {
     stiffness: 120,
@@ -107,6 +109,7 @@ export default function Navbar() {
 
           <div className="flex items-center gap-2">
             <a
+              ref={magnetic}
               href={profile.resume}
               target="_blank"
               rel="noopener noreferrer"

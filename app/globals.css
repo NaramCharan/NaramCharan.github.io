@@ -189,6 +189,38 @@ h1 { letter-spacing: -0.035em; }
 .animate-radar { animation: radar-sweep 6s linear infinite; }
 .animate-ticker { animation: ticker 28s linear infinite; }
 
+/* Circuit conduit — section nodes go from dormant to lit as the charge
+   front passes; each node's label fades in alongside it. */
+.conduit-node {
+  transition: background-color 0.4s, border-color 0.4s, box-shadow 0.4s;
+}
+.conduit-node.conduit-lit {
+  background-color: var(--color-cyan);
+  border-color: var(--color-cyan-bright);
+  box-shadow: 0 0 10px rgba(34, 211, 238, 0.8);
+}
+.conduit-label {
+  opacity: 0;
+  transition: opacity 0.5s ease 0.15s;
+}
+.conduit-node.conduit-lit + .conduit-label {
+  opacity: 1;
+}
+/* Terminal node — LINK ESTABLISHED: goes gold and pings when the charge
+   arrives at Contact (ring-charge keyframes already exist above). */
+.conduit-final.conduit-lit {
+  background-color: var(--color-gold);
+  border-color: var(--color-gold-bright);
+  box-shadow: 0 0 12px rgba(255, 178, 62, 0.9);
+}
+.conduit-final.conduit-lit::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border: 1px solid var(--color-gold);
+  animation: ring-charge 1.4s ease-out infinite;
+}
+
 /* Data pulses flowing along the Blueprint schematic connections */
 @keyframes dash-flow {
   to { stroke-dashoffset: -32; }
