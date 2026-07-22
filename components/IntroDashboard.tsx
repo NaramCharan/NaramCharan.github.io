@@ -180,7 +180,7 @@ export default function IntroDashboard() {
         {!reduced && (
           <div
             aria-hidden
-            className="ia-welcome pointer-events-none absolute inset-x-0 bottom-[12%] z-20 px-6"
+            className="ia-welcome pointer-events-none absolute inset-x-0 bottom-[max(12%,7.5rem)] z-20 px-6"
           >
             {/* Inner wrapper: parallax + boot-in stagger live here, so GSAP
                 keeps sole ownership of .ia-welcome's own transform/opacity. */}
@@ -211,12 +211,6 @@ export default function IntroDashboard() {
                 className="mono text-[11px] tracking-[0.22em] text-text sm:text-sm"
               >
                 ML ENGINEER · 3RD-YEAR CS · <span className="text-gold">OPEN TO INTERNSHIPS</span>
-              </motion.p>
-              <motion.p
-                variants={{ boot: { opacity: 0 }, on: { opacity: 1, transition: { duration: 0.9, ease: EASE } } }}
-                className="mono mt-1.5 text-[10px] tracking-[0.35em] text-cyan/70 sm:text-xs"
-              >
-                LET&apos;S DIVE IN
               </motion.p>
             </motion.div>
           </div>
@@ -372,7 +366,8 @@ export default function IntroDashboard() {
         </div>
         {!reduced && (
           <div className="ia-hint pointer-events-none absolute bottom-8 left-1/2 z-20 flex -translate-x-1/2 flex-col items-center gap-1.5">
-            <span className="mono text-[10px] tracking-[0.35em] text-cyan/80">SCROLL TO INITIALIZE</span>
+            <span className="mono text-[11px] tracking-[0.35em] text-cyan sm:text-xs">LET&apos;S DIVE IN</span>
+            <span className="mono text-[9px] tracking-[0.35em] text-cyan/60">SCROLL TO INITIALIZE</span>
             <svg viewBox="0 0 24 24" className="h-4 w-4 animate-bounce text-cyan/70" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
               <path d="M12 5v14M5 12l7 7 7-7" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
