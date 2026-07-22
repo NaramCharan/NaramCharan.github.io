@@ -79,7 +79,7 @@ export default function ProjectHologram({
             animate={{ opacity: 1, y: 0, scale: 1, filter: "brightness(1)" }}
             exit={reduced ? { opacity: 0 } : { opacity: 0, y: 16, scale: 0.97 }}
             transition={{ duration: 0.4, ease: EASE }}
-            className="scanlines relative z-10 flex max-h-[86vh] w-full max-w-2xl flex-col overflow-hidden rounded-xl border border-cyan/40 bg-gradient-to-br from-cyan/[0.08] via-surface/85 to-surface/90 shadow-[inset_0_0_28px_-14px_rgba(34,211,238,0.6),0_0_60px_-10px_rgba(34,211,238,0.5)] outline-none backdrop-blur-[15px]"
+            className="scanlines relative z-10 flex max-h-[92vh] sm:max-h-[88vh] w-full max-w-3xl flex-col overflow-hidden rounded-xl border border-cyan/40 bg-gradient-to-br from-cyan/[0.08] via-surface/85 to-surface/90 shadow-[inset_0_0_28px_-14px_rgba(34,211,238,0.6),0_0_60px_-10px_rgba(34,211,238,0.5)] outline-none backdrop-blur-[15px]"
           >
             {/* Glitch layer — brief skew blip every 3s, kept off the motion
                 element so it can't fight the entrance/exit transform */}
