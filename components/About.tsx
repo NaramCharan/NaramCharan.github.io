@@ -1,34 +1,79 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { profile, education, certifications } from "@/lib/content";
-import { EASE } from "@/lib/motion";
+import { usePrefersReducedMotion } from "@/lib/useReducedMotion";
 import SectionHeading from "./SectionHeading";
 
+gsap.registerPlugin(ScrollTrigger);
+
 export default function About() {
+  const reduced = usePrefersReducedMotion();
+  const narrativeRef = useRef<HTMLDivElement>(null);
+  const timelineRef = useRef<HTMLDivElement>(null);
+
+  // Narrative + education panel assemble as the section scrolls into view;
+  // the certifications timeline draws its spine and pops each entry in
+  // sequence. Both scrub with scroll (reversible) rather than firing once,
+  // matching the Projects/Blueprint/Skills pattern.
+  useEffect(() => {
+    const narrative = narrativeRef.current;
+    const timeline = timelineRef.current;
+    if (reduced) return;
+
+    const ctx = gsap.context(() => {
+      if (narrative) {
+        gsap.timeline({
+          scrollTrigger: { trigger: narrative, start: "top 88%", end: "top 45%", scrub: 0.5 },
+        }).from(narrative.querySelectorAll("[data-narrative-part]"), {
+          opacity: 0,
+          y: 18,
+          stagger: 0.12,
+          duration: 0.4,
+        });
+      }
+
+      if (timeline) {
+        const spine = timeline.querySelector<HTMLElement>("[data-spine]");
+        if (spine) spine.style.transformOrigin = "top";
+        const tl = gsap.timeline({
+          scrollTrigger: { trigger: timeline, start: "top 85%", end: "bottom 55%", scrub: 0.5 },
+        });
+        if (spine) tl.from(spine, { scaleY: 0, duration: 0.6 }, 0);
+        tl.from(
+          timeline.querySelectorAll("[data-cert-dot]"),
+          { scale: 0, transformOrigin: "50% 50%", stagger: 0.09, duration: 0.25, ease: "back.out(2)" },
+          0.05
+        ).from(
+          timeline.querySelectorAll("[data-cert-item]"),
+          { opacity: 0, x: -14, stagger: 0.09, duration: 0.35 },
+          0.05
+        );
+      }
+    });
+
+    return () => ctx.revert();
+  }, [reduced]);
+
   return (
     <section id="about" className="mx-auto max-w-6xl scroll-mt-20 px-6 py-28">
       <SectionHeading index="03" title="Origin Story" />
 
       <div className="grid grid-cols-1 gap-12 lg:grid-cols-5">
         {/* Narrative */}
-        <motion.div
-          initial={{ opacity: 0, y: 18 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.5 }}
-          className="lg:col-span-3"
-        >
+        <div ref={narrativeRef} className="lg:col-span-3">
           <div className="space-y-5 text-base leading-relaxed text-text-muted">
             {profile.about.map((para, i) => (
-              <p key={i} className={i === 0 ? "text-text" : undefined}>
+              <p key={i} data-narrative-part className={i === 0 ? "text-text" : undefined}>
                 {para}
               </p>
             ))}
           </div>
 
           {/* Education panel */}
-          <div className="mt-10 rounded-xl border border-line bg-surface/50 p-6">
+          <div data-narrative-part className="mt-10 rounded-xl border border-line bg-surface/50 p-6">
             <div className="mb-3 mono text-[10px] tracking-[0.3em] text-gold">
               EDUCATION
             </div>
@@ -56,64 +101,25 @@ export default function About() {
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Certifications timeline */}
-        <motion.div
-          initial={{ opacity: 0, y: 18 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="lg:col-span-2"
-        >
+        <div ref={timelineRef} className="lg:col-span-2">
           <div className="mb-4 mono text-[10px] tracking-[0.3em] text-gold">
             CERTIFICATIONS
           </div>
-          {/* One observer on the (full-size) list; the zero-size spine/dots
-              animate as variant children — IO never fires on 0×0 elements. */}
-          <motion.ul
-            className="relative space-y-3 pl-6"
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: "-40px" }}
-            variants={{ hidden: {}, show: { transition: { staggerChildren: 0.09 } } }}
-          >
+          <div className="relative space-y-3 pl-6">
             {/* Timeline spine draws itself top-to-bottom on reveal */}
-            <motion.span
+            <span
+              data-spine
               aria-hidden
-              variants={{
-                hidden: { scaleY: 0 },
-                show: { scaleY: 1, transition: { duration: 1.1, ease: EASE } },
-              }}
               className="absolute left-0 top-0 h-full w-px origin-top bg-gradient-to-b from-cyan/70 via-line to-transparent"
             />
             {certifications.map((c) => (
-              <motion.li
-                key={c.name}
-                variants={{
-                  hidden: { opacity: 0, x: -14 },
-                  show: {
-                    opacity: 1,
-                    x: 0,
-                    transition: { duration: 0.5, ease: EASE },
-                  },
-                }}
-                className="relative"
-              >
-                <motion.span
+              <div key={c.name} data-cert-item className="relative">
+                <span
+                  data-cert-dot
                   aria-hidden
-                  variants={{
-                    hidden: { scale: 0 },
-                    show: {
-                      scale: 1,
-                      transition: {
-                        type: "spring",
-                        stiffness: 320,
-                        damping: 18,
-                        delay: 0.15,
-                      },
-                    },
-                  }}
                   className="absolute -left-[26px] top-3.5 h-2.5 w-2.5 rounded-full border border-cyan bg-bg shadow-[0_0_8px_rgba(34,211,238,0.7)]"
                 />
                 <a
@@ -145,10 +151,10 @@ export default function About() {
                     {c.note} · VERIFY →
                   </p>
                 </a>
-              </motion.li>
+              </div>
             ))}
-          </motion.ul>
-        </motion.div>
+          </div>
+        </div>
       </div>
     </section>
   );

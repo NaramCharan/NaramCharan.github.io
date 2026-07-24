@@ -3,12 +3,15 @@
 import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { animate, createDraggable, createSpring } from "animejs";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { skillSystems, type SkillSystem } from "@/lib/content";
-import { EASE } from "@/lib/motion";
 import { usePrefersReducedMotion } from "@/lib/useReducedMotion";
 import SectionHeading from "./SectionHeading";
 import DotGrid from "./DotGrid";
 import { SystemIcon } from "./SystemIcons";
+
+gsap.registerPlugin(ScrollTrigger);
 
 function SystemEmblem({ icon }: { icon: SkillSystem["icon"] }) {
   const reduced = usePrefersReducedMotion();
@@ -43,7 +46,7 @@ function SystemEmblem({ icon }: { icon: SkillSystem["icon"] }) {
   return (
     <div className="relative h-24 w-24 shrink-0">
       <div ref={dragRef} className="absolute inset-0 cursor-grab active:cursor-grabbing">
-        {/* Rotating reticle ring (decorative, replaces the numeric gauge) */}
+        {/* Rotating reticle ring — spins continuously once assembled */}
         <svg viewBox="0 0 96 96" className="absolute inset-0 h-full w-full">
           <circle cx="48" cy="48" r="44" fill="none" stroke="#0f1828" strokeWidth="2" />
           <motion.circle
@@ -55,10 +58,8 @@ function SystemEmblem({ icon }: { icon: SkillSystem["icon"] }) {
             strokeWidth="2"
             strokeLinecap="round"
             strokeDasharray="14 10"
-            initial={{ rotate: 0, opacity: 0 }}
-            whileInView={{ rotate: 360, opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ rotate: { duration: 24, repeat: Infinity, ease: "linear" }, opacity: { duration: 0.6 } }}
+            animate={reduced ? { rotate: 0 } : { rotate: 360 }}
+            transition={{ duration: 24, repeat: Infinity, ease: "linear" }}
             style={{ transformOrigin: "center", filter: "drop-shadow(0 0 4px rgba(34,211,238,0.5))" }}
           />
           {/* corner ticks */}
@@ -83,8 +84,9 @@ function SystemEmblem({ icon }: { icon: SkillSystem["icon"] }) {
   );
 }
 
-function SystemCard({ s, i }: { s: SkillSystem; i: number }) {
+function SystemCard({ s }: { s: SkillSystem }) {
   const reduced = usePrefersReducedMotion();
+  const rootRef = useRef<HTMLDivElement>(null);
 
   // Chips pop with a little spring when the pointer lands on them.
   const popChip = (e: React.PointerEvent<HTMLLIElement>) => {
@@ -96,56 +98,68 @@ function SystemCard({ s, i }: { s: SkillSystem; i: number }) {
     });
   };
 
+  // Card assembles as it scrolls into view — emblem, label, heading and each
+  // chip lock into place in sequence, reversing on scroll-back — matching the
+  // Projects/Blueprint scrub pattern rather than a one-shot entrance.
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el || reduced) return;
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: el,
+          start: "top 90%",
+          end: "top 40%",
+          scrub: 0.5,
+        },
+      });
+      tl.from(el, { opacity: 0, y: 22, duration: 0.3 }, 0)
+        .from(
+          el.querySelector("[data-emblem]"),
+          { scale: 0, opacity: 0, transformOrigin: "50% 50%", duration: 0.35, ease: "back.out(1.8)" },
+          0.1
+        )
+        .from(el.querySelectorAll("[data-tag], [data-heading]"), { opacity: 0, x: -10, stagger: 0.06, duration: 0.3 }, 0.2)
+        .from(
+          el.querySelectorAll("[data-chip]"),
+          { opacity: 0, y: 8, scale: 0.9, stagger: 0.045, duration: 0.3 },
+          0.35
+        );
+    }, el);
+    return () => ctx.revert();
+  }, [reduced]);
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 22 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-70px" }}
-      transition={{ duration: 0.7, ease: EASE, delay: i * 0.1 }}
-      className="flex gap-5 rounded-xl border border-line bg-surface/50 p-6 backdrop-blur-[2px] transition-all duration-300 hover:-translate-y-1 hover:border-cyan/50 sm:p-7"
+    <div
+      ref={rootRef}
+      className="flex gap-5 rounded-xl border border-line bg-surface/50 p-6 backdrop-blur-[2px] transition-colors duration-300 hover:border-cyan/50 sm:p-7"
     >
-      <SystemEmblem icon={s.icon} />
+      <div data-emblem>
+        <SystemEmblem icon={s.icon} />
+      </div>
       <div className="min-w-0">
-        <div className="mb-1 flex items-center gap-2">
+        <div data-tag className="mb-1 flex items-center gap-2">
           <span className="mono text-[10px] tracking-[0.25em] text-gold">
             ◢ {s.tag}
           </span>
         </div>
-        <h3 className="text-lg font-semibold text-text">{s.system}</h3>
-        {/* Chips cascade in one-by-one after the card lands */}
-        <motion.ul
-          className="mt-3 flex flex-wrap gap-2"
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: "-60px" }}
-          variants={{
-            hidden: {},
-            show: {
-              transition: { staggerChildren: 0.05, delayChildren: 0.25 + i * 0.1 },
-            },
-          }}
-        >
+        <h3 data-heading className="text-lg font-semibold text-text">
+          {s.system}
+        </h3>
+        <ul className="mt-3 flex flex-wrap gap-2">
           {s.items.map((it) => (
-            <motion.li
+            <li
               key={it}
+              data-chip
               onPointerEnter={popChip}
-              variants={{
-                hidden: { opacity: 0, y: 8, scale: 0.92 },
-                show: {
-                  opacity: 1,
-                  y: 0,
-                  scale: 1,
-                  transition: { duration: 0.45, ease: EASE },
-                },
-              }}
               className="mono rounded bg-cyan/8 px-2 py-1 text-[11px] text-cyan/90 ring-1 ring-inset ring-cyan/20 transition-colors duration-200 hover:bg-cyan/15 hover:text-cyan-bright"
             >
               {it}
-            </motion.li>
+            </li>
           ))}
-        </motion.ul>
+        </ul>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -165,8 +179,8 @@ export default function Skills() {
           subtitle="Core subsystems and their capabilities — the stack that powers every build. (Go ahead — poke the grid, grab a reticle.)"
         />
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-          {skillSystems.map((s, i) => (
-            <SystemCard key={s.system} s={s} i={i} />
+          {skillSystems.map((s) => (
+            <SystemCard key={s.system} s={s} />
           ))}
         </div>
       </div>

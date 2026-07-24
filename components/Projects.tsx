@@ -1,24 +1,68 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { projects, type Project } from "@/lib/content";
-import { EASE } from "@/lib/motion";
 import { useTilt } from "@/lib/useTilt";
+import { usePrefersReducedMotion } from "@/lib/useReducedMotion";
 import SectionHeading from "./SectionHeading";
 import ProjectHologram from "./ProjectHologram";
 import MiniDemo from "./MiniDemo";
 
+gsap.registerPlugin(ScrollTrigger);
+
 function ProjectCard({
   p,
-  i,
   onBrief,
 }: {
   p: Project;
-  i: number;
   onBrief: (p: Project) => void;
 }) {
   const tilt = useTilt(3.5);
+  const reduced = usePrefersReducedMotion();
+
+  // Exploded-parts assembly, scrubbed by scroll: each internal part starts
+  // offset/rotated outside the frame and locks into place as the card enters
+  // the viewport (reverses on scroll-back). SSR markup is the assembled state.
+  useEffect(() => {
+    const el = tilt.ref.current;
+    if (!el || reduced) return;
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: el,
+          start: "top 94%",
+          end: "top 45%",
+          scrub: 0.5,
+        },
+      });
+      tl.from(el.querySelectorAll("[data-bracket]"), {
+        scale: 0,
+        opacity: 0,
+        duration: 0.22,
+        stagger: 0.04,
+        ease: "back.out(2)",
+      });
+      el.querySelectorAll<HTMLElement>("[data-part]").forEach((part, pi) => {
+        tl.from(
+          part,
+          {
+            x: pi % 2 ? 30 : -30,
+            y: 24 + (pi % 3) * 8,
+            rotate: pi % 2 ? 2.5 : -2.5,
+            opacity: 0,
+            filter: "blur(4px)",
+            duration: 0.45,
+            ease: "power2.out",
+          },
+          0.1 + pi * 0.09
+        );
+      });
+    }, el);
+    return () => ctx.revert();
+  }, [reduced, tilt.ref]);
 
   return (
     <motion.article
@@ -36,16 +80,25 @@ function ProjectCard({
         rotateY: tilt.rotateY,
         transformPerspective: 900,
       }}
-      // Hologram materialization — blur resolving to sharp reads far more
-      // clearly than a plain fade, and fits the FRIDAY projection theme.
-      initial={{ opacity: 0, y: 24, scale: 0.98, filter: "blur(8px)" }}
-      whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
-      viewport={{ once: true, margin: "-70px" }}
-      transition={{ duration: 0.7, ease: EASE, delay: (i % 2) * 0.1 }}
       className={`group relative flex cursor-pointer flex-col justify-between overflow-hidden rounded-xl border border-line bg-surface/60 p-5 transition-colors duration-300 hover:border-cyan/60 hover:bg-surface-2/70 hover:shadow-[0_0_36px_-6px_rgba(34,211,238,0.35)] sm:p-6 ${
         p.featured ? "md:col-span-2" : ""
       }`}
     >
+      {/* HUD lock-on brackets — first parts to snap in during assembly */}
+      {[
+        "left-2 top-2 border-l border-t",
+        "right-2 top-2 border-r border-t",
+        "left-2 bottom-2 border-l border-b",
+        "right-2 bottom-2 border-r border-b",
+      ].map((cls) => (
+        <span
+          key={cls}
+          data-bracket
+          aria-hidden
+          className={`pointer-events-none absolute z-10 h-4 w-4 border-cyan/60 ${cls}`}
+        />
+      ))}
+
       {/* Scan sweep on hover */}
       <span
         aria-hidden
@@ -65,7 +118,7 @@ function ProjectCard({
         {/* Left Column (or Top) */}
         <div className="flex flex-col justify-between h-full">
           <div>
-            <div className="mb-3 flex flex-wrap items-center gap-2">
+            <div data-part className="mb-3 flex flex-wrap items-center gap-2">
               <span className="mono rounded border border-cyan/40 px-2 py-0.5 text-[10px] tracking-[0.2em] text-cyan">
                 {p.code}
               </span>
@@ -80,7 +133,7 @@ function ProjectCard({
             </div>
 
             {/* Title + headline metric */}
-            <div className="flex items-start justify-between gap-3">
+            <div data-part className="flex items-start justify-between gap-3">
               <h3 className="text-base font-semibold leading-snug text-text transition-colors duration-200 group-hover:text-cyan-bright sm:text-lg">
                 {p.name}
               </h3>
@@ -88,14 +141,14 @@ function ProjectCard({
                 {p.metric}
               </span>
             </div>
-            <p className="mt-2 text-xs leading-relaxed text-text-muted sm:text-sm">
+            <p data-part className="mt-2 text-xs leading-relaxed text-text-muted sm:text-sm">
               {p.description}
             </p>
           </div>
 
           {/* Action buttons on desktop for featured card */}
           {p.featured && (
-            <div className="hidden md:flex items-center justify-between gap-3 border-t border-line pt-4 mt-4">
+            <div data-part className="hidden md:flex items-center justify-between gap-3 border-t border-line pt-4 mt-4">
               <button
                 type="button"
                 onClick={() => onBrief(p)}
@@ -128,10 +181,12 @@ function ProjectCard({
         <div className="flex flex-col justify-between mt-3 md:mt-0">
           <div>
             {/* Live mini-demo */}
-            <MiniDemo id={p.id} />
+            <div data-part>
+              <MiniDemo id={p.id} />
+            </div>
 
             {/* Key results */}
-            <div className="mt-3">
+            <div data-part className="mt-3">
               <p className="mono mb-1.5 flex items-center gap-2 text-[10px] tracking-[0.25em] text-gold/90">
                 <span className="h-px w-3 bg-gold/70" /> KEY RESULTS
               </p>
@@ -148,7 +203,7 @@ function ProjectCard({
             </div>
           </div>
 
-          <div className="mt-3 flex flex-wrap gap-1.5">
+          <div data-part className="mt-3 flex flex-wrap gap-1.5">
             {p.tech.map((t) => (
               <span
                 key={t}
@@ -163,7 +218,7 @@ function ProjectCard({
 
       {/* Action buttons for normal cards (and mobile for featured card) */}
       {(!p.featured || true) && (
-        <div className={`mt-4 flex items-center justify-between gap-3 border-t border-line pt-3.5 ${p.featured ? "md:hidden" : ""}`}>
+        <div data-part className={`mt-4 flex items-center justify-between gap-3 border-t border-line pt-3.5 ${p.featured ? "md:hidden" : ""}`}>
           <button
             type="button"
             onClick={() => onBrief(p)}
@@ -213,8 +268,8 @@ export default function Projects() {
         subtitle="Production-grade ML systems — each scanned, validated, and leakage-checked before deployment. Tap any card or FRIDAY for the full brief."
       />
       <div className="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2">
-        {projects.map((p, i) => (
-          <ProjectCard key={p.id} p={p} i={i} onBrief={setActive} />
+        {projects.map((p) => (
+          <ProjectCard key={p.id} p={p} onBrief={setActive} />
         ))}
       </div>
 
