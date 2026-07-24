@@ -9,7 +9,7 @@ export const profile = {
   status: "3rd-year CS · AI & ML · Open to internships",
   location: "Gurugram, India",
   about: [
-    "It started with a man in a metal suit and an AI named JARVIS. The obsession was never the armor — it was the intelligence behind it.",
+    "It started with a man in a suit of armor and an AI he trusted completely — loyal, steady, present in a way that's rare to find in people, let alone machines. Figuring out how to build that turned a childhood fascination into a career.",
     "I'm a 3rd-year CS student specializing in AI & Machine Learning, focused on end-to-end data pipelines, predictive modeling, and scalable systems — not notebook exercises.",
     "I build recommendation architectures with deep learning and vector-index search, tune tree-based classifiers with hyperparameter optimization, and obsess over data-separation methodology so models hold up in production, not just on a leaderboard.",
   ],
@@ -232,6 +232,12 @@ export const education = {
 
 // `url` = the holder's real credential verification link.
 export const certifications = [
+  {
+    name: "Deep Learning Specialization",
+    issuer: "DeepLearning.AI",
+    note: "Jul 2026",
+    url: "https://learn.deeplearning.ai/certificates/07716d58-daf9-4806-80a5-cfdac044a258?usp=sharing",
+  },
   {
     name: "Claude Code: A Highly Agentic Coding Assistant",
     issuer: "DeepLearning.AI · Anthropic",
