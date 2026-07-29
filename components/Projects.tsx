@@ -265,7 +265,7 @@ export default function Projects() {
   const [active, setActive] = useState<Project | null>(null);
 
   return (
-    <section id="projects" className="mx-auto max-w-6xl scroll-mt-20 px-4 sm:px-6 py-16 md:py-24">
+    <section id="projects" className="mx-auto max-w-6xl scroll-mt-20 px-6 py-28">
       <SectionHeading
         index="01"
         title="Projects"

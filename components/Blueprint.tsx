@@ -85,9 +85,9 @@ export default function Blueprint() {
   return (
     <section
       aria-label="Recommendation engine schematic"
-      className="relative overflow-hidden border-b border-line py-24"
+      className="relative overflow-hidden border-b border-line py-28"
     >
-      <div className="mx-auto max-w-6xl px-5">
+      <div className="mx-auto max-w-6xl px-6">
         <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="mono mb-2 text-[10px] tracking-[0.4em] text-gold">
@@ -129,9 +129,13 @@ export default function Blueprint() {
             />
           ))}
 
+          {/* Below md the 900-wide viewBox scaled to 0.33, rendering every
+              label at 3–5 effective pixels. Scroll the diagram instead of
+              shrinking it into illegibility. */}
+          <div className="-mx-2 overflow-x-auto px-2 pb-2 md:mx-0 md:overflow-visible md:px-0 md:pb-0">
           <svg
             viewBox="0 0 900 360"
-            className="relative w-full"
+            className="relative w-full min-w-[820px] md:min-w-0"
             role="img"
             aria-label="Diagram: user and item embeddings feed a neural network, producing 32-dimensional vectors indexed by FAISS for sub-10ms retrieval."
           >
@@ -361,6 +365,7 @@ export default function Blueprint() {
               </text>
             </g>
           </svg>
+          </div>
 
           {/* Spec footer */}
           <div className="mt-4 grid grid-cols-2 gap-3 border-t border-line pt-4 sm:grid-cols-4">

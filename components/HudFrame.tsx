@@ -25,9 +25,9 @@ export default function HudFrame() {
       <Corner className="bottom-3 left-3 -rotate-90" />
       <Corner className="bottom-3 right-3 rotate-180" />
 
-      <div className="absolute left-1/2 top-3 -translate-x-1/2 mono text-[10px] tracking-[0.35em] text-cyan/50">
-        J.A.R.V.I.S · ONLINE
-      </div>
+      {/* "J.A.R.V.I.S · ONLINE" used to sit at top-3, permanently buried under
+          the fixed navbar as a grey smudge. Removed rather than relocated —
+          the hero bottom already carries two scroll cues and this label. */}
       <div className="absolute bottom-3 left-1/2 hidden -translate-x-1/2 mono text-[10px] tracking-[0.3em] text-text-muted/50 sm:block">
         MARK XLII · PERSONAL INTERFACE
       </div>

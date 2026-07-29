@@ -113,20 +113,19 @@ export default function IntroDashboard() {
           { autoAlpha: 1, y: 0, duration: 0.03, stagger: 0.012 },
           0.31
         )
-        .to(".ia-code", { autoAlpha: 0, duration: 0.08 }, 0.66)
-        .from(".ia-name", { autoAlpha: 0, y: 28, duration: 0.09 }, 0.75)
-        .from(".ia-spec", { autoAlpha: 0, y: 14, duration: 0.06 }, 0.82)
-        .fromTo(".ia-quote", { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 0.1, ease: "none" }, 0.85)
+        .to(".ia-code", { autoAlpha: 0, duration: 0.08 }, 0.58)
+        .from(".ia-name", { autoAlpha: 0, y: 28, duration: 0.09 }, 0.66)
+        .from(".ia-spec", { autoAlpha: 0, y: 14, duration: 0.06 }, 0.76)
+        .fromTo(".ia-quote", { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 0.1, ease: "none" }, 0.8)
         // caret exists only while the quote "types" — hidden at rest and after
-        .fromTo(".ia-caret", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.01 }, 0.85)
-        .to(".ia-caret", { autoAlpha: 0, duration: 0.02 }, 0.96)
-        .from(".ia-ctas", { autoAlpha: 0, y: 16, duration: 0.06 }, 0.9)
+        .fromTo(".ia-caret", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.01 }, 0.8)
+        .to(".ia-caret", { autoAlpha: 0, duration: 0.02 }, 0.94)
+        .from(".ia-ctas", { autoAlpha: 0, y: 16, duration: 0.06 }, 0.86)
         // panels boot one-by-one — scale + wider stagger makes each land legibly
-        // (last one settles by ~0.955 so the full HUD reads before track end)
         .from(
           ".ia-panel",
-          { autoAlpha: 0, y: 18, scale: 0.94, duration: 0.07, stagger: 0.025 },
-          0.76
+          { autoAlpha: 0, y: 18, scale: 0.94, duration: 0.07, stagger: 0.035 },
+          0.68
         )
         .to({}, { duration: 0.001 }, 1); // pad so positions ≈ scroll fraction
 
@@ -142,7 +141,9 @@ export default function IntroDashboard() {
       ref={trackRef}
       aria-label="Intro"
       data-seg="a"
-      className={reduced ? "relative" : "relative h-[320vh]"}
+      // 180vh, down from 320vh. At 320 the hero was 29% of the whole page and
+      // segment B ran ~1,300px with no text on screen at all.
+      className={reduced ? "relative" : "relative h-[180vh]"}
     >
       <div
         ref={stageRef}
@@ -177,7 +178,9 @@ export default function IntroDashboard() {
         {!reduced && (
           <div
             aria-hidden
-            className="ia-welcome pointer-events-none absolute inset-x-0 bottom-[12%] z-20 px-6"
+            // Centred, not parked in the bottom 17%: the reticle is a halo
+            // behind the name now rather than a 400px empty ring above it.
+            className="ia-welcome pointer-events-none absolute inset-0 z-20 flex items-center justify-center px-6"
           >
             {/* Inner wrapper: parallax + boot-in stagger live here, so GSAP
                 keeps sole ownership of .ia-welcome's own transform/opacity. */}
@@ -199,7 +202,10 @@ export default function IntroDashboard() {
               </motion.p>
               <motion.p
                 variants={{ boot: { opacity: 0, y: 14 }, on: { opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE } } }}
-                className="text-balance text-4xl font-semibold tracking-tight text-text glow-cyan sm:text-6xl"
+                // font-display: this is a <p>, so without it the name renders in
+                // Sora here but Space Grotesk in segment C — one hero, one name,
+                // two typefaces.
+                className="font-display text-balance text-5xl font-semibold tracking-tight text-text glow-cyan sm:text-6xl lg:text-7xl"
               >
                 {bootName || " "}
               </motion.p>
@@ -207,13 +213,17 @@ export default function IntroDashboard() {
                 variants={{ boot: { opacity: 0, y: 10 }, on: { opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE } } }}
                 className="mono text-[11px] tracking-[0.22em] text-text sm:text-sm"
               >
-                ML ENGINEER · 3RD-YEAR CS · <span className="text-gold">OPEN TO INTERNSHIPS</span>
+                ML ENGINEER · 3RD-YEAR CS ·{" "}
+                <span className="whitespace-nowrap text-gold">OPEN TO INTERNSHIPS</span>
               </motion.p>
+              {/* Proof, at rest. These numbers used to sit three viewport
+                  scrolls away behind the assembly; LET'S DIVE IN moved into
+                  the scroll-hint stack so the two can't collide. */}
               <motion.p
-                variants={{ boot: { opacity: 0 }, on: { opacity: 1, transition: { duration: 0.9, ease: EASE } } }}
-                className="mono mt-1.5 text-[10px] tracking-[0.35em] text-cyan/70 sm:text-xs"
+                variants={{ boot: { opacity: 0, y: 8 }, on: { opacity: 1, y: 0, transition: { duration: 0.85, ease: EASE } } }}
+                className="mono mt-1 max-w-xs text-balance text-[10px] leading-relaxed tracking-[0.14em] text-cyan/85 sm:max-w-none sm:text-[11px]"
               >
-                LET&apos;S DIVE IN
+                5 SHIPPED ML SYSTEMS · 95.55% R² FORECASTER · 98.28% CHURN CLASSIFIER
               </motion.p>
             </motion.div>
           </div>
@@ -242,10 +252,14 @@ export default function IntroDashboard() {
           <h1 className="ia-name text-balance text-4xl font-semibold leading-[0.95] tracking-tight sm:text-6xl lg:text-7xl">
             <span className="glow-cyan">{profile.name}</span>
           </h1>
-          <div className="ia-spec mt-3 flex h-6 items-center gap-2 mono text-xs tracking-[0.15em] text-text-dim sm:text-sm">
-            <span className="text-gold">◢</span>
-            <span>SPECIALIZING IN</span>
-            <span className="relative inline-flex min-w-[13ch] justify-start text-cyan">
+          {/* Stacks below sm: as one row the reserved 13ch pushed the line to
+              308px, so it overflowed and sat visibly left of the name's axis. */}
+          <div className="ia-spec mt-3 flex flex-col items-center gap-1 mono text-xs tracking-[0.15em] text-text-dim sm:h-6 sm:flex-row sm:gap-2 sm:text-sm">
+            <span className="flex items-center gap-2">
+              <span className="text-gold">◢</span>
+              <span>SPECIALIZING IN</span>
+            </span>
+            <span className="relative inline-flex justify-center text-cyan sm:min-w-[13ch] sm:justify-start">
               <AnimatePresence mode="wait">
                 <motion.span
                   key={specialty}
@@ -260,10 +274,14 @@ export default function IntroDashboard() {
             </span>
           </div>
           <p className="mt-3 max-w-md text-balance text-lg leading-relaxed text-text sm:text-xl">
-            <span className="ia-quote inline-block">&ldquo;{profile.tagline}&rdquo;</span>
-            {!reduced && (
-              <span aria-hidden className="ia-caret ml-0.5 inline-block h-5 w-2 translate-y-0.5 animate-blink bg-cyan align-baseline" />
-            )}
+            {/* Caret lives inside the quote span — outside it, the wrapped
+                tagline orphaned it onto a line of its own as a stray block. */}
+            <span className="ia-quote inline-block">
+              &ldquo;{profile.tagline}&rdquo;
+              {!reduced && (
+                <span aria-hidden className="ia-caret ml-0.5 inline-block h-5 w-2 translate-y-0.5 animate-blink bg-cyan align-baseline" />
+              )}
+            </span>
           </p>
           {/* One CTA only. Resume is always reachable in the navbar and again
               in the dossier immediately below — three entry points was noise. */}
@@ -285,17 +303,10 @@ export default function IntroDashboard() {
           className="par-layer pointer-events-none absolute inset-0 z-10 hidden lg:block"
           style={{ "--par-m": -10 } as React.CSSProperties}
         >
-          <Panel className="left-8 top-24 w-[220px]">
-            <PanelHead label="SUIT SYSTEMS" code="PWR" />
-            <div className="flex items-center gap-4">
-              <PowerGauge />
-              <div>
-                <div className="mono text-xl font-bold text-cyan glow-cyan">100%</div>
-                <div className="mono text-[9px] tracking-[0.2em] text-text-dim">POWER LEVEL</div>
-              </div>
-            </div>
-          </Panel>
-
+          {/* Three panels, all real. SUIT SYSTEMS (100% POWER LEVEL), SYSTEM
+              FEED and GLOBAL NODES were invented telemetry sitting at equal
+              weight beside the two genuine metrics — once a viewer clocks the
+              theatre, the 98.28% next to it inherits the doubt. */}
           <Panel className="left-8 top-1/2 w-[250px] -translate-y-1/2">
             <PanelHead label="CHURN MODEL ACCURACY" code="MK-02" />
             <div className="flex items-end justify-between">
@@ -308,35 +319,21 @@ export default function IntroDashboard() {
           <Panel className="bottom-16 left-8 w-[260px]">
             <PanelHead label="STORE-DEPT FORECAST" code="MK-01" />
             <ForecastBars />
-            <p className="mono mt-2 text-[9px] tracking-wide text-text-dim">95.55% VALIDATION R² · LIGHTGBM</p>
+            <p className="mono mt-2 flex items-center gap-2 text-[9px] tracking-wide text-text-dim">
+              <span className="text-gold">■</span> ACTUAL
+              <span className="ml-1 text-cyan">■</span> FORECAST
+              <span className="ml-auto">95.55% R²</span>
+            </p>
           </Panel>
 
-          <Panel className="right-8 top-20 w-[260px]">
-            <PanelHead label="SYSTEM FEED" code="LIVE" />
-            <ul className="space-y-1">
-              {[
-                ["INITIALIZING JARVIS CORE", "OK"],
-                ["LOADING NEURAL MODULES", "OK"],
-                ["FAISS VECTOR INDEX", "OK"],
-                ["MODEL INFERENCE ENGINE", "OK"],
-                ["REAL-TIME MONITORING", "OK"],
-              ].map(([l, s]) => (
-                <li key={l} className="mono flex items-center gap-2 text-[10px] text-cyan/85">
-                  <span className="text-gold">&gt;</span>
-                  <span className="truncate">{l}</span>
-                  <span className="ml-auto text-cyan-bright">{s}</span>
-                </li>
-              ))}
-            </ul>
-          </Panel>
-
-          <Panel className="right-8 top-1/2 w-[240px] -translate-y-1/2">
-            <PanelHead label="TELEMETRY" code="RT" />
+          {/* Third real panel: the NCF retrieval rig, from MK-03's actual specs */}
+          <Panel className="right-8 top-1/2 w-[250px] -translate-y-1/2">
+            <PanelHead label="NCF RETRIEVAL" code="MK-03" />
             <div className="grid grid-cols-3 gap-2 text-center">
               {[
-                ["<10", "MS", "LATENCY"],
-                ["421K", "", "RECORDS"],
-                ["OK", "", "FAISS"],
+                ["32", "D", "EMBEDDING"],
+                ["<10", "MS", "RETRIEVAL"],
+                ["L2", "", "FAISS"],
               ].map(([v, u, k]) => (
                 <div key={k}>
                   <div className="mono text-lg font-bold text-cyan glow-cyan">
@@ -347,10 +344,6 @@ export default function IntroDashboard() {
                 </div>
               ))}
             </div>
-          </Panel>
-
-          <Panel className="bottom-16 right-8 w-[260px]">
-            <PanelHead label="GLOBAL NODES" code="NET" />
             <NodeNet />
           </Panel>
         </div>
@@ -361,7 +354,8 @@ export default function IntroDashboard() {
         </div>
         {!reduced && (
           <div className="ia-hint pointer-events-none absolute bottom-8 left-1/2 z-20 flex -translate-x-1/2 flex-col items-center gap-1.5">
-            <span className="mono text-[10px] tracking-[0.35em] text-cyan/80">SCROLL TO INITIALIZE</span>
+            <span className="mono text-[11px] tracking-[0.35em] text-cyan sm:text-xs">LET&apos;S DIVE IN</span>
+            <span className="mono text-[9px] tracking-[0.35em] text-cyan/60">SCROLL TO INITIALIZE</span>
             <svg viewBox="0 0 24 24" className="h-4 w-4 animate-bounce text-cyan/70" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
               <path d="M12 5v14M5 12l7 7 7-7" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
@@ -518,25 +512,28 @@ function AccuracyChart() {
   );
 }
 
-function PowerGauge() {
-  const r = 26, c = 2 * Math.PI * r;
-  return (
-    <svg viewBox="0 0 64 64" className="h-16 w-16 -rotate-90">
-      <circle cx="32" cy="32" r={r} fill="none" stroke="#0f1828" strokeWidth="5" />
-      <circle cx="32" cy="32" r={r} fill="none" stroke="#ffb23e" strokeWidth="5" strokeLinecap="round" strokeDasharray={`${c * 0.75} ${c}`} style={{ filter: "drop-shadow(0 0 4px rgba(255,178,62,0.5))" }} />
-      <circle cx="32" cy="32" r={r - 8} fill="none" stroke="#22d3ee" strokeWidth="3" strokeLinecap="round" strokeDasharray={`${(2 * Math.PI * (r - 8)) * 0.6} ${2 * Math.PI * (r - 8)}`} />
-    </svg>
-  );
-}
-
+// Gold = the four observed weeks, cyan = the three forecast weeks. The
+// alternating colours used to encode nothing at all.
 function ForecastBars() {
   const bars = [110, 135, 205, 120, 190, 150, 225];
   const max = 240;
+  const forecastFrom = 4;
   return (
     <svg viewBox="0 0 240 80" className="mt-1 w-full">
       {bars.map((v, i) => {
         const bw = 22, gap = 12, x = i * (bw + gap) + 6, bh = (v / max) * 70, y = 76 - bh;
-        return <rect key={i} x={x} y={y} width={bw} height={bh} rx="2" fill={i % 2 ? "#ffb23e" : "#22d3ee"} fillOpacity="0.75" />;
+        return (
+          <rect
+            key={i}
+            x={x}
+            y={y}
+            width={bw}
+            height={bh}
+            rx="2"
+            fill={i < forecastFrom ? "#ffb23e" : "#22d3ee"}
+            fillOpacity={i < forecastFrom ? 0.75 : 0.55}
+          />
+        );
       })}
     </svg>
   );

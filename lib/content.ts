@@ -194,6 +194,9 @@ export type SkillSystem = {
   icon: "brain" | "circuit" | "data" | "engine";
   tag: string;
   items: string[];
+  // Where this system was actually used — turns the card from a word cloud
+  // into an index back into the project work.
+  evidence: string;
 };
 
 export const skillSystems: SkillSystem[] = [
@@ -208,6 +211,7 @@ export const skillSystems: SkillSystem[] = [
       "FAISS Similarity Search",
       "Prompt Engineering",
     ],
+    evidence: "MK-03 — neural collaborative filtering built from scratch, 32-dim embeddings, FAISS L2 retrieval under 10ms.",
   },
   {
     system: "Machine Learning",
@@ -221,6 +225,7 @@ export const skillSystems: SkillSystem[] = [
       "Scikit-Learn",
       "Optuna",
     ],
+    evidence: "MK-01 & MK-02 — LightGBM at 95.55% R² across ~3,000 series; XGBoost at 98.28% accuracy, tuned with Optuna.",
   },
   {
     system: "Data Intelligence",
@@ -234,6 +239,7 @@ export const skillSystems: SkillSystem[] = [
       "Imbalance Handling",
       "RobustScaler",
     ],
+    evidence: "MK-01 — recursive walk-forward feature engine; diagnosed and killed the leakage inflating R² to 0.98.",
   },
   {
     system: "Engineering Core",
@@ -247,6 +253,7 @@ export const skillSystems: SkillSystem[] = [
       "Git Workflow",
       "BeautifulSoup",
     ],
+    evidence: "MK-04 — BeautifulSoup crawler into a SQLAlchemy schema, 980+ records in under 30 minutes.",
   },
 ];
 

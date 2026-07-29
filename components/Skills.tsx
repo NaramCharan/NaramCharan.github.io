@@ -158,6 +158,12 @@ function SystemCard({ s }: { s: SkillSystem }) {
             </li>
           ))}
         </ul>
+        {/* Evidence line — without it these chips just repeat the tech chips
+            already on the project cards above. This makes the card an index
+            back into the work. */}
+        <p className="mono mt-3 border-t border-line/60 pt-3 text-[10px] leading-relaxed text-text-muted">
+          {s.evidence}
+        </p>
       </div>
     </div>
   );

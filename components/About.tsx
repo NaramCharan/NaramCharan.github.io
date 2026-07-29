@@ -64,7 +64,9 @@ export default function About() {
       <div className="grid grid-cols-1 gap-12 lg:grid-cols-5">
         {/* Narrative */}
         <div ref={narrativeRef} className="lg:col-span-3">
-          <div className="space-y-5 text-base leading-relaxed text-text-muted">
+          {/* max-w-[62ch]: lines were running 82–85 characters at the smallest
+              body size on the longest read on the page. */}
+          <div className="max-w-[62ch] space-y-5 text-[17px] leading-relaxed text-text-muted">
             {profile.about.map((para, i) => (
               <p key={i} data-narrative-part className={i === 0 ? "text-text" : undefined}>
                 {para}
