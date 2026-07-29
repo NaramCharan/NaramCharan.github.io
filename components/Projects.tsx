@@ -114,9 +114,13 @@ function ProjectCard({
         }}
       />
 
-      <div className={p.featured ? "md:grid md:grid-cols-2 md:gap-6 md:items-start flex-1" : "flex flex-col flex-1"}>
+      {/* Below md the featured card is a plain column. Without `flex flex-col`
+          it was a block with flex-1 inside an overflow-hidden article, which
+          clipped 287px at 375px — the chart drew over the action row and the
+          key results and tech chips vanished entirely. */}
+      <div className={p.featured ? "flex flex-col flex-1 md:grid md:grid-cols-2 md:gap-6 md:items-start" : "flex flex-col flex-1"}>
         {/* Left Column (or Top) */}
-        <div className="flex flex-col justify-between h-full">
+        <div className="flex flex-col justify-between md:h-full">
           <div>
             <div data-part className="mb-3 flex flex-wrap items-center gap-2">
               <span className="mono rounded border border-cyan/40 px-2 py-0.5 text-[10px] tracking-[0.2em] text-cyan">
