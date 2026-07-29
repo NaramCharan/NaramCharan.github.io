@@ -16,6 +16,35 @@ export const profile = {
   resume: "/NARAM_RESUME.pdf",
 };
 
+// Personnel-file dossier — the hologram short-resume projected straight after
+// the hero assembly. Pulls the rest of its fields from `profile`, `education`,
+// `certifications` and `projects` so nothing is duplicated here.
+export const dossier = {
+  fileId: "NC-MK42-001",
+  summary:
+    "Third-year CS undergrad specializing in AI & Machine Learning. I build end-to-end ML systems — recommendation architectures on learned embeddings, gradient-boosted forecasters spanning thousands of parallel time series, and the data pipelines underneath them. Strong bias toward models that survive production, not just leaderboards.",
+  identity: [
+    { label: "DESIGNATION", value: "AI & Machine Learning Engineer" },
+    { label: "BASE", value: "Gurugram, India" },
+    { label: "AVAILABILITY", value: "Open to internships" },
+  ],
+  focus: [
+    "Predictive modeling & forecasting",
+    "Recommender systems · vector retrieval",
+    "Leakage-free validation methodology",
+  ],
+  coreStack: [
+    "Python",
+    "PyTorch",
+    "XGBoost",
+    "LightGBM",
+    "FAISS",
+    "Scikit-Learn",
+    "Pandas",
+    "SQL",
+  ],
+};
+
 export const stats = [
   { value: 98.28, suffix: "%", label: "Churn Model Accuracy" },
   { value: 95.55, suffix: "%", label: "Walmart Validation R²" },
