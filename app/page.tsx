@@ -2,7 +2,7 @@ import IntroDashboard from "@/components/IntroDashboard";
 import Navbar from "@/components/Navbar";
 import HudFrame from "@/components/HudFrame";
 import CircuitConduit from "@/components/CircuitConduit";
-import StatsBar from "@/components/StatsBar";
+import DossierHologram from "@/components/DossierHologram";
 import Projects from "@/components/Projects";
 import Skills from "@/components/Skills";
 import Blueprint from "@/components/Blueprint";
@@ -17,7 +17,6 @@ export default function Home() {
       {/* relative: the CircuitConduit positions itself against <main> */}
       <main id="main" className="relative">
         <IntroDashboard />
-        <StatsBar />
         <Projects />
         <Skills />
         <Blueprint />
@@ -25,6 +24,8 @@ export default function Home() {
         <Contact />
         <CircuitConduit />
       </main>
+      {/* Projected by the navbar's RESUME button */}
+      <DossierHologram />
     </>
   );
 }

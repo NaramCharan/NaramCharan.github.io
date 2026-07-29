@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useScroll, useSpring } from "framer-motion";
 import { navLinks, profile } from "@/lib/content";
 import { EASE } from "@/lib/motion";
-import { triggerResumeDownload } from "@/lib/resume";
+import { openDossier } from "@/lib/dossier";
 import { useMagnetic } from "@/lib/useMagnetic";
 
 export default function Navbar() {
@@ -113,8 +113,14 @@ export default function Navbar() {
               href={profile.resume}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={() => triggerResumeDownload(profile.resume)}
-              className="inline-flex min-h-9 items-center gap-1.5 rounded-md border border-gold/60 bg-gold/15 px-4 py-1.5 mono text-[11px] tracking-[0.15em] text-gold transition-all duration-300 hover:bg-gold/25 hover:shadow-[0_0_18px_rgba(255,178,62,0.3)]"
+              // Left-click projects the personnel-file hologram; the href stays
+              // real so middle/right-click still reach the PDF directly.
+              onClick={(e) => {
+                if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+                e.preventDefault();
+                openDossier();
+              }}
+              className="inline-flex min-h-11 items-center gap-1.5 rounded-md border border-gold/60 bg-gold/15 px-4 py-1.5 mono text-[11px] tracking-[0.15em] text-gold transition-all duration-300 hover:bg-gold/25 hover:shadow-[0_0_18px_rgba(255,178,62,0.3)]"
             >
               <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14" />
@@ -130,7 +136,7 @@ export default function Navbar() {
               aria-expanded={open}
               aria-controls="mobile-nav"
               onClick={() => setOpen((v) => !v)}
-              className="grid h-9 w-9 place-items-center rounded-md border border-line text-cyan transition-colors duration-300 hover:border-cyan/60 md:hidden"
+              className="grid h-11 w-11 place-items-center rounded-md border border-line text-cyan transition-colors duration-300 hover:border-cyan/60 md:hidden"
             >
               <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
                 {open ? (

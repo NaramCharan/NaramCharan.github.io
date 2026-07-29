@@ -39,7 +39,7 @@ const links = [
 
 export default function Contact() {
   return (
-    <section id="contact" className="mx-auto max-w-4xl scroll-mt-20 px-6 py-28">
+    <section id="contact" className="mx-auto max-w-6xl scroll-mt-20 px-6 py-28">
       <SectionHeading
         index="04"
         title="Establish Link"
@@ -91,7 +91,7 @@ export default function Contact() {
                   rel={l.href.startsWith("http") ? "noopener noreferrer" : undefined}
                   className="group flex min-h-11 flex-wrap items-center gap-x-3 gap-y-1 py-3 transition-colors duration-200 hover:bg-cyan/5"
                 >
-                  <span className="mono w-24 text-xs tracking-wide text-gold/90">
+                  <span className="mono w-28 shrink-0 whitespace-nowrap text-xs tracking-wide text-gold/90">
                     {l.cmd}
                   </span>
                   <span className="text-sm font-medium text-text group-hover:text-cyan-bright">

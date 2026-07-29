@@ -16,6 +16,35 @@ export const profile = {
   resume: "/NARAM_RESUME.pdf",
 };
 
+// Personnel-file dossier — the hologram short-resume projected straight after
+// the hero assembly. Pulls the rest of its fields from `profile`, `education`,
+// `certifications` and `projects` so nothing is duplicated here.
+export const dossier = {
+  fileId: "NC-MK42-001",
+  summary:
+    "Third-year CS undergrad specializing in AI & Machine Learning. I build end-to-end ML systems — recommendation architectures on learned embeddings, gradient-boosted forecasters spanning thousands of parallel time series, and the data pipelines underneath them. Strong bias toward models that survive production, not just leaderboards.",
+  identity: [
+    { label: "DESIGNATION", value: "AI & Machine Learning Engineer" },
+    { label: "BASE", value: "Gurugram, India" },
+    { label: "AVAILABILITY", value: "Open to internships" },
+  ],
+  focus: [
+    "Predictive modeling & forecasting",
+    "Recommender systems · vector retrieval",
+    "Leakage-free validation methodology",
+  ],
+  coreStack: [
+    "Python",
+    "PyTorch",
+    "XGBoost",
+    "LightGBM",
+    "FAISS",
+    "Scikit-Learn",
+    "Pandas",
+    "SQL",
+  ],
+};
+
 export const stats = [
   { value: 98.28, suffix: "%", label: "Churn Model Accuracy" },
   { value: 95.55, suffix: "%", label: "Walmart Validation R²" },
@@ -165,6 +194,9 @@ export type SkillSystem = {
   icon: "brain" | "circuit" | "data" | "engine";
   tag: string;
   items: string[];
+  // Where this system was actually used — turns the card from a word cloud
+  // into an index back into the project work.
+  evidence: string;
 };
 
 export const skillSystems: SkillSystem[] = [
@@ -179,6 +211,7 @@ export const skillSystems: SkillSystem[] = [
       "FAISS Similarity Search",
       "Prompt Engineering",
     ],
+    evidence: "MK-03 — neural collaborative filtering built from scratch, 32-dim embeddings, FAISS L2 retrieval under 10ms.",
   },
   {
     system: "Machine Learning",
@@ -192,6 +225,7 @@ export const skillSystems: SkillSystem[] = [
       "Scikit-Learn",
       "Optuna",
     ],
+    evidence: "MK-01 & MK-02 — LightGBM at 95.55% R² across ~3,000 series; XGBoost at 98.28% accuracy, tuned with Optuna.",
   },
   {
     system: "Data Intelligence",
@@ -205,6 +239,7 @@ export const skillSystems: SkillSystem[] = [
       "Imbalance Handling",
       "RobustScaler",
     ],
+    evidence: "MK-01 — recursive walk-forward feature engine; diagnosed and killed the leakage inflating R² to 0.98.",
   },
   {
     system: "Engineering Core",
@@ -218,6 +253,7 @@ export const skillSystems: SkillSystem[] = [
       "Git Workflow",
       "BeautifulSoup",
     ],
+    evidence: "MK-04 — BeautifulSoup crawler into a SQLAlchemy schema, 980+ records in under 30 minutes.",
   },
 ];
 
