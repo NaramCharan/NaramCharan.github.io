@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
 import { motion, useInView } from "framer-motion";
 import {
   profile,
@@ -34,91 +35,110 @@ function Field({ label, value }: { label: string; value: string }) {
   );
 }
 
-/* Hex ID badge — initials under a slow reticle + a sweeping biometric bar. */
+/* Hex geometry shared by the photo clip and the SVG bezel drawn over it. */
+const HEX_CLIP = "polygon(50% 5%, 88% 27.5%, 88% 72.5%, 50% 95%, 12% 72.5%, 12% 27.5%)";
+
+/**
+ * ID badge — the real portrait, hex-clipped and graded into the HUD palette
+ * (light cyan wash + scanlines + a fade into the panel) so it reads as a
+ * scanned personnel photo without going full duotone and losing the face.
+ */
 function IdBadge({ reduced }: { reduced: boolean }) {
   return (
-    <div className="relative mx-auto h-32 w-32 shrink-0 sm:mx-0 sm:h-36 sm:w-36">
-      <svg viewBox="0 0 120 120" className="absolute inset-0 h-full w-full" aria-hidden>
-        <defs>
-          <clipPath id="dossier-hex">
-            <path d="M60 6 L106 33 V87 L60 114 L14 87 V33 Z" />
-          </clipPath>
-        </defs>
-        <path
-          d="M60 6 L106 33 V87 L60 114 L14 87 V33 Z"
-          fill="rgba(34,211,238,0.06)"
-          stroke="var(--color-cyan)"
-          strokeWidth="1.2"
-          opacity="0.75"
-        />
-        <path
-          d="M60 14 L99 37 V83 L60 106 L21 83 V37 Z"
-          fill="none"
-          stroke="var(--color-cyan)"
-          strokeWidth="0.5"
-          opacity="0.35"
-        />
-        <g clipPath="url(#dossier-hex)">
-          {Array.from({ length: 14 }).map((_, i) => (
-            <line
-              key={i}
-              x1="10"
-              x2="110"
-              y1={12 + i * 8}
-              y2={12 + i * 8}
-              stroke="var(--color-cyan)"
-              strokeWidth="0.4"
-              opacity="0.12"
+    <div className="flex flex-col items-center gap-2.5">
+      <div className="relative h-40 w-40 shrink-0 sm:h-44 sm:w-44">
+        {/* Portrait + grade, all clipped to the hexagon */}
+        <div className="absolute inset-0" style={{ clipPath: HEX_CLIP }}>
+          <Image
+            src="/portrait.jpg"
+            alt="Naram Charan"
+            width={512}
+            height={512}
+            className="h-full w-full scale-[1.06] object-cover"
+          />
+          <span aria-hidden className="absolute inset-0 bg-cyan/12" />
+          <span
+            aria-hidden
+            className="absolute inset-0 bg-gradient-to-t from-surface/85 via-transparent to-cyan/10"
+          />
+          <span
+            aria-hidden
+            className="absolute inset-0 opacity-60"
+            style={{
+              background:
+                "repeating-linear-gradient(to bottom, transparent 0 2px, rgba(34,211,238,0.16) 3px, transparent 4px)",
+            }}
+          />
+          {/* Biometric scan bar sweeps across the photo */}
+          {!reduced && (
+            <motion.span
+              aria-hidden
+              className="absolute inset-x-0 h-px bg-gradient-to-r from-transparent via-cyan-bright to-transparent shadow-[0_0_10px_rgba(125,231,245,0.9)]"
+              initial={{ top: "8%", opacity: 0 }}
+              whileInView={{ top: ["8%", "92%", "8%"], opacity: [0, 1, 0] }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{
+                duration: 3.4,
+                ease: "easeInOut",
+                delay: 0.7,
+                repeat: Infinity,
+                repeatDelay: 2.6,
+              }}
             />
-          ))}
-        </g>
-        <circle
-          cx="60"
-          cy="60"
-          r="46"
-          fill="none"
-          stroke="var(--color-cyan)"
-          strokeWidth="0.5"
-          strokeDasharray="3 7"
-          opacity="0.5"
-          className={reduced ? "" : "animate-spin-slow"}
-          style={{ transformOrigin: "60px 60px" }}
-        />
-        {[0, 90, 180, 270].map((a) => (
-          <line
-            key={a}
-            x1="60"
-            y1="8"
-            x2="60"
-            y2="16"
-            stroke="var(--color-gold)"
+          )}
+        </div>
+
+        {/* Bezel, reticle and corner ticks drawn over the photo */}
+        <svg
+          viewBox="0 0 120 120"
+          className="pointer-events-none absolute inset-0 h-full w-full"
+          aria-hidden
+        >
+          <path
+            d="M60 6 L105.6 33 V87 L60 114 L14.4 87 V33 Z"
+            fill="none"
+            stroke="var(--color-cyan)"
             strokeWidth="1.2"
             opacity="0.8"
-            transform={`rotate(${a} 60 60)`}
           />
-        ))}
-      </svg>
-
-      {/* Biometric scan bar */}
-      {!reduced && (
-        <motion.span
-          aria-hidden
-          className="absolute inset-x-6 h-px bg-gradient-to-r from-transparent via-cyan-bright to-transparent shadow-[0_0_10px_rgba(125,231,245,0.9)]"
-          initial={{ top: "18%", opacity: 0 }}
-          whileInView={{ top: ["18%", "82%", "18%"], opacity: [0, 1, 0] }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 3.2, ease: "easeInOut", delay: 0.6, repeat: Infinity, repeatDelay: 2.4 }}
-        />
-      )}
-
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-3xl font-semibold tracking-tight text-text glow-cyan sm:text-4xl">
-          NC
-        </span>
-        <span className="mono mt-1 text-[8px] tracking-[0.3em] text-cyan/70">
-          ID VERIFIED
-        </span>
+          <path
+            d="M60 13 L99 37 V83 L60 107 L21 83 V37 Z"
+            fill="none"
+            stroke="var(--color-cyan)"
+            strokeWidth="0.5"
+            opacity="0.3"
+          />
+          <circle
+            cx="60"
+            cy="60"
+            r="52"
+            fill="none"
+            stroke="var(--color-cyan)"
+            strokeWidth="0.5"
+            strokeDasharray="3 7"
+            opacity="0.45"
+            className={reduced ? "" : "animate-spin-slow"}
+            style={{ transformOrigin: "60px 60px" }}
+          />
+          {[0, 90, 180, 270].map((a) => (
+            <line
+              key={a}
+              x1="60"
+              y1="2"
+              x2="60"
+              y2="10"
+              stroke="var(--color-gold)"
+              strokeWidth="1.4"
+              opacity="0.85"
+              transform={`rotate(${a} 60 60)`}
+            />
+          ))}
+        </svg>
       </div>
+
+      <span className="mono text-[8px] tracking-[0.3em] text-cyan/70">
+        ◈ ID VERIFIED
+      </span>
     </div>
   );
 }
@@ -135,10 +155,11 @@ export default function HoloDossier() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
 
+  // CGPA is deliberately absent — it already appears in the INSTITUTION field
+  // below and again in the StatsBar directly under this section.
   const record = [
     { k: "PROJECTS SHIPPED", v: String(projects.length) },
     { k: "CERTIFICATIONS", v: String(certifications.length) },
-    { k: "CGPA", v: education.cgpa.replace(" / 10.0", "/10") },
   ];
 
   return (
