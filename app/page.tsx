@@ -3,7 +3,7 @@ import Navbar from "@/components/Navbar";
 import HudFrame from "@/components/HudFrame";
 import CircuitConduit from "@/components/CircuitConduit";
 import HoloDossier from "@/components/HoloDossier";
-import StatsBar from "@/components/StatsBar";
+import ResumeHologram from "@/components/ResumeHologram";
 import Projects from "@/components/Projects";
 import Skills from "@/components/Skills";
 import Blueprint from "@/components/Blueprint";
@@ -19,7 +19,6 @@ export default function Home() {
       <main id="main" className="relative">
         <IntroDashboard />
         <HoloDossier />
-        <StatsBar />
         <Projects />
         <Skills />
         <Blueprint />
@@ -27,6 +26,8 @@ export default function Home() {
         <Contact />
         <CircuitConduit />
       </main>
+      {/* Projected by the navbar's RESUME button and the dossier's Full Resume */}
+      <ResumeHologram />
     </>
   );
 }

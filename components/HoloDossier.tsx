@@ -13,7 +13,7 @@ import {
 } from "@/lib/content";
 import { EASE } from "@/lib/motion";
 import { usePrefersReducedMotion } from "@/lib/useReducedMotion";
-import { triggerResumeDownload } from "@/lib/resume";
+import { openResumeHologram } from "@/lib/resumeHologram";
 
 /* Field row — label left, value right, with the HUD's dotted leader between. */
 function Field({ label, value }: { label: string; value: string }) {
@@ -155,18 +155,20 @@ export default function HoloDossier() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
 
-  // CGPA is deliberately absent — it already appears in the INSTITUTION field
-  // below and again in the StatsBar directly under this section.
   const record = [
     { k: "PROJECTS SHIPPED", v: String(projects.length) },
     { k: "CERTIFICATIONS", v: String(certifications.length) },
+    { k: "CGPA", v: education.cgpa.replace(" / 10.0", "/10") },
   ];
 
   return (
     <section
       id="dossier"
       aria-label="Personnel file — profile summary"
-      className="relative overflow-hidden border-b border-line px-5 py-20 sm:py-24"
+      // Sized to land in exactly one screen: the section is a viewport-tall
+      // flex box and the panel is capped just under it. Below md the content
+      // stacks and the section is free to grow instead of nesting a scroller.
+      className="relative flex min-h-dvh items-center overflow-hidden border-b border-line px-4 py-16 sm:px-5 md:py-10"
     >
       {/* Projection cone rising from the panel's base */}
       {!reduced && (
@@ -188,11 +190,11 @@ export default function HoloDossier() {
         whileInView={{ opacity: 1, y: 0, scale: 1, filter: "brightness(1)" }}
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.75, ease: EASE }}
-        className="scanlines relative z-10 mx-auto max-w-5xl overflow-hidden rounded-xl border border-cyan/40 bg-gradient-to-br from-cyan/[0.07] via-surface/85 to-surface/90 shadow-[inset_0_0_30px_-14px_rgba(34,211,238,0.6),0_0_70px_-18px_rgba(34,211,238,0.5)] backdrop-blur-[15px]"
+        className="scanlines relative z-10 mx-auto w-full max-w-5xl overflow-hidden rounded-xl border border-cyan/40 bg-gradient-to-br from-cyan/[0.07] via-surface/85 to-surface/90 shadow-[inset_0_0_30px_-14px_rgba(34,211,238,0.6),0_0_70px_-18px_rgba(34,211,238,0.5)] backdrop-blur-[15px] md:flex md:max-h-[calc(100dvh-5rem)] md:flex-col"
       >
         {/* Glitch layer lives on an inner wrapper so it can't fight the
             entrance transform (same pattern as ProjectHologram). */}
-        <div className={reduced ? "" : "holo-glitch"}>
+        <div className={`md:flex md:min-h-0 md:flex-1 md:flex-col${reduced ? "" : " holo-glitch"}`}>
           {/* Corner brackets */}
           {[
             "left-2.5 top-2.5",
@@ -232,11 +234,11 @@ export default function HoloDossier() {
           </div>
 
           {/* Body */}
-          <div className="grid gap-8 px-6 py-8 sm:px-8 md:grid-cols-[auto_1fr] md:gap-10">
+          <div className="grid gap-6 px-6 py-6 sm:px-8 md:min-h-0 md:flex-1 md:grid-cols-[auto_1fr] md:gap-9 md:overflow-y-auto md:py-5">
             {/* Left rail — badge + hard identity fields */}
-            <div className="flex flex-col items-center gap-5 md:items-start">
+            <div className="flex flex-col items-center gap-4 md:items-start">
               <IdBadge reduced={reduced} />
-              <ul className="w-full space-y-2 md:w-44">
+              <ul className="w-full space-y-1.5 md:w-44">
                 {record.map((r) => (
                   <li
                     key={r.k}
@@ -262,11 +264,11 @@ export default function HoloDossier() {
                 {profile.role.toUpperCase()}
               </p>
 
-              <p className="mt-5 max-w-2xl text-[15px] leading-relaxed text-text-muted">
+              <p className="mt-3.5 max-w-2xl text-[14px] leading-relaxed text-text-muted">
                 {dossier.summary}
               </p>
 
-              <div className="mt-6 space-y-2 border-t border-line pt-5">
+              <div className="mt-4 space-y-1.5 border-t border-line pt-4">
                 {dossier.identity.map((f) => (
                   <Field key={f.label} label={f.label} value={f.value} />
                 ))}
@@ -281,51 +283,56 @@ export default function HoloDossier() {
                 <Field label="GRADUATION" value={education.graduation} />
               </div>
 
-              {/* Focus */}
-              <div className="mt-6 border-t border-line pt-5">
-                <p className="mono mb-3 text-[9px] tracking-[0.3em] text-text-dim">
-                  PRIMARY FOCUS
-                </p>
-                <ul className="grid gap-2 sm:grid-cols-3">
-                  {dossier.focus.map((f) => (
-                    <li
-                      key={f}
-                      className="mono flex items-start gap-2 text-[11px] leading-snug text-text"
-                    >
-                      <span className="mt-px text-gold">◢</span>
-                      <span>{f}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              {/* Focus + stack share a row so the panel clears one screen */}
+              <div className="mt-4 grid gap-4 border-t border-line pt-4 lg:grid-cols-[1fr_auto] lg:gap-8">
+                <div>
+                  <p className="mono mb-2 text-[9px] tracking-[0.3em] text-text-dim">
+                    PRIMARY FOCUS
+                  </p>
+                  <ul className="space-y-1">
+                    {dossier.focus.map((f) => (
+                      <li
+                        key={f}
+                        className="mono flex items-start gap-2 text-[11px] leading-snug text-text"
+                      >
+                        <span className="mt-px text-gold">◢</span>
+                        <span>{f}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
 
-              {/* Core stack */}
-              <div className="mt-6 border-t border-line pt-5">
-                <p className="mono mb-3 text-[9px] tracking-[0.3em] text-text-dim">
-                  CORE STACK
-                </p>
-                <ul className="flex flex-wrap gap-2">
-                  {dossier.coreStack.map((s, i) => (
-                    <motion.li
-                      key={s}
-                      initial={reduced ? false : { opacity: 0, y: 6 }}
-                      animate={inView ? { opacity: 1, y: 0 } : undefined}
-                      transition={{ duration: 0.4, ease: EASE, delay: 0.5 + i * 0.05 }}
-                      className="mono rounded border border-cyan/30 bg-cyan/[0.07] px-2.5 py-1 text-[10px] tracking-wide text-cyan"
-                    >
-                      {s}
-                    </motion.li>
-                  ))}
-                </ul>
+                <div className="lg:max-w-[19rem]">
+                  <p className="mono mb-2 text-[9px] tracking-[0.3em] text-text-dim">
+                    CORE STACK
+                  </p>
+                  <ul className="flex flex-wrap gap-1.5">
+                    {dossier.coreStack.map((s, i) => (
+                      <motion.li
+                        key={s}
+                        initial={reduced ? false : { opacity: 0, y: 6 }}
+                        animate={inView ? { opacity: 1, y: 0 } : undefined}
+                        transition={{ duration: 0.4, ease: EASE, delay: 0.5 + i * 0.05 }}
+                        className="mono rounded border border-cyan/30 bg-cyan/[0.07] px-2 py-0.5 text-[10px] tracking-wide text-cyan"
+                      >
+                        {s}
+                      </motion.li>
+                    ))}
+                  </ul>
+                </div>
               </div>
 
               {/* Actions */}
-              <div className="mt-7 flex flex-col gap-3 border-t border-line pt-6 sm:flex-row">
+              <div className="mt-4 flex flex-col gap-2.5 border-t border-line pt-4 sm:flex-row">
                 <a
                   href={profile.resume}
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={() => triggerResumeDownload(profile.resume)}
+                  onClick={(e) => {
+                    if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+                    e.preventDefault();
+                    openResumeHologram();
+                  }}
                   className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-gold/60 bg-gold/15 px-6 py-2.5 text-sm font-semibold text-gold transition-all duration-300 hover:bg-gold/25 hover:shadow-[0_0_26px_rgba(255,178,62,0.35)]"
                 >
                   Full Resume

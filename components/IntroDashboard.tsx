@@ -9,7 +9,6 @@ import { profile } from "@/lib/content";
 import { usePrefersReducedMotion } from "@/lib/useReducedMotion";
 import { useDecode, useRotate } from "@/lib/useDecode";
 import { EASE } from "@/lib/motion";
-import { triggerResumeDownload } from "@/lib/resume";
 import { useMagnetic } from "@/lib/useMagnetic";
 import ArcReactorStatic from "./ArcReactorStatic";
 
@@ -74,7 +73,6 @@ export default function IntroDashboard() {
   // JARVIS boot: the at-rest name scrambles in on load.
   const bootName = useDecode(profile.name, 42);
   const magProjects = useMagnetic();
-  const magResume = useMagnetic();
 
   // Pointer parallax — writes --par-x/--par-y on the stage; the .par-layer
   // wrappers (each with its own --par-m depth) drift in CSS. GSAP never
@@ -116,8 +114,7 @@ export default function IntroDashboard() {
           0.31
         )
         .to(".ia-code", { autoAlpha: 0, duration: 0.08 }, 0.66)
-        .from(".ia-status", { autoAlpha: 0, y: 14, duration: 0.06 }, 0.74)
-        .from(".ia-name", { autoAlpha: 0, y: 28, duration: 0.09 }, 0.77)
+        .from(".ia-name", { autoAlpha: 0, y: 28, duration: 0.09 }, 0.75)
         .from(".ia-spec", { autoAlpha: 0, y: 14, duration: 0.06 }, 0.82)
         .fromTo(".ia-quote", { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 0.1, ease: "none" }, 0.85)
         // caret exists only while the quote "types" — hidden at rest and after
@@ -239,10 +236,10 @@ export default function IntroDashboard() {
           className="par-layer pointer-events-none absolute inset-x-0 bottom-[6%] z-10 flex flex-col items-center px-6 text-center"
           style={{ "--par-m": 5 } as React.CSSProperties}
         >
-          <p className="ia-status mono text-[11px] tracking-[0.4em] text-cyan/80 sm:text-xs">
-            {reduced ? profile.status : profile.status}
-          </p>
-          <h1 className="ia-name mt-3 text-balance text-4xl font-semibold leading-[0.95] tracking-tight sm:text-6xl lg:text-7xl">
+          {/* The status line lived here, but it repeated the at-rest role line
+              above and the dossier's AVAILABILITY field below. Cut — the hero
+              is the cinematic beat, the dossier carries the facts. */}
+          <h1 className="ia-name text-balance text-4xl font-semibold leading-[0.95] tracking-tight sm:text-6xl lg:text-7xl">
             <span className="glow-cyan">{profile.name}</span>
           </h1>
           <div className="ia-spec mt-3 flex h-6 items-center gap-2 mono text-xs tracking-[0.15em] text-text-dim sm:text-sm">
@@ -268,7 +265,9 @@ export default function IntroDashboard() {
               <span aria-hidden className="ia-caret ml-0.5 inline-block h-5 w-2 translate-y-0.5 animate-blink bg-cyan align-baseline" />
             )}
           </p>
-          <div className="ia-ctas pointer-events-auto mt-6 flex flex-col gap-3 sm:flex-row">
+          {/* One CTA only. Resume is always reachable in the navbar and again
+              in the dossier immediately below — three entry points was noise. */}
+          <div className="ia-ctas pointer-events-auto mt-6 flex">
             <a
               ref={magProjects}
               href="#projects"
@@ -276,16 +275,6 @@ export default function IntroDashboard() {
             >
               View Projects
               <span className="transition-transform duration-300 group-hover:translate-x-0.5">→</span>
-            </a>
-            <a
-              ref={magResume}
-              href={profile.resume}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => triggerResumeDownload(profile.resume)}
-              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-gold/60 bg-gold/15 px-7 py-3 text-sm font-semibold text-gold transition-all duration-300 hover:bg-gold/25 hover:shadow-[0_0_26px_rgba(255,178,62,0.35)]"
-            >
-              Download Resume
             </a>
           </div>
         </div>

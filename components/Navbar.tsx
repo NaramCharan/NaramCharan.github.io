@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useScroll, useSpring } from "framer-motion";
 import { navLinks, profile } from "@/lib/content";
 import { EASE } from "@/lib/motion";
-import { triggerResumeDownload } from "@/lib/resume";
+import { openResumeHologram } from "@/lib/resumeHologram";
 import { useMagnetic } from "@/lib/useMagnetic";
 
 export default function Navbar() {
@@ -113,7 +113,13 @@ export default function Navbar() {
               href={profile.resume}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={() => triggerResumeDownload(profile.resume)}
+              // Left-click projects the CV hologram; the href stays real so
+              // middle-click / right-click still reach the PDF directly.
+              onClick={(e) => {
+                if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+                e.preventDefault();
+                openResumeHologram();
+              }}
               className="inline-flex min-h-9 items-center gap-1.5 rounded-md border border-gold/60 bg-gold/15 px-4 py-1.5 mono text-[11px] tracking-[0.15em] text-gold transition-all duration-300 hover:bg-gold/25 hover:shadow-[0_0_18px_rgba(255,178,62,0.3)]"
             >
               <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
