@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useScroll, useSpring } from "framer-motion";
 import { navLinks, profile } from "@/lib/content";
 import { EASE } from "@/lib/motion";
-import { openResumeHologram } from "@/lib/resumeHologram";
+import { openDossier } from "@/lib/dossier";
 import { useMagnetic } from "@/lib/useMagnetic";
 
 export default function Navbar() {
@@ -113,12 +113,12 @@ export default function Navbar() {
               href={profile.resume}
               target="_blank"
               rel="noopener noreferrer"
-              // Left-click projects the CV hologram; the href stays real so
-              // middle-click / right-click still reach the PDF directly.
+              // Left-click projects the personnel-file hologram; the href stays
+              // real so middle/right-click still reach the PDF directly.
               onClick={(e) => {
                 if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
                 e.preventDefault();
-                openResumeHologram();
+                openDossier();
               }}
               className="inline-flex min-h-9 items-center gap-1.5 rounded-md border border-gold/60 bg-gold/15 px-4 py-1.5 mono text-[11px] tracking-[0.15em] text-gold transition-all duration-300 hover:bg-gold/25 hover:shadow-[0_0_18px_rgba(255,178,62,0.3)]"
             >
