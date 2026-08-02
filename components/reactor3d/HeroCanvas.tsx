@@ -8,7 +8,7 @@ import { BlendFunction } from "postprocessing";
 import * as THREE from "three";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Reactor3D from "./Reactor3D";
+import Helmet3D from "../hero3d/Helmet3D";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -76,8 +76,9 @@ export default function HeroCanvas({
         <Lightformer intensity={0.8} color="#ffffff" position={[0, -4, 3]} scale={[5, 2, 1]} />
       </Environment>
 
-      <group position={[0, 0.35, 0]}>
-        <Reactor3D progress={progress} />
+      {/* A helmet's visual centre sits lower than its geometric centre */}
+      <group position={[0, 0.15, 0]}>
+        <Helmet3D progress={progress} />
       </group>
 
       <EffectComposer multisampling={0}>
