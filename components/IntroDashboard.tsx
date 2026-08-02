@@ -113,19 +113,22 @@ export default function IntroDashboard() {
           { autoAlpha: 1, y: 0, duration: 0.03, stagger: 0.012 },
           0.31
         )
-        .to(".ia-code", { autoAlpha: 0, duration: 0.08 }, 0.58)
-        .from(".ia-name", { autoAlpha: 0, y: 28, duration: 0.09 }, 0.66)
-        .from(".ia-spec", { autoAlpha: 0, y: 14, duration: 0.06 }, 0.76)
-        .fromTo(".ia-quote", { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 0.1, ease: "none" }, 0.8)
+        // Copy arrives on the ignition beat: the faceplate seals ~0.82 and the
+        // eyes light 0.72–0.84, so the name rides in with the flash rather
+        // than 8% of scroll ahead of it.
+        .to(".ia-code", { autoAlpha: 0, duration: 0.08 }, 0.54)
+        .from(".ia-name", { autoAlpha: 0, y: 28, duration: 0.08 }, 0.74)
+        .from(".ia-spec", { autoAlpha: 0, y: 14, duration: 0.05 }, 0.82)
+        .fromTo(".ia-quote", { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 0.09, ease: "none" }, 0.85)
         // caret exists only while the quote "types" — hidden at rest and after
-        .fromTo(".ia-caret", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.01 }, 0.8)
-        .to(".ia-caret", { autoAlpha: 0, duration: 0.02 }, 0.94)
-        .from(".ia-ctas", { autoAlpha: 0, y: 16, duration: 0.06 }, 0.86)
+        .fromTo(".ia-caret", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.01 }, 0.85)
+        .to(".ia-caret", { autoAlpha: 0, duration: 0.02 }, 0.95)
+        .from(".ia-ctas", { autoAlpha: 0, y: 16, duration: 0.05 }, 0.92)
         // panels boot one-by-one — scale + wider stagger makes each land legibly
         .from(
           ".ia-panel",
-          { autoAlpha: 0, y: 18, scale: 0.94, duration: 0.07, stagger: 0.035 },
-          0.68
+          { autoAlpha: 0, y: 18, scale: 0.94, duration: 0.06, stagger: 0.03 },
+          0.78
         )
         .to({}, { duration: 0.001 }, 1); // pad so positions ≈ scroll fraction
 

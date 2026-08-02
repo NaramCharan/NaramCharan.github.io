@@ -43,7 +43,7 @@ export default function HeroCanvas({
         progress.current = self.progress;
         track.style.setProperty("--p", self.progress.toFixed(4));
         track.dataset.seg =
-          self.progress < 0.28 ? "a" : self.progress < 0.74 ? "b" : "c";
+          self.progress < 0.28 ? "a" : self.progress < 0.72 ? "b" : "c";
       },
     });
     return () => st.kill();
