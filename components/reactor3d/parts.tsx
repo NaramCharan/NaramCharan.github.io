@@ -20,14 +20,17 @@ export function useReactorMaterials() {
       clearcoat: 0.6,
       clearcoatRoughness: 0.15,
     });
+    // Brass winding block — warmer and lighter than the old copper so the
+    // coils read as the reference prop's polished brass windings under the
+    // rim light, not dark oxidised pipe.
     const copper = new THREE.MeshPhysicalMaterial({
-      color: "#c9772e",
+      color: "#d8973c",
       metalness: 1,
-      roughness: 0.36,
-      emissive: "#3a1e08",
-      emissiveIntensity: 0.4,
-      clearcoat: 0.3,
-      clearcoatRoughness: 0.4,
+      roughness: 0.3,
+      emissive: "#4a2a0a",
+      emissiveIntensity: 0.45,
+      clearcoat: 0.35,
+      clearcoatRoughness: 0.35,
     });
     const cyanGlass = new THREE.MeshStandardMaterial({
       color: "#22d3ee",
@@ -70,7 +73,37 @@ export function useReactorMaterials() {
       metalness: 1,
       roughness: 0.45,
     });
-    return { darkMetal, brightMetal, copper, cyanGlass, coreGlow, steel, slotGlow, copperDark };
+    // Weathered cast iron for the crown of teeth — the reference prop's rim is
+    // rough, hand-finished and light-eating, which is what separates it from a
+    // CG torus. High roughness + no clearcoat kills the plastic sheen.
+    const weathered = new THREE.MeshPhysicalMaterial({
+      color: "#59626b",
+      metalness: 0.82,
+      roughness: 0.62,
+      clearcoat: 0.12,
+      clearcoatRoughness: 0.7,
+    });
+    // Polished ball-bearing rivets studded around the rim — the bright specular
+    // pinpoints that sell the scale of everything around them.
+    const chrome = new THREE.MeshPhysicalMaterial({
+      color: "#cdd9de",
+      metalness: 1,
+      roughness: 0.12,
+      clearcoat: 0.9,
+      clearcoatRoughness: 0.08,
+    });
+    return {
+      darkMetal,
+      brightMetal,
+      copper,
+      cyanGlass,
+      coreGlow,
+      steel,
+      slotGlow,
+      copperDark,
+      weathered,
+      chrome,
+    };
   }, []);
 }
 

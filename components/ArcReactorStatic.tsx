@@ -1,14 +1,16 @@
 "use client";
 
 /**
- * Iron Man 3 "Mark XLII" arc reactor — the triangular new-element core.
+ * The classic arc reactor — jagged tooth crown, riveted rim, triangular core.
  * Pure SVG so it stays crisp at any size, themeable, and reduced-motion safe
  * (the global reduced-motion rule freezes the CSS spins/pulse automatically).
  *
- * Geometry mirrors the WebGL hero rig: 10 radial copper coil wedges in a
- * recessed well with lit slots between them, concentric machined rings, a
+ * Geometry mirrors the WebGL hero rig: an outer crown of uneven weathered
+ * teeth studded with ball-bearing rivets, then 10 radial brass coil wedges in
+ * a recessed well with lit slots between them, concentric machined rings, a
  * dominant downward triangle rotor with corner nodes, and a 16-tooth collar
- * around the bright upward-triangle core.
+ * around the bright upward-triangle core. The inner assembly is scaled inside
+ * the crown so the crown can own the outer edge without renumbering it.
  */
 
 // deterministic polar helper (no Math.random — hydration-safe)
@@ -54,6 +56,20 @@ export default function ArcReactorStatic() {
     return { x, y, rot: +(a + 90).toFixed(2) };
   });
 
+  // Outer crown — 18 teeth with a deterministic length jitter so the rim reads
+  // hand-forged rather than stamped (uniform teeth are the giveaway).
+  const crown = Array.from({ length: 18 }, (_, i) => {
+    const a = i * 20 - 90;
+    const tipR = 92 + ((i * 7) % 6); // 92..97, deterministic
+    const [x1, y1] = pt(a - 6.2, 77);
+    const [x2, y2] = pt(a + 6.2, 77);
+    const [x3, y3] = pt(a + 2.1, tipR);
+    const [x4, y4] = pt(a - 2.1, tipR);
+    return `${x1},${y1} ${x2},${y2} ${x3},${y3} ${x4},${y4}`;
+  });
+  // polished ball-bearing rivets set into the rim, offset between the teeth
+  const rivets = Array.from({ length: 12 }, (_, i) => pt(i * 30 - 75, 78));
+
   return (
     <div
       aria-hidden
@@ -80,6 +96,30 @@ export default function ArcReactorStatic() {
 
         {/* Ambient glow */}
         <circle cx="100" cy="100" r="98" fill="url(#ar-glow)" />
+
+        {/* Crown — weathered teeth + riveted rim (owns the outer edge) */}
+        {crown.map((pts, i) => (
+          <polygon
+            key={`ct${i}`}
+            points={pts}
+            fill="#59626b"
+            stroke="#7f8b95"
+            strokeOpacity="0.5"
+            strokeWidth="0.8"
+            strokeLinejoin="round"
+          />
+        ))}
+        <circle cx="100" cy="100" r="78" fill="none" stroke="#59626b" strokeWidth="7" />
+        <circle cx="100" cy="100" r="82" fill="none" stroke="#22d3ee" strokeOpacity="0.3" strokeWidth="1" />
+        {rivets.map(([x, y], i) => (
+          <g key={`rv${i}`}>
+            <circle cx={x} cy={y} r="3.2" fill="#cdd9de" />
+            <circle cx={+(x - 0.9).toFixed(2)} cy={+(y - 0.9).toFixed(2)} r="1.1" fill="#f2f7f9" />
+          </g>
+        ))}
+
+        {/* Inner assembly, scaled to sit inside the crown */}
+        <g transform="translate(100,100) scale(0.84) translate(-100,-100)">
 
         {/* Outer bezel */}
         <circle cx="100" cy="100" r="90" fill="#06121a" stroke="#0f3d47" strokeWidth="3" />
@@ -120,7 +160,7 @@ export default function ArcReactorStatic() {
           ))}
           {coilWedges.map((pts, i) => (
             <g key={`w${i}`}>
-              <polygon points={pts} fill="#241408" stroke="#c9772e" strokeOpacity="0.8" strokeWidth="1.4" strokeLinejoin="round" />
+              <polygon points={pts} fill="#2b1a09" stroke="#d8973c" strokeOpacity="0.85" strokeWidth="1.4" strokeLinejoin="round" />
               {/* cyan winding highlight down each wedge face */}
               <line
                 x1={pt(i * 36 - 90, 53)[0]}
@@ -183,6 +223,7 @@ export default function ArcReactorStatic() {
         />
         <polygon points={coreInner} fill="none" stroke="#eafdff" strokeOpacity="0.9" strokeWidth="1.5" strokeLinejoin="round" />
         <polygon points="100,94 95,104 105,104" fill="#eafdff" />
+        </g>
       </svg>
     </div>
   );

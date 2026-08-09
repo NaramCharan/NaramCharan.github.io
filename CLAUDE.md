@@ -77,24 +77,33 @@ content is REAL, sourced from naramcharan.me.
   the assembled reactor clears the sticky navbar), lights + framed
   `<Environment>`/`<Lightformer>` (no network HDR fetch), `<Bloom>` postprocessing,
   and the single `ScrollTrigger` that writes 0..1 into a `progress` ref (+
-  `--p`/`data-seg` on the track). `Reactor3D.tsx`: the Mark XLII rig, reshaped
-  2026-07-08 to read as a real machined arc reactor — bezel + milled steel rim, tick
-  ring, recessed coil well (set-back floor, two concentric rings, 10 glowing radial
-  slots), **10 radial copper trapezoid coil segments** (`useTrapezoidGeometry`, wide
-  end outward, lit inner strip each), extruded triangular rotor, corner nodes, core
-  assembly (16-tooth steel collar + bright hub torus + glowing triangle + central
-  disc), 4 robotic arms; each part lerps from a scattered/scaled start to its locked
-  pose across its own progress window (read in `useFrame`, no React re-render); a
-  dev-only `window.__pin` (NODE_ENV-gated) pins progress for preview inspection; core
-  `pointLight` + emissive **ignite to a flash then CALM** (`win(p,0.8,0.94)`) so the
-  name/copy read in segment C (toned 2026-07-03: core light ×4.5, core emissive
-  flash ~1.5, coil glass 1.6, Bloom 0.5 @ luminanceThreshold 0.85 — never washes the
-  viewport gray). As the core calms the root also **settles** — scales to 0.74
-  (0.58 under 640px) and rises (+0.8 / +1.0 world y) so the tick ring parks clear
-  of the "3rd-year CS…" kicker line. `parts.tsx`: shared PBR materials (dark/bright metal,
-  copper, cyan glass, core glow, steel) + extruded-triangle and trapezoid-coil
-  geometry helpers. `ArcReactorStatic.tsx` mirrors this machined design in pure SVG
-  (copper wedges + slots, tooth collar) for the reduced-motion hero + FRIDAY modal. **Quirk:**
+  `--p`/`data-seg` on the track). `Reactor3D.tsx`: reshaped **2026-08-09 to the
+  CLASSIC prop** (user supplied the reference still) instead of the sleek Mark XLII
+  disc — an outer **crown of 18 weathered iron teeth** (`useTrapezoidGeometry` run
+  backwards: wide root, narrow tip) each carrying a deterministic length/girth/tilt
+  jitter (uniform teeth read as CG), **12 chrome ball-bearing rivets** on the rim,
+  tick ring, recessed coil well (set-back floor, two concentric rings, 10 glowing
+  radial slots), **10 radial brass trapezoid winding blocks** (5 wrap bands each),
+  extruded triangular frame, corner nodes, core assembly (16-tooth steel collar +
+  hub torus + the glowing **triangle heart** + central disc), **10 plasma filaments**
+  that snap on/off individually around the heart, 4 robotic arms. Each part lerps
+  from a scattered/scaled start to its locked pose across its own progress window
+  (read in `useFrame`, no React re-render); **teeth hammer in one at a time**
+  (0.34→0.48, staggered) — the clearest "assembling" read on the piece — and the
+  crown seats with a quarter-turn. A dev-only `window.__pin` (NODE_ENV-gated) pins
+  progress for preview inspection. Core `pointLight` + emissive **ignite to a flash
+  then CALM** (`win(p,0.8,0.94)`) so the name/copy read in segment C, plus a
+  scroll-scrubbed **recoil kick** through ignition. **Glow budget:** slotGlow idles
+  ~1.1 (was 2.4 — past that Bloom swallows the brass and the crown and it reads as a
+  glowing disc, not a machined object); core light ×4.5, Bloom 0.5 @ luminanceThreshold
+  0.85. As the core calms the root **settles** — scales to 0.70 (0.55 under 640px) and
+  rises (+0.8 / +1.0 world y) so the crown parks clear of the kicker line.
+  `parts.tsx`: shared PBR materials (dark/bright metal, brass copper, cyan glass, core
+  glow, steel, **weathered** crown iron, **chrome** rivets) + extruded-triangle and
+  trapezoid geometry helpers (keep any trapezoid's narrow end ≥0.1 — the helper's
+  0.03 bevel pinches below that). `ArcReactorStatic.tsx` mirrors this design in pure
+  SVG (crown teeth + rivets outside a `scale(0.84)` group holding the brass wedges,
+  slots and tooth collar) for the reduced-motion hero + FRIDAY modal. **Quirk:**
   in the hidden preview tab rAF is throttled → the R3F loop + ScrollTrigger freeze;
   each `preview_screenshot` pumps a few frames (scroll via eval →
   `dispatchEvent('scroll')` → screenshot). Also: HMR reloads can corrupt the
