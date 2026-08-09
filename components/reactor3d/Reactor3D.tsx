@@ -12,18 +12,18 @@ import {
 /**
  * The 3D arc reactor, assembled by a scroll-progress ref (0..1).
  *
- * Modelled on the CLASSIC prop rather than the sleek Mark XLII disc: a crown of
- * uneven weathered iron teeth studded with polished ball-bearing rivets, a well
- * of brass wire windings, and a triangular heart that crackles with plasma once
- * it ignites. The irregularity is deliberate — perfectly uniform teeth read as
- * CG, so each one carries a deterministic length/tilt jitter.
+ * Modelled on the CLASSIC prop rather than the sleek Mark XLII disc: a weathered
+ * iron rim studded with polished ball-bearing rivets, a well of brass wire
+ * windings, and a triangular heart that crackles with plasma once it ignites.
+ * (An outer crown of jagged teeth was tried and cut — at this scale it read far
+ * too heavy and dominated the hero.)
  *
  * Each part interpolates from a scattered start pose to its locked pose across
  * its own progress window, so scrubbing forward assembles / backward disassembles.
  * Parts are hidden either by starting off-camera (the big rings fly in) or by
- * scaling from ~0 (teeth, rivets, coils, triangle, core) — no per-material
- * opacity, so shared materials stay conflict-free. `progress` is a live ref
- * updated by ScrollTrigger and read in useFrame (no React re-render per frame).
+ * scaling from ~0 (rivets, coils, triangle, core) — no per-material opacity, so
+ * shared materials stay conflict-free. `progress` is a live ref updated by
+ * ScrollTrigger and read in useFrame (no React re-render per frame).
  */
 type Props = { progress: React.MutableRefObject<number> };
 
@@ -44,8 +44,6 @@ const hash = (n: number) => {
 
 const COIL_COUNT = 10; // radial brass winding blocks (real arc-reactor spoke count)
 const COIL_R = 1.06; // lock radius of the coil band
-const TOOTH_COUNT = 18; // crown teeth
-const TOOTH_R = 2.14; // centre radius of a tooth (tips reach ~2.35)
 const RIVET_COUNT = 12;
 const RIVET_R = 1.86;
 const CORNER_ANGLES = [
@@ -60,13 +58,9 @@ export default function Reactor3D({ progress }: Props) {
   const coilGeo = useTrapezoidGeometry(0.28, 0.5, 0.66, 0.18);
   // glowing wedge between coils — the prop's actual light source
   const slotGeo = useTrapezoidGeometry(0.1, 0.18, 0.6, 0.05);
-  // crown tooth — wide root, narrow tip, chunky in z so it catches a hard edge
-  // (tip kept ≥ 0.1 so the 0.03 bevel in the helper can't pinch the geometry)
-  const toothGeo = useTrapezoidGeometry(0.3, 0.1, 0.42, 0.3);
 
   const rootRef = useRef<THREE.Group>(null);
   const crownRef = useRef<THREE.Group>(null);
-  const teethRef = useRef<THREE.Group>(null);
   const rivetsRef = useRef<THREE.Group>(null);
   const tickRef = useRef<THREE.Group>(null);
   const housingRef = useRef<THREE.Group>(null);
@@ -90,23 +84,6 @@ export default function Reactor3D({ progress }: Props) {
             (i % 3) - 1 > 0 ? 4 : -4
           ),
           spin: (i % 2 ? 1 : -1) * Math.PI * 2,
-        };
-      }),
-    []
-  );
-
-  // Per-tooth jitter — hand-forged, not stamped.
-  const teeth = useMemo(
-    () =>
-      Array.from({ length: TOOTH_COUNT }, (_, i) => {
-        const j = hash(i + 1);
-        const k = hash(i * 5.3 + 11);
-        return {
-          angle: (i / TOOTH_COUNT) * Math.PI * 2,
-          len: 0.84 + j * 0.42, // scale along the blade
-          girth: 0.86 + k * 0.3,
-          tilt: (k - 0.5) * 0.22, // slight lean, like a beaten rim
-          drop: 0.9 + j * 0.5, // stagger offset within the crown window
         };
       }),
     []
@@ -153,19 +130,8 @@ export default function Reactor3D({ progress }: Props) {
       g.rotation.x = lerp(0.9, 0, k);
       g.scale.setScalar(lerp(0.5, 1, k));
     }
-    // Teeth hammer in one at a time — the clearest "assembling" read on the piece.
-    if (teethRef.current) {
-      teethRef.current.children.forEach((child, i) => {
-        const d = teeth[i];
-        const start = 0.34 + (i / TOOTH_COUNT) * 0.14;
-        const k = win(p, start, start + 0.1);
-        const s = Math.max(0.001, backOut(k));
-        child.scale.set(d.girth * s, d.len * s, s);
-        // slides outward into its socket as it lands
-        const r = lerp(TOOTH_R - 0.3, TOOTH_R, easeOut(k));
-        child.position.set(Math.cos(d.angle) * r, Math.sin(d.angle) * r, 0);
-      });
-    }
+    // Rivets pop into the rim one at a time — with the tooth crown gone these
+    // carry the "assembling" read on the outer ring.
     if (rivetsRef.current) {
       rivetsRef.current.children.forEach((child, i) => {
         const start = 0.44 + (i / RIVET_COUNT) * 0.1;
@@ -270,7 +236,7 @@ export default function Reactor3D({ progress }: Props) {
       const small = state.size.width < 640;
       const settle = easeOut(win(p, 0.8, 0.96));
       rootRef.current.scale.setScalar(
-        lerp(0.62, 1, intro) * lerp(1, small ? 0.55 : 0.7, settle)
+        lerp(0.62, 1, intro) * lerp(1, small ? 0.58 : 0.74, settle)
       );
       rootRef.current.position.y = lerp(0, small ? 1.0 : 0.8, settle);
       // Mechanical recoil through the ignition step — a damped kick scrubbed by
@@ -288,9 +254,9 @@ export default function Reactor3D({ progress }: Props) {
 
   return (
     <group ref={rootRef}>
-      {/* 1 — Crown: weathered iron rim, jagged teeth, ball-bearing rivets */}
+      {/* 1 — Rim: weathered iron ring + ball-bearing rivets */}
       <group ref={crownRef} scale={0.001}>
-        {/* backing plate the teeth are set into */}
+        {/* backing plate the rim sits on */}
         <mesh material={mat.weathered} position={[0, 0, -0.1]}>
           <ringGeometry args={[1.5, 2.0, 72]} />
         </mesh>
@@ -302,20 +268,6 @@ export default function Reactor3D({ progress }: Props) {
         <mesh material={mat.cyanGlass} position={[0, 0, -0.12]}>
           <torusGeometry args={[1.94, 0.03, 10, 72]} />
         </mesh>
-
-        {/* jagged crown teeth — uneven by design */}
-        <group ref={teethRef}>
-          {teeth.map((d, i) => (
-            <mesh
-              key={i}
-              geometry={toothGeo}
-              material={mat.weathered}
-              position={[Math.cos(d.angle) * TOOTH_R, Math.sin(d.angle) * TOOTH_R, 0]}
-              rotation={[0, 0, d.angle - Math.PI / 2 + d.tilt]}
-              scale={0.001}
-            />
-          ))}
-        </group>
 
         {/* polished rivets studded around the rim face */}
         <group ref={rivetsRef}>
