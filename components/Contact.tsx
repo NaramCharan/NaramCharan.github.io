@@ -41,7 +41,7 @@ export default function Contact() {
   return (
     <section id="contact" className="mx-auto max-w-6xl scroll-mt-20 px-6 py-28">
       <SectionHeading
-        index="04"
+        index="05"
         title="Establish Link"
         subtitle="Channels are open. Reach out for internships, collaborations, or to talk shop about ML."
       />

@@ -38,13 +38,6 @@ function ProjectCard({
           scrub: 0.5,
         },
       });
-      tl.from(el.querySelectorAll("[data-bracket]"), {
-        scale: 0,
-        opacity: 0,
-        duration: 0.22,
-        stagger: 0.04,
-        ease: "back.out(2)",
-      });
       el.querySelectorAll<HTMLElement>("[data-part]").forEach((part, pi) => {
         tl.from(
           part,
@@ -84,21 +77,6 @@ function ProjectCard({
         p.featured ? "md:col-span-2" : ""
       }`}
     >
-      {/* HUD lock-on brackets — first parts to snap in during assembly */}
-      {[
-        "left-2 top-2 border-l border-t",
-        "right-2 top-2 border-r border-t",
-        "left-2 bottom-2 border-l border-b",
-        "right-2 bottom-2 border-r border-b",
-      ].map((cls) => (
-        <span
-          key={cls}
-          data-bracket
-          aria-hidden
-          className={`pointer-events-none absolute z-10 h-4 w-4 border-cyan/60 ${cls}`}
-        />
-      ))}
-
       {/* Scan sweep on hover */}
       <span
         aria-hidden

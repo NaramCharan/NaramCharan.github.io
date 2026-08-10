@@ -40,8 +40,9 @@ content is REAL, sourced from naramcharan.me.
 - `lib/motion.ts` — shared easing + reveal helpers.
 - `lib/useDecode.ts` — `useDecode()` (scramble-in text) + `useRotate()` (cycling words).
 - `lib/useReducedMotion.ts` — SSR-safe reduced-motion hook.
-- `app/page.tsx` order: Navbar → HudFrame → main[ IntroDashboard, StatsBar, Projects,
-  Skills, Blueprint, About, Contact ]. (No separate Hero/boot gate — IntroDashboard
+- `app/page.tsx` order: Navbar → main[ IntroDashboard, StatsBar, Projects, Skills,
+  About, HowIThink, Contact ]. (HudFrame + CircuitConduit removed 2026-08-10 —
+  decorative chrome, cut to reduce on-screen clutter. Files kept on disk.) (No separate Hero/boot gate — IntroDashboard
   IS the hero.)
 
 ### Key components

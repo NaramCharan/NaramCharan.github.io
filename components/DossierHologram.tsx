@@ -9,7 +9,6 @@ import {
   education,
   certifications,
   projects,
-  contact,
 } from "@/lib/content";
 import { EASE } from "@/lib/motion";
 import { triggerResumeDownload } from "@/lib/resume";
@@ -431,12 +430,6 @@ export default function DossierHologram() {
                     →
                   </span>
                 </button>
-                <a
-                  href={`mailto:${contact.email}`}
-                  className="inline-flex min-h-11 items-center justify-center rounded-md border border-line px-6 py-2.5 text-sm text-text-muted transition-colors duration-300 hover:border-cyan/50 hover:text-cyan"
-                >
-                  Open Channel
-                </a>
               </div>
             </div>
           </motion.div>
