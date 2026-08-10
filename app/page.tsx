@@ -1,11 +1,9 @@
 import IntroDashboard from "@/components/IntroDashboard";
 import Navbar from "@/components/Navbar";
-import HudFrame from "@/components/HudFrame";
-import CircuitConduit from "@/components/CircuitConduit";
 import DossierHologram from "@/components/DossierHologram";
 import Projects from "@/components/Projects";
 import Skills from "@/components/Skills";
-import Blueprint from "@/components/Blueprint";
+import HowIThink from "@/components/HowIThink";
 import About from "@/components/About";
 import Contact from "@/components/Contact";
 
@@ -13,16 +11,13 @@ export default function Home() {
   return (
     <>
       <Navbar />
-      <HudFrame />
-      {/* relative: the CircuitConduit positions itself against <main> */}
       <main id="main" className="relative">
         <IntroDashboard />
         <Projects />
         <Skills />
-        <Blueprint />
         <About />
+        <HowIThink />
         <Contact />
-        <CircuitConduit />
       </main>
       {/* Projected by the navbar's RESUME button */}
       <DossierHologram />

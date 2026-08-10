@@ -9,7 +9,7 @@ export const profile = {
   status: "3rd-year CS · AI & ML · Open to internships",
   location: "Gurugram, India",
   about: [
-    "It started with a man in a suit of armor and an AI he trusted completely — loyal, steady, present in a way that's rare to find in people, let alone machines. Figuring out how to build that turned a childhood fascination into a career.",
+    "It started with a man in a suit of armor — the coolest hero I'd ever seen. But my interest went past the armor, to the AI he talked to. Because you know what was even cooler than the suit? His AI.",
     "I'm a 3rd-year CS student specializing in AI & Machine Learning, focused on end-to-end data pipelines, predictive modeling, and scalable systems — not notebook exercises.",
     "I build recommendation architectures with deep learning and vector-index search, tune tree-based classifiers with hyperparameter optimization, and obsess over data-separation methodology so models hold up in production, not just on a leaderboard.",
   ],
