@@ -212,7 +212,8 @@ export default function DossierHologram() {
   }, [close]);
 
   const record = [
-    { k: "PROJECTS SHIPPED", v: String(projects.length) },
+    // Shipped means shipped — a wip build is not a delivered one.
+    { k: "PROJECTS SHIPPED", v: String(projects.filter((p) => !p.wip).length) },
     { k: "CERTIFICATIONS", v: String(certifications.length) },
     { k: "CGPA", v: education.cgpa.replace(" / 10.0", "/10") },
   ];
