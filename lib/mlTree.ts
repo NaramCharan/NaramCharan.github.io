@@ -20,9 +20,9 @@ export type TreeModel = {
   note?: string;
   /** Work in progress — renders with a pulsing amber state. */
   wip?: boolean;
-  /** Conceptual groundwork rather than a portfolio gap. These exist to show
-   *  the lineage — the sequence models are the problem transformers solved —
-   *  so they are never counted as missing projects. */
+  /** Studied in theory rather than shipped — and shown as such on purpose.
+   *  These trace the RNN → LSTM → attention line that today's models are
+   *  built on, so they are never counted as missing projects. */
   foundation?: boolean;
   /** Scrolls to an element on this page instead of opening a project. */
   seeAlso?: { label: string; href: string };
@@ -148,11 +148,11 @@ export const ML_TREE: { root: string; branches: [TreeBranch, TreeBranch] } = {
           models: [
             {
               id: "chestxray",
-              label: "Chest X-Ray Classification",
-              projectIds: [],
+              label: "Pneumonia Detection · Chest X-Ray",
+              projectIds: ["rsna"],
               wip: true,
               note:
-                "In progress — CNN-based classification on chest radiographs. Currently building the pipeline.",
+                "MK-06, in progress — a CNN over chest radiographs from the RSNA dataset. First build on this branch: the features are learned from pixels rather than engineered by hand.",
             },
           ],
         },
@@ -160,7 +160,7 @@ export const ML_TREE: { root: string; branches: [TreeBranch, TreeBranch] } = {
           id: "sequential",
           label: "SEQUENTIAL MODELS",
           caption:
-            "Order carries meaning — state is passed along the sequence. These are the building blocks transformers were built to replace.",
+            "Order carries meaning — state is passed along the sequence. Studied in theory: these are the building blocks transformers were built to replace, and knowing exactly where they break is what makes attention make sense.",
           models: [
             {
               id: "rnn",
@@ -168,7 +168,7 @@ export const ML_TREE: { root: string; branches: [TreeBranch, TreeBranch] } = {
               projectIds: [],
               foundation: true,
               note:
-                "Processes a sequence one step at a time, carrying a hidden state forward. Sequential by construction — which is exactly what caps its speed and its memory over long spans.",
+                "Studied in depth rather than shipped — and that is the point. It processes a sequence one step at a time, carrying a hidden state forward. Sequential by construction, which is exactly what caps its speed and its memory over long spans. Understanding that limit is what makes attention make sense.",
             },
             {
               id: "lstm",
@@ -176,7 +176,7 @@ export const ML_TREE: { root: string; branches: [TreeBranch, TreeBranch] } = {
               projectIds: [],
               foundation: true,
               note:
-                "Gates let gradients survive far longer than a plain RNN. Still strictly sequential, though — you cannot parallelise across time.",
+                "Gates let gradients survive far longer than a plain RNN — the fix that made sequence learning practical. Still strictly sequential, though: you cannot parallelise across time. That ceiling is exactly what the transformer was designed to break.",
             },
           ],
         },
@@ -184,7 +184,7 @@ export const ML_TREE: { root: string; branches: [TreeBranch, TreeBranch] } = {
           id: "transformers",
           label: "TRANSFORMERS",
           caption:
-            "Attention replaces recurrence — every position can see every other in one step.",
+            "Attention replaces recurrence — every position sees every other in one step. This is the architecture running inside ChatGPT, Gemini and Claude, and the reason the modern era of AI happened when it did.",
           models: [
             {
               id: "attention",
@@ -192,7 +192,7 @@ export const ML_TREE: { root: string; branches: [TreeBranch, TreeBranch] } = {
               projectIds: [],
               foundation: true,
               note:
-                "Drops recurrence entirely: every position attends to every other in a single step, so the whole sequence computes in parallel. That is what made scale possible.",
+                "The mechanism I studied to understand how modern models actually work. It drops recurrence entirely — every position attends to every other in a single step, so the whole sequence computes in parallel instead of one token at a time. That single change is what made training at today's scale possible.",
             },
             {
               id: "pretrained",
@@ -200,7 +200,7 @@ export const ML_TREE: { root: string; branches: [TreeBranch, TreeBranch] } = {
               projectIds: [],
               foundation: true,
               note:
-                "Pre-train once on a large corpus, adapt to the task afterwards — the pattern behind modern NLP. Studied through the Deep Learning Specialization.",
+                "Pre-train once on a huge corpus, adapt to the task afterwards. This is where the line ends: RNN → LSTM → attention → the models running in ChatGPT, Gemini and Claude today. Studied through the Deep Learning Specialization rather than built — the theory is the point here, not a repo.",
             },
           ],
         },

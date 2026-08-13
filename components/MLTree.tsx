@@ -333,10 +333,11 @@ export default function MLTree() {
         <p className="mono mt-5 border-t border-line pt-3 text-[10px] leading-relaxed tracking-wide text-text-dim">
           <b className="font-normal text-text-muted">HOW TO READ THIS.</b> A filled cyan dot means
           I&apos;ve shipped a project with that model — open the node to jump to the code. Amber is
-          in progress. <b className="font-normal text-cyan/80">FOUNDATION</b> marks the theory the
-          branch is built on — sequential models are the problem transformers were invented to
-          solve, so they carry no project by design. A hollow dot is a method I know but
-          haven&apos;t built with yet.
+          in progress. <b className="font-normal text-cyan/80">FOUNDATION</b> means I&apos;ve
+          studied it in theory and understand how it works, and it carries no project by design:
+          RNN → LSTM → attention is the line the modern era of AI was built on, and the architecture
+          it ends at is the one running inside ChatGPT, Gemini and Claude today. A hollow dot is a
+          method I know but haven&apos;t built with yet.
         </p>
       </div>
     </div>

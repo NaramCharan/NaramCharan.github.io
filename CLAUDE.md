@@ -114,7 +114,10 @@ content is REAL, sourced from naramcharan.me.
   (no `Math.random()` in render) to avoid SSR/client mismatch.
 - Branded favicon: `app/icon.svg` (mini arc reactor). No Three.js deps — the reactors
   are all pure SVG + anime.js/CSS.
-- `Projects.tsx` — 5 real repos as HUD scan cards (MK-01…05, FEATURED on Walmart).
+- `Projects.tsx` — 6 repos as HUD scan cards, numbered chronologically
+  (MK-01 scraper → MK-02 titanic → MK-03 recsys → MK-04 churn → MK-05 walmart,
+  FEATURED on Walmart; MK-06 RSNA pneumonia is `wip: true` — renders IN PROGRESS,
+  no metric glow, no results block).
 - `Skills.tsx` + `SystemIcons.tsx` — "Suit Systems" with **icon emblems, NO numbers**
   (brain=Deep Learning, circuit=ML, database=Data, terminal=Engineering) in rotating reticles.
 - `Blueprint.tsx` — **bespoke commissioned-feel** SVG schematic of the neural

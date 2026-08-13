@@ -308,7 +308,7 @@ export default function IntroDashboard() {
               weight beside the two genuine metrics — once a viewer clocks the
               theatre, the 98.28% next to it inherits the doubt. */}
           <Panel className="left-8 top-1/2 w-[250px] -translate-y-1/2">
-            <PanelHead label="CHURN MODEL ACCURACY" code="MK-02" />
+            <PanelHead label="CHURN MODEL ACCURACY" code="MK-04" />
             <div className="flex items-end justify-between">
               <span className="mono text-2xl font-bold text-gold glow-gold">98.28%</span>
               <span className="mono text-[9px] text-text-dim">XGBOOST · 10-FOLD CV</span>
@@ -317,7 +317,7 @@ export default function IntroDashboard() {
           </Panel>
 
           <Panel className="bottom-16 left-8 w-[260px]">
-            <PanelHead label="STORE-DEPT FORECAST" code="MK-01" />
+            <PanelHead label="STORE-DEPT FORECAST" code="MK-05" />
             <ForecastBars />
             <p className="mono mt-2 flex items-center gap-2 text-[9px] tracking-wide text-text-dim">
               <span className="text-gold">■</span> ACTUAL

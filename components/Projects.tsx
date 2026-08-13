@@ -112,6 +112,11 @@ function ProjectCard({
                   FEATURED
                 </span>
               )}
+              {p.wip && (
+                <span className="mono rounded border border-gold/50 bg-gold/10 px-2 py-0.5 text-[10px] tracking-[0.2em] text-gold motion-safe:animate-pulse">
+                  IN PROGRESS
+                </span>
+              )}
             </div>
 
             {/* Title + headline metric */}
@@ -119,7 +124,13 @@ function ProjectCard({
               <h3 className="text-base font-semibold leading-snug text-text transition-colors duration-200 group-hover:text-cyan-bright sm:text-lg">
                 {p.name}
               </h3>
-              <span className="mono shrink-0 whitespace-nowrap text-sm font-bold text-gold glow-gold sm:text-base">
+              <span
+                className={`mono shrink-0 whitespace-nowrap text-sm sm:text-base ${
+                  p.wip
+                    ? "font-normal tracking-[0.14em] text-gold/70"
+                    : "font-bold text-gold glow-gold"
+                }`}
+              >
                 {p.metric}
               </span>
             </div>
@@ -163,11 +174,15 @@ function ProjectCard({
         <div className="flex flex-col justify-between mt-3 md:mt-0">
           <div>
             {/* Live mini-demo */}
-            <div data-part>
-              <MiniDemo id={p.id} />
-            </div>
+            {!p.wip && (
+              <div data-part>
+                <MiniDemo id={p.id} />
+              </div>
+            )}
 
-            {/* Key results */}
+            {/* Key results — omitted entirely while a project is in progress,
+                rather than shown as an empty promise. */}
+            {p.wins.length > 0 && (
             <div data-part className="mt-3">
               <p className="mono mb-1.5 flex items-center gap-2 text-[10px] tracking-[0.25em] text-gold/90">
                 <span className="h-px w-3 bg-gold/70" /> KEY RESULTS
@@ -183,6 +198,7 @@ function ProjectCard({
                 ))}
               </ul>
             </div>
+            )}
           </div>
 
           <div data-part className="mt-3 flex flex-wrap gap-1.5">
