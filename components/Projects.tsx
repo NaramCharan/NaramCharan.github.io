@@ -5,6 +5,11 @@ import { motion } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { projects, type Project } from "@/lib/content";
+
+/* Displayed newest-first so the current build leads and MK-01 closes.
+   content.ts stays authored in build order, so adding MK-07 is still just a
+   push to the end of that array. */
+const ordered = [...projects].reverse();
 import { useTilt } from "@/lib/useTilt";
 import { usePrefersReducedMotion } from "@/lib/useReducedMotion";
 import SectionHeading from "./SectionHeading";
@@ -74,7 +79,7 @@ function ProjectCard({
         transformPerspective: 900,
       }}
       className={`group relative flex cursor-pointer flex-col justify-between overflow-hidden rounded-xl border border-line bg-surface/60 p-5 transition-colors duration-300 hover:border-cyan/60 hover:bg-surface-2/70 hover:shadow-[0_0_36px_-6px_rgba(34,211,238,0.35)] sm:p-6 ${
-        p.featured ? "md:col-span-2" : ""
+        p.featured || p.wip ? "md:col-span-2" : ""
       }`}
     >
       {/* Scan sweep on hover */}
@@ -266,7 +271,7 @@ export default function Projects() {
         subtitle="Production-grade ML systems — each scanned, validated, and leakage-checked before deployment. Tap any card or FRIDAY for the full brief."
       />
       <div className="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2">
-        {projects.map((p) => (
+        {ordered.map((p) => (
           <ProjectCard key={p.id} p={p} onBrief={setActive} />
         ))}
       </div>
