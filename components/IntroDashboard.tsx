@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useRef, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import dynamic from "next/dynamic";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -12,11 +12,10 @@ import { EASE } from "@/lib/motion";
 import { useMagnetic } from "@/lib/useMagnetic";
 import ArcReactorStatic from "./ArcReactorStatic";
 
-// Split the three.js bundle out of the initial load — the canvas streams in
-// behind a lightweight reactor shimmer instead of blocking first paint.
-const HeroCanvas = dynamic(() => import("./reactor3d/HeroCanvas"), {
-  ssr: false,
-  loading: () => (
+/** The shimmer shown while three.js is still on the wire (and before we ask
+ *  for it at all). Doubles as the pre-idle placeholder so the swap is seamless. */
+function ReactorShimmer() {
+  return (
     <div
       aria-hidden
       className="absolute inset-0 flex flex-col items-center justify-center gap-4"
@@ -28,6 +27,15 @@ const HeroCanvas = dynamic(() => import("./reactor3d/HeroCanvas"), {
         INITIALIZING RENDERER…
       </span>
     </div>
+  );
+}
+
+// Split the three.js bundle out of the initial load — the canvas streams in
+// behind a lightweight reactor shimmer instead of blocking first paint.
+const HeroCanvas = dynamic(() => import("./reactor3d/HeroCanvas"), {
+  ssr: false,
+  loading: () => (
+    <ReactorShimmer />
   ),
 });
 
@@ -67,6 +75,36 @@ const CODE_LINES = [
  */
 export default function IntroDashboard() {
   const reduced = usePrefersReducedMotion();
+
+  /* three.js is ~1.1MB and was being fetched and parsed while React was still
+     hydrating — 450ms of blocking time before the page would answer a tap.
+     The reactor sits at 0.25 opacity until you scroll, so nobody can tell it
+     arrived a beat late: wait for the main thread to go idle, or for the first
+     scroll (whichever lands first), then pull it in. The shimmer holds the
+     frame meanwhile, so the swap is invisible either way. */
+  const [canvasReady, setCanvasReady] = useState(false);
+  useEffect(() => {
+    if (reduced) return;
+    let settled = false;
+    const start = () => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      setCanvasReady(true);
+    };
+    // Safari only shipped requestIdleCallback recently, so fall back to a timer.
+    const idle = typeof window.requestIdleCallback === "function";
+    const id = idle
+      ? window.requestIdleCallback(start, { timeout: 1500 })
+      : window.setTimeout(start, 700);
+    function cleanup() {
+      window.removeEventListener("scroll", start);
+      if (idle) window.cancelIdleCallback(id);
+      else clearTimeout(id);
+    }
+    window.addEventListener("scroll", start, { passive: true });
+    return cleanup;
+  }, [reduced]);
   const trackRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const specialty = useRotate(SPECIALTIES);
@@ -165,7 +203,7 @@ export default function IntroDashboard() {
             className="absolute inset-0"
             style={{ opacity: "calc(0.25 + var(--p, 0) * 6)" }}
           >
-            <HeroCanvas trackId="top" />
+            {canvasReady ? <HeroCanvas trackId="top" /> : <ReactorShimmer />}
           </div>
         )}
 

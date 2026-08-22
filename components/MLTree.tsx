@@ -172,7 +172,9 @@ function Branch({
         >
           {branch.dataType}
         </p>
-        <h4 className="mt-1 text-lg font-semibold text-text">{branch.label}</h4>
+        {/* h3, not h4 — the section heading above is an h2 and skipping a level
+            breaks screen-reader outline navigation. */}
+        <h3 className="mt-1 text-lg font-semibold text-text">{branch.label}</h3>
         <p className="mt-1.5 text-[13px] leading-relaxed text-text-muted">{branch.caption}</p>
       </div>
 
