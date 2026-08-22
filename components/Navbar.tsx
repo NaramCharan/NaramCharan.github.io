@@ -67,7 +67,9 @@ export default function Navbar() {
           <a
             href="#top"
             className="group flex min-h-11 items-center gap-2.5"
-            aria-label="Back to top"
+            /* WCAG 2.5.3 Label in Name — the accessible name must contain the
+               visible text ("NC"), or voice-control users can't say what they see. */
+            aria-label="NC — back to top"
           >
             <span
               aria-hidden
