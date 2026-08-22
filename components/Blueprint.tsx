@@ -85,7 +85,7 @@ export default function Blueprint() {
   return (
     <section
       aria-label="Recommendation engine schematic"
-      className="relative overflow-hidden border-b border-line py-28"
+      className="relative overflow-hidden border-b border-line py-16 sm:py-28"
     >
       <div className="mx-auto max-w-6xl px-6">
         <div className="mb-10 flex flex-wrap items-end justify-between gap-4">

@@ -18,7 +18,7 @@ import MLTree from "./MLTree";
  */
 export default function HowIThink() {
   return (
-    <section id="how-i-think" className="mx-auto max-w-6xl scroll-mt-20 px-6 py-28">
+    <section id="how-i-think" className="mx-auto max-w-6xl scroll-mt-20 px-5 py-16 sm:px-6 sm:py-28">
       <SectionHeading
         index="04"
         title="How I Think"

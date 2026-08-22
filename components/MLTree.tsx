@@ -300,8 +300,35 @@ export default function MLTree() {
           </div>
         </div>
 
-        {/* trunk — splits by the one question that decides everything */}
-        <div className="relative mx-auto h-16 w-full max-w-3xl sm:h-20">
+        {/* trunk — splits by the one question that decides everything.
+            Below lg the two branches STACK, so a Y-split would fork out to the
+            left and right edges and dead-end in empty space (the gold arm
+            especially, pointing at nothing). Mobile gets a single spine with
+            the question set into it; the fork only appears once there really
+            are two columns to fork into. */}
+        <div className="relative mx-auto flex h-16 w-full max-w-3xl items-center justify-center lg:hidden">
+          <svg
+            viewBox="0 0 100 80"
+            preserveAspectRatio="none"
+            className="absolute inset-0 h-full w-full overflow-visible"
+            aria-hidden
+          >
+            <path
+              className="ml-trunk-line"
+              d="M50 0 V80"
+              fill="none"
+              stroke="var(--color-cyan)"
+              strokeWidth="1.5"
+              opacity="0.65"
+              vectorEffect="non-scaling-stroke"
+            />
+          </svg>
+          <span className="mono relative whitespace-nowrap bg-bg px-3 text-[9px] tracking-[0.2em] text-text-dim">
+            WHAT SHAPE IS THE DATA?
+          </span>
+        </div>
+
+        <div className="relative mx-auto hidden h-16 w-full max-w-3xl sm:h-20 lg:block">
           <svg
             viewBox="0 0 600 80"
             preserveAspectRatio="none"
