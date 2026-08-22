@@ -26,8 +26,28 @@ export default function HeroCanvas({
 }) {
   const progress = useRef(0);
   const [mounted, setMounted] = useState(false);
+  const [live, setLive] = useState(true);
 
   useEffect(() => setMounted(true), []);
+
+  // R3F's default frameloop is "always": without this the whole pipeline below
+  // — two mipmap Bloom passes, chromatic aberration, vignette — kept rendering
+  // every frame for the entire page, long after the hero had scrolled away.
+  // That was the site-wide scroll stutter: a 4-pass post-processing chain
+  // burning GPU on an off-screen canvas while you read Projects and Contact.
+  // Park the loop when the hero track leaves the viewport; the last frame stays
+  // on the canvas, and the margin wakes it before it scrolls back into view.
+  useEffect(() => {
+    if (!mounted) return;
+    const track = document.getElementById(trackId);
+    if (!track) return;
+    const io = new IntersectionObserver(
+      ([entry]) => setLive(entry.isIntersecting),
+      { rootMargin: "250px 0px" }
+    );
+    io.observe(track);
+    return () => io.disconnect();
+  }, [mounted, trackId]);
 
   useEffect(() => {
     if (!mounted) return;
@@ -55,8 +75,14 @@ export default function HeroCanvas({
     <Canvas
       className="!absolute inset-0"
       camera={{ position: [0, 0, 9.2], fov: 42 }}
-      dpr={[1, 2]}
-      gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
+      frameloop={live ? "always" : "never"}
+      // 2× DPR on a retina panel is 4× the pixels through four post passes.
+      // 1.5 is the last step where the bloom still reads clean, and it cuts
+      // roughly 44% of the fragment work on exactly the machines that struggled.
+      dpr={[1, 1.5]}
+      // The scene renders into the EffectComposer's own target, so context
+      // MSAA never applies here — it only cost memory.
+      gl={{ antialias: false, alpha: true, powerPreference: "high-performance" }}
     >
       <color attach="background" args={["#05080f"]} />
       <fog attach="fog" args={["#05080f", 10, 22]} />
