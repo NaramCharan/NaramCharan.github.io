@@ -139,7 +139,7 @@ function ProjectCard({
                 {p.metric}
               </span>
             </div>
-            <p data-part className="mt-2 text-xs leading-relaxed text-text-muted sm:text-sm">
+            <p data-part className="mt-2 text-[13px] leading-relaxed text-text-muted sm:text-sm">
               {p.description}
             </p>
           </div>
@@ -151,7 +151,7 @@ function ProjectCard({
                 type="button"
                 onClick={() => onBrief(p)}
                 aria-label={`FRIDAY — analyze ${p.name}`}
-                className="friday-chip mono group/friday inline-flex items-center gap-2 rounded-md border border-cyan/40 bg-cyan/5 px-3 py-1.5 text-[11px] tracking-[0.2em] text-cyan transition-all duration-200 hover:border-cyan hover:bg-cyan/15 hover:shadow-[0_0_16px_-4px_rgba(34,211,238,0.5)]"
+                className="friday-chip mono group/friday inline-flex min-h-11 items-center gap-2 rounded-md border border-cyan/40 bg-cyan/5 px-3 py-1.5 text-[11px] tracking-[0.2em] text-cyan transition-all duration-200 hover:border-cyan hover:bg-cyan/15 hover:shadow-[0_0_16px_-4px_rgba(34,211,238,0.5)]"
               >
                 <span aria-hidden className="relative flex h-2 w-2">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan opacity-60" />
@@ -166,7 +166,7 @@ function ProjectCard({
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={`${p.name} — open repository on GitHub`}
-                className="mono inline-flex items-center gap-1.5 text-xs text-cyan transition-transform duration-200 hover:translate-x-1"
+                className="mono inline-flex min-h-11 items-center gap-1.5 text-xs text-cyan transition-transform duration-200 hover:translate-x-1"
               >
                 <GitHubMark className="h-3.5 w-3.5" />
                 VIEW CODE →
@@ -226,7 +226,7 @@ function ProjectCard({
             type="button"
             onClick={() => onBrief(p)}
             aria-label={`FRIDAY — analyze ${p.name}`}
-            className="friday-chip mono group/friday inline-flex items-center gap-2 rounded-md border border-cyan/40 bg-cyan/5 px-3 py-1.5 text-[11px] tracking-[0.2em] text-cyan transition-all duration-200 hover:border-cyan hover:bg-cyan/15 hover:shadow-[0_0_16px_-4px_rgba(34,211,238,0.5)]"
+            className="friday-chip mono group/friday inline-flex min-h-11 items-center gap-2 rounded-md border border-cyan/40 bg-cyan/5 px-3 py-1.5 text-[11px] tracking-[0.2em] text-cyan transition-all duration-200 hover:border-cyan hover:bg-cyan/15 hover:shadow-[0_0_16px_-4px_rgba(34,211,238,0.5)]"
           >
             <span aria-hidden className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan opacity-60" />
@@ -241,7 +241,7 @@ function ProjectCard({
             target="_blank"
             rel="noopener noreferrer"
             aria-label={`${p.name} — open repository on GitHub`}
-            className="mono inline-flex items-center gap-1.5 text-xs text-cyan transition-transform duration-200 hover:translate-x-1"
+            className="mono inline-flex min-h-11 items-center gap-1.5 text-xs text-cyan transition-transform duration-200 hover:translate-x-1"
           >
             <GitHubMark className="h-3.5 w-3.5" />
             VIEW CODE →
@@ -264,7 +264,7 @@ export default function Projects() {
   const [active, setActive] = useState<Project | null>(null);
 
   return (
-    <section id="projects" className="mx-auto max-w-6xl scroll-mt-20 px-6 py-28">
+    <section id="projects" className="mx-auto max-w-6xl scroll-mt-20 px-5 py-16 sm:px-6 sm:py-28">
       <SectionHeading
         index="01"
         title="Projects"

@@ -58,7 +58,7 @@ export default function About() {
   }, [reduced]);
 
   return (
-    <section id="about" className="mx-auto max-w-6xl scroll-mt-20 px-6 py-28">
+    <section id="about" className="mx-auto max-w-6xl scroll-mt-20 px-5 py-16 sm:px-6 sm:py-28">
       <SectionHeading index="03" title="Origin Story" />
 
       <div className="grid grid-cols-1 gap-12 lg:grid-cols-5">

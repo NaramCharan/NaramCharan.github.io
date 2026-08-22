@@ -43,8 +43,10 @@ function SystemEmblem({ icon }: { icon: SkillSystem["icon"] }) {
     };
   }, [reduced]);
 
+  // 96px of emblem left the text column only 161px at 375px — every skill chip
+  // wrapped onto its own line. Shrinks on phones, full size from sm.
   return (
-    <div className="relative h-24 w-24 shrink-0">
+    <div className="relative h-16 w-16 shrink-0 sm:h-24 sm:w-24">
       <div ref={dragRef} className="absolute inset-0 cursor-grab active:cursor-grabbing">
         {/* Rotating reticle ring — spins continuously once assembled */}
         <svg viewBox="0 0 96 96" className="absolute inset-0 h-full w-full">
@@ -77,7 +79,7 @@ function SystemEmblem({ icon }: { icon: SkillSystem["icon"] }) {
           ))}
         </svg>
         <div className="absolute inset-0 flex items-center justify-center text-cyan glow-cyan">
-          <SystemIcon name={icon} className="h-9 w-9" />
+          <SystemIcon name={icon} className="h-6 w-6 sm:h-9 sm:w-9" />
         </div>
       </div>
     </div>
@@ -132,7 +134,7 @@ function SystemCard({ s }: { s: SkillSystem }) {
   return (
     <div
       ref={rootRef}
-      className="flex gap-5 rounded-xl border border-line bg-surface/50 p-6 backdrop-blur-[2px] transition-colors duration-300 hover:border-cyan/50 sm:p-7"
+      className="flex gap-4 rounded-xl border border-line bg-surface/50 p-5 backdrop-blur-[2px] transition-colors duration-300 hover:border-cyan/50 sm:gap-5 sm:p-7"
     >
       <div data-emblem>
         <SystemEmblem icon={s.icon} />
@@ -173,12 +175,12 @@ export default function Skills() {
   return (
     <section
       id="skills"
-      className="relative scroll-mt-20 border-y border-line bg-bg-2/40 py-28"
+      className="relative scroll-mt-20 border-y border-line bg-bg-2/40 py-16 sm:py-28"
     >
       {/* Interactive HUD dot field — ripples from clicks, glows under the
           cursor, pulses on its own. Content sits above on z-10. */}
       <DotGrid />
-      <div className="relative z-10 mx-auto max-w-6xl px-6">
+      <div className="relative z-10 mx-auto max-w-6xl px-5 sm:px-6">
         <SectionHeading
           index="02"
           title="Suit Systems"

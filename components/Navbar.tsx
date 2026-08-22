@@ -66,7 +66,7 @@ export default function Navbar() {
         <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
           <a
             href="#top"
-            className="group flex items-center gap-2.5"
+            className="group flex min-h-11 items-center gap-2.5"
             aria-label="Back to top"
           >
             <span
