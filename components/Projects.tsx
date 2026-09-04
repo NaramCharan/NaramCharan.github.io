@@ -27,6 +27,11 @@ function ProjectCard({
 }) {
   const tilt = useTilt(3.5);
   const reduced = usePrefersReducedMotion();
+  // A featured card splits into two columns, with the demo and key results
+  // filling the right half. A work-in-progress project has neither yet, so
+  // splitting it would leave that half empty — it stays full-width instead
+  // and still spans both grid columns, so it leads without looking broken.
+  const split = p.featured && !p.wip;
 
   // Exploded-parts assembly, scrubbed by scroll: each internal part starts
   // offset/rotated outside the frame and locks into place as the card enters
@@ -101,7 +106,7 @@ function ProjectCard({
           it was a block with flex-1 inside an overflow-hidden article, which
           clipped 287px at 375px — the chart drew over the action row and the
           key results and tech chips vanished entirely. */}
-      <div className={p.featured ? "flex flex-col flex-1 md:grid md:grid-cols-2 md:gap-6 md:items-start" : "flex flex-col flex-1"}>
+      <div className={split ? "flex flex-col flex-1 md:grid md:grid-cols-2 md:gap-6 md:items-start" : "flex flex-col flex-1"}>
         {/* Left Column (or Top) */}
         <div className="flex flex-col justify-between md:h-full">
           <div>
@@ -145,7 +150,7 @@ function ProjectCard({
           </div>
 
           {/* Action buttons on desktop for featured card */}
-          {p.featured && (
+          {split && (
             <div data-part className="hidden md:flex items-center justify-between gap-3 border-t border-line pt-4 mt-4">
               <button
                 type="button"
@@ -221,7 +226,7 @@ function ProjectCard({
 
       {/* Action buttons for normal cards (and mobile for featured card) */}
       {(!p.featured || true) && (
-        <div data-part className={`mt-4 flex items-center justify-between gap-3 border-t border-line pt-3.5 ${p.featured ? "md:hidden" : ""}`}>
+        <div data-part className={`mt-4 flex items-center justify-between gap-3 border-t border-line pt-3.5 ${split ? "md:hidden" : ""}`}>
           <button
             type="button"
             onClick={() => onBrief(p)}

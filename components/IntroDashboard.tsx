@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { AnimatePresence, motion } from "framer-motion";
-import { profile } from "@/lib/content";
+import { profile, projects } from "@/lib/content";
 import { usePrefersReducedMotion } from "@/lib/useReducedMotion";
 import { useDecode, useRotate } from "@/lib/useDecode";
 import { EASE } from "@/lib/motion";
@@ -40,6 +40,9 @@ const HeroCanvas = dynamic(() => import("./reactor3d/HeroCanvas"), {
 });
 
 gsap.registerPlugin(ScrollTrigger);
+
+/** Work in progress isn't shipped — the hero kicker only counts finished builds. */
+const SHIPPED_COUNT = projects.filter((p) => !p.wip).length;
 
 const SPECIALTIES = [
   "Recommendation Systems",
@@ -261,7 +264,9 @@ export default function IntroDashboard() {
                 variants={{ boot: { opacity: 0, y: 8 }, on: { opacity: 1, y: 0, transition: { duration: 0.85, ease: EASE } } }}
                 className="mono mt-1 max-w-xs text-balance text-[10px] leading-relaxed tracking-[0.14em] text-cyan/85 sm:max-w-none sm:text-[11px]"
               >
-                5 SHIPPED ML SYSTEMS · 95.55% R² FORECASTER · 98.28% CHURN CLASSIFIER
+                {/* Counted, not typed — this line read "5 SHIPPED" for a while
+                    after the project list changed underneath it. */}
+                {SHIPPED_COUNT} SHIPPED ML SYSTEMS · 95.55% R² FORECASTER · 98.28% CHURN CLASSIFIER
               </motion.p>
             </motion.div>
           </div>

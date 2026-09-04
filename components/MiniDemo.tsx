@@ -86,23 +86,6 @@ export default function MiniDemo({ id }: { id: string }) {
           "-=700"
         );
         break;
-      case "titanic":
-        t.add($(".md-sep"), {
-          strokeDashoffset: [56, 0],
-          duration: 500,
-          ease: "inOutQuad",
-        })
-          .add(
-            $('.md-pt[data-side="l"]'),
-            { translateX: [0, -62], opacity: [0.35, 1], duration: 750, delay: stagger(45), ease: "outExpo" },
-            300
-          )
-          .add(
-            $('.md-pt[data-side="r"]'),
-            { translateX: [0, 62], opacity: [0.35, 1], duration: 750, delay: stagger(45), ease: "outExpo" },
-            300
-          );
-        break;
     }
     tl.current = t;
     return () => {
@@ -263,43 +246,6 @@ function Demo({ id }: { id: string }) {
                 OK
               </text>
             </g>
-          ))}
-        </Svg>
-      );
-    }
-    case "titanic": {
-      const pts = Array.from({ length: 22 }, (_, i) => {
-        const survived = i % 2 === 0;
-        const gx = 108 + ((i * 37) % 28) - 14;
-        const gy = 12 + ((i * 23) % 48);
-        return { survived, gx, gy, dx: survived ? -62 : 62 };
-      });
-      return (
-        <Svg label="SURVIVAL SPLIT · 81.6%">
-          <line
-            className="md-sep"
-            x1="120"
-            y1="8"
-            x2="120"
-            y2="64"
-            stroke="#88a6b3"
-            strokeOpacity="0.4"
-            strokeWidth="1"
-            strokeDasharray="56"
-            strokeDashoffset="0"
-          />
-          {pts.map((p, i) => (
-            <circle
-              key={i}
-              className="md-pt"
-              data-side={p.survived ? "l" : "r"}
-              cx={p.gx}
-              cy={p.gy}
-              r="2.8"
-              fill={p.survived ? "#22d3ee" : "#ffb23e"}
-              fillOpacity="0.8"
-              style={{ transform: `translateX(${p.dx}px)` }}
-            />
           ))}
         </Svg>
       );

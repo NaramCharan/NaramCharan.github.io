@@ -97,32 +97,8 @@ export const projects: Project[] = [
     ],
   },
   {
-    id: "titanic",
-    code: "MK-02",
-    name: "Titanic Survival Prediction Engine",
-    domain: "Classification",
-    metric: "85.5% acc",
-    description:
-      "End-to-end classification comparing Logistic Regression, Random Forest and XGBoost with KNN imputation and disciplined, leakage-free validation.",
-    tech: ["Scikit-Learn", "XGBoost", "Optuna", "KNNImputer"],
-    repo: "https://github.com/NaramCharan/Titanic-Survival-Engine-Predictive-Analysis",
-    wins: [
-      "85.5% accuracy — 12% above baseline",
-      "LogReg vs Random Forest vs XGBoost bake-off",
-      "KNN imputation, leakage-free validation",
-    ],
-    brief: [
-      { label: "OBJECTIVE", value: "Predict passenger survival from the Titanic dataset" },
-      { label: "MODELS", value: "Logistic Regression vs Random Forest vs XGBoost, compared head-to-head" },
-      { label: "IMPUTATION", value: "KNNImputer for missing values; disciplined feature handling" },
-      { label: "TUNING", value: "Optuna hyperparameter optimization" },
-      { label: "INTEGRITY", value: "Leakage-free validation throughout" },
-      { label: "RESULT", value: "85.5% accuracy — 12% above baseline" },
-    ],
-  },
-  {
     id: "recsys",
-    code: "MK-03",
+    code: "MK-02",
     name: "Neural Collaborative Filtering Architecture",
     domain: "Recommender Systems",
     metric: "<10ms retrieval",
@@ -145,7 +121,7 @@ export const projects: Project[] = [
   },
   {
     id: "churn",
-    code: "MK-04",
+    code: "MK-03",
     name: "E-Commerce Customer Churn Prediction",
     domain: "Classification",
     metric: "98.28% acc",
@@ -169,7 +145,7 @@ export const projects: Project[] = [
   },
   {
     id: "walmart",
-    code: "MK-05",
+    code: "MK-04",
     name: "Walmart Store Weekly Sales Forecasting",
     featured: true,
     domain: "Time-Series Forecasting",
@@ -193,7 +169,8 @@ export const projects: Project[] = [
   },
   {
     id: "rsna",
-    code: "MK-06",
+    code: "MK-05",
+    featured: true,
     wip: true,
     name: "RSNA Pneumonia Detection",
     domain: "Computer Vision",
