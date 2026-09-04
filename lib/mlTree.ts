@@ -69,7 +69,7 @@ export const ML_TREE: { root: string; branches: [TreeBranch, TreeBranch] } = {
             {
               id: "logreg",
               label: "Logistic Regression",
-              projectIds: ["churn", "titanic"],
+              projectIds: ["churn"],
               note: "Baseline in both classification bake-offs.",
             },
             {
@@ -81,13 +81,13 @@ export const ML_TREE: { root: string; branches: [TreeBranch, TreeBranch] } = {
             {
               id: "rf",
               label: "Random Forest",
-              projectIds: ["walmart", "churn", "titanic"],
+              projectIds: ["walmart", "churn"],
               note: "Benchmarked against boosting in all three.",
             },
             {
               id: "xgboost",
               label: "XGBoost",
-              projectIds: ["churn", "titanic", "walmart"],
+              projectIds: ["churn", "walmart"],
               note: "Shipped model for churn — chosen over a deeper net on compute.",
             },
             {
