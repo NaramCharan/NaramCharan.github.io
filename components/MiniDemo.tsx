@@ -26,16 +26,21 @@ export default function MiniDemo({ id }: { id: string }) {
 
     switch (id) {
       case "walmart":
-        t.add($(".md-bar"), {
-          scaleY: [0, 1],
-          duration: 700,
-          delay: stagger(60),
-          ease: "outExpo",
-        }).add(
-          $(".md-line"),
-          { strokeDashoffset: [300, 0], duration: 900, ease: "inOutQuad" },
-          "-=400"
-        );
+        t.add($(".md-actual"), {
+          strokeDashoffset: [460, 0],
+          duration: 950,
+          ease: "inOutQuad",
+        })
+          .add(
+            $(".md-forecast"),
+            { opacity: [0, 0.9], duration: 500, ease: "outQuad" },
+            "-=350"
+          )
+          .add(
+            $(".md-peak"),
+            { scale: [0, 1], opacity: [0, 1], duration: 420, ease: "outBack(2)" },
+            "-=220"
+          );
         break;
       case "churn":
         t.add($(".md-roc"), {
@@ -109,36 +114,59 @@ export default function MiniDemo({ id }: { id: string }) {
 function Demo({ id }: { id: string }) {
   switch (id) {
     case "walmart": {
-      const bars = [22, 30, 26, 38, 34, 46, 41, 52, 48, 58];
-      const pts = bars
-        .map((v, i) => `${18 + i * 22.5},${64 - v - 4}`)
+      /* Actual vs forecast across the horizon, not a bar chart: the story here
+         is how tightly the model tracks a seasonal series (0.9555 R²), and two
+         lines show that where bars just show magnitude. Deterministic values —
+         no Math.random in render. */
+      const actual = [
+        0.30, 0.34, 0.31, 0.38, 0.35, 0.42, 0.39, 0.45, 0.41, 0.48, 0.44, 0.52,
+        0.49, 0.55, 0.51, 0.58, 0.62, 0.57, 0.64, 0.70, 0.66, 0.79, 0.93, 0.72,
+        0.58, 0.54,
+      ];
+      const X = (i: number) => +(14 + (i * 212) / (actual.length - 1)).toFixed(2);
+      const Y = (v: number) => +(62 - v * 50).toFixed(2);
+      const aPts = actual.map((v, i) => `${X(i)},${Y(v)}`).join(" ");
+      const fPts = actual
+        .map((v, i) => `${X(i)},${Y(Math.min(1, Math.max(0.05, v + (((i * 7) % 5) - 2) / 90)))}`)
         .join(" ");
+      const peak = actual.indexOf(Math.max(...actual));
       return (
-        <Svg label="52-WK FORECAST">
-          {bars.map((v, i) => (
-            <rect
-              key={i}
-              className="md-bar"
-              x={12 + i * 22.5}
-              y={64 - v}
-              width="12"
-              height={v}
-              rx="1.5"
-              fill={i % 2 ? "#ffb23e" : "#22d3ee"}
-              fillOpacity="0.55"
-              style={{ transformBox: "fill-box", transformOrigin: "bottom" }}
-            />
-          ))}
+        <Svg label="ACTUAL vs FORECAST · 52 WK">
+          <line x1="14" y1="62" x2="226" y2="62" stroke="#88a6b3" strokeOpacity="0.25" strokeWidth="1" />
           <polyline
-            className="md-line"
-            points={pts}
+            className="md-forecast"
+            points={fPts}
             fill="none"
-            stroke="#7de7f5"
-            strokeWidth="1.6"
-            strokeDasharray="300"
+            stroke="#ffb23e"
+            strokeWidth="1.4"
+            strokeDasharray="4 4"
+            strokeOpacity="0.9"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <polyline
+            className="md-actual"
+            points={aPts}
+            fill="none"
+            stroke="#22d3ee"
+            strokeWidth="1.9"
+            strokeDasharray="460"
             strokeDashoffset="0"
             strokeLinecap="round"
-            style={{ filter: "drop-shadow(0 0 3px rgba(125,231,245,0.6))" }}
+            strokeLinejoin="round"
+            style={{ filter: "drop-shadow(0 0 4px rgba(34,211,238,0.6))" }}
+          />
+          <circle
+            className="md-peak"
+            cx={X(peak)}
+            cy={Y(actual[peak])}
+            r="3.6"
+            fill="#ffb23e"
+            style={{
+              transformBox: "fill-box",
+              transformOrigin: "center",
+              filter: "drop-shadow(0 0 7px rgba(255,178,62,0.9))",
+            }}
           />
         </Svg>
       );
