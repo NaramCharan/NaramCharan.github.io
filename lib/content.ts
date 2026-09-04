@@ -198,6 +198,7 @@ export const projects: Project[] = [
       { label: "MODELS", value: "DenseNet-121 vs EfficientNet-B2 vs ResNet-34, two-stage transfer learning under one protocol. ResNet-34 fine-tuned won on F1 (0.77 val) — DenseNet hit higher recall but at 0.67 precision" },
       { label: "RESULT", value: "83% recall · 75% precision · 0.79 F1 · 86% accuracy on the pneumonia class, against a 68% always-negative baseline" },
       { label: "SHIPPED", value: "FastAPI serves the React bundle and the API from one origin — no CORS, no second service. Priced the Postgres layer at $25.68/mo to store a 4KB CSV, deleted it, cut hosting 84%" },
+      { label: "BUILD SPLIT", value: "The ML pipeline — dataset handling, transforms, training, evaluation, model selection — and the FastAPI backend are mine. The React frontend and the Azure deployment were built by an AI coding agent working to my instructions: I directed it, followed every step, and came out understanding the deployment path rather than just owning the output" },
     ],
   },
 ];
@@ -261,12 +262,14 @@ export const skillSystems: SkillSystem[] = [
     items: [
       "Python 3 · Advanced OOP",
       "Data Structures",
+      "FastAPI · REST APIs",
       "SQL · Schema Design",
       "SQLAlchemy",
+      "Docker · Azure",
       "Git Workflow",
       "BeautifulSoup",
     ],
-    evidence: "MK-01 — BeautifulSoup crawler into a SQLAlchemy schema, 980+ records in under 30 minutes.",
+    evidence: "MK-05 — FastAPI serving a model and a React bundle from one container on Azure. MK-01 — BeautifulSoup crawler into a SQLAlchemy schema, 980+ records in under 30 minutes.",
   },
 ];
 

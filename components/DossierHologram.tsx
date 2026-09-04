@@ -254,15 +254,20 @@ export default function DossierHologram() {
             aria-modal="true"
             aria-labelledby="dossier-title"
             tabIndex={-1}
-            initial={reduced ? { opacity: 0 } : { opacity: 0, y: 26, scale: 0.96, filter: "brightness(1.9)" }}
-            animate={{ opacity: 1, y: 0, scale: 1, filter: "brightness(1)" }}
-            exit={reduced ? { opacity: 0 } : { opacity: 0, y: 16, scale: 0.97 }}
+            /* Plain fade, matching the FRIDAY brief — this is the resume, the
+               most read-heavy surface on the site. Nothing should move the
+               text while someone is reading it. */
+            initial={reduced ? { opacity: 0 } : { opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
             transition={{ duration: 0.45, ease: EASE }}
             className="scanlines relative z-10 flex max-h-[94dvh] w-full max-w-4xl flex-col overflow-hidden rounded-xl border border-cyan/40 bg-gradient-to-br from-cyan/[0.07] via-surface/90 to-surface/95 shadow-[inset_0_0_30px_-14px_rgba(34,211,238,0.6),0_0_70px_-18px_rgba(34,211,238,0.5)] outline-none backdrop-blur-[15px]"
           >
             {/* Glitch layer on an inner wrapper so it can't fight the
                 entrance/exit transform. */}
-            <div className={`flex min-h-0 flex-1 flex-col${reduced ? "" : " holo-glitch"}`}>
+            {/* holo-glitch removed here too — a 3s jolt across a resume is a
+                distraction, not atmosphere. Static scanlines carry the look. */}
+            <div className="flex min-h-0 flex-1 flex-col">
               {/* Corner brackets */}
               {[
                 "left-2.5 top-2.5",

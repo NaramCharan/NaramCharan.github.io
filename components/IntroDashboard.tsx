@@ -43,6 +43,9 @@ gsap.registerPlugin(ScrollTrigger);
 
 /** Work in progress isn't shipped — the hero kicker only counts finished builds. */
 const SHIPPED_COUNT = projects.filter((p) => !p.wip).length;
+/** Anything with a public URL — a deployed app is the strongest claim here,
+ *  so the hero states how many there are rather than leaving it to be found. */
+const DEPLOYED_COUNT = projects.filter((p) => p.demo).length;
 
 const SPECIALTIES = [
   "Recommendation Systems",
@@ -266,7 +269,8 @@ export default function IntroDashboard() {
               >
                 {/* Counted, not typed — this line read "5 SHIPPED" for a while
                     after the project list changed underneath it. */}
-                {SHIPPED_COUNT} SHIPPED ML SYSTEMS · 95.55% R² FORECASTER · 98.28% CHURN CLASSIFIER
+                {SHIPPED_COUNT} SHIPPED ML SYSTEMS · {DEPLOYED_COUNT} DEPLOYED LIVE ON AZURE ·
+                83% RECALL PNEUMONIA SCREEN
               </motion.p>
             </motion.div>
           </div>
