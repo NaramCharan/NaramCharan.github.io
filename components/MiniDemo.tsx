@@ -119,7 +119,11 @@ export default function MiniDemo({ id }: { id: string }) {
       ref={ref}
       aria-hidden
       onPointerEnter={() => tl.current?.restart()}
-      className="mt-4 overflow-hidden rounded-md border border-line/60 bg-bg-2/50 px-3 py-2"
+      /* max-w caps the chart: the viewBox is 240x72, so stretching it to a
+         740px card rendered it 160px tall — a third of the whole card for a
+         decorative micro-chart. Capped, it keeps its aspect (no distortion)
+         and gives that height back to the content. */
+      className="mt-3 max-w-[340px] overflow-hidden rounded-md border border-line/60 bg-bg-2/50 px-3 py-1.5"
     >
       <Demo id={id} />
     </div>

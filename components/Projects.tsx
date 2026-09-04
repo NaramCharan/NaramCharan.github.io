@@ -83,7 +83,7 @@ function ProjectCard({
         rotateY: tilt.rotateY,
         transformPerspective: 900,
       }}
-      className={`group relative flex cursor-pointer flex-col justify-between overflow-hidden rounded-xl border border-line bg-surface/60 p-5 transition-colors duration-300 hover:border-cyan/60 hover:bg-surface-2/70 hover:shadow-[0_0_36px_-6px_rgba(34,211,238,0.35)] sm:p-6 ${
+      className={`group relative flex cursor-pointer flex-col justify-between overflow-hidden rounded-xl border border-line bg-surface/60 p-4 transition-colors duration-300 hover:border-cyan/60 hover:bg-surface-2/70 hover:shadow-[0_0_36px_-6px_rgba(34,211,238,0.35)] sm:p-5 ${
         p.featured || p.wip ? "md:col-span-2" : ""
       }`}
     >
@@ -127,6 +127,11 @@ function ProjectCard({
                   IN PROGRESS
                 </span>
               )}
+              {p.period && (
+                <span className="mono rounded border border-line px-2 py-0.5 text-[10px] tracking-[0.16em] text-text-dim">
+                  {p.period.toUpperCase()}
+                </span>
+              )}
             </div>
 
             {/* Title + headline metric */}
@@ -144,14 +149,14 @@ function ProjectCard({
                 {p.metric}
               </span>
             </div>
-            <p data-part className="mt-2 text-[13px] leading-relaxed text-text-muted sm:text-sm">
+            <p data-part className="mt-2 text-[13px] leading-normal text-text-muted sm:text-sm">
               {p.description}
             </p>
           </div>
 
           {/* Action buttons on desktop for featured card */}
           {split && (
-            <div data-part className="hidden md:flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-t border-line pt-4 mt-4">
+            <div data-part className="hidden md:flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-t border-line pt-3 mt-3">
               <button
                 type="button"
                 onClick={() => onBrief(p)}
@@ -196,11 +201,11 @@ function ProjectCard({
             {/* Key results — omitted entirely while a project is in progress,
                 rather than shown as an empty promise. */}
             {p.wins.length > 0 && (
-            <div data-part className="mt-3">
-              <p className="mono mb-1.5 flex items-center gap-2 text-[10px] tracking-[0.25em] text-gold/90">
+            <div data-part className="mt-2.5">
+              <p className="mono mb-1 flex items-center gap-2 text-[10px] tracking-[0.25em] text-gold/90">
                 <span className="h-px w-3 bg-gold/70" /> KEY RESULTS
               </p>
-              <ul className="space-y-1">
+              <ul className="space-y-0.5">
                 {p.wins.map((w) => (
                   <li key={w} className="flex items-start gap-2 text-xs text-text/90">
                     <svg viewBox="0 0 24 24" className="mt-[2px] h-3.5 w-3.5 shrink-0 text-cyan" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -214,7 +219,7 @@ function ProjectCard({
             )}
           </div>
 
-          <div data-part className="mt-3 flex flex-wrap gap-1.5">
+          <div data-part className="mt-2.5 flex flex-wrap gap-1.5">
             {p.tech.map((t) => (
               <span
                 key={t}
@@ -229,7 +234,7 @@ function ProjectCard({
 
       {/* Action buttons for normal cards (and mobile for featured card) */}
       {(!p.featured || true) && (
-        <div data-part className={`mt-4 flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-t border-line pt-3.5 ${split ? "md:hidden" : ""}`}>
+        <div data-part className={`mt-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-t border-line pt-3 ${split ? "md:hidden" : ""}`}>
           <button
             type="button"
             onClick={() => onBrief(p)}
