@@ -64,6 +64,10 @@ export type Project = {
    *  headline metric and no results block. Never put `wins` on a wip
    *  project; there are no results to claim yet. */
   wip?: boolean;
+  /** Build window, e.g. "Aug 1 – Sep 4, 2026". Shown as a chip on the card
+   *  and as a TIMELINE row in the FRIDAY brief. Optional: older projects
+   *  predate the habit of recording it. */
+  period?: string;
   domain: string; // scan-at-a-glance category
   metric: string; // one headline number, shown prominent
   description: string;
@@ -175,6 +179,7 @@ export const projects: Project[] = [
     code: "MK-05",
     featured: true,
     name: "RSNA Pneumonia Detection",
+    period: "Aug 1 – Sep 4, 2026",
     domain: "Medical Imaging · Deployed",
     // Recall, not accuracy: ~70% of studies are negative, so a model that
     // always says "no" scores 68% and catches nothing. Recall is the number
@@ -191,6 +196,7 @@ export const projects: Project[] = [
       "Live on Azure: one container serves API + UI at $5.06/month",
     ],
     brief: [
+      { label: "TIMELINE", value: "1 August – 4 September 2026 — from first DICOM read to a container answering requests on Azure" },
       { label: "OBJECTIVE", value: "Screen chest radiographs for pneumonia — triage which studies a radiologist reads first, on the RSNA Pneumonia Detection Challenge dataset (~30,000 DICOM studies)" },
       { label: "THE BUG", value: "A copied ImageNet pipeline ran RandomCrop(224) first on 1024×1024 radiographs — every training image was a random 4.8% patch still labelled 'pneumonia'. Deleting one line beat every architecture swap in the project combined" },
       { label: "INTEGRITY", value: "Split on unique patient IDs, never rows — the label file has one row per bounding box, so row-splitting puts the same patient in train and validation and inflates every metric silently. Test set (6%) evaluated exactly once, at the end" },
