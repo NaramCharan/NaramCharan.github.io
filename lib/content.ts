@@ -32,6 +32,7 @@ export const dossier = {
     "Predictive modeling & forecasting",
     "Recommender systems · vector retrieval",
     "Leakage-free validation methodology",
+    "Directing AI coding agents",
   ],
   coreStack: [
     "Python",
@@ -272,10 +273,11 @@ export const skillSystems: SkillSystem[] = [
       "SQL · Schema Design",
       "SQLAlchemy",
       "Docker · Azure",
+      "Claude Code · Agentic Dev",
       "Git Workflow",
       "BeautifulSoup",
     ],
-    evidence: "MK-05 — FastAPI serving a model and a React bundle from one container on Azure. MK-01 — BeautifulSoup crawler into a SQLAlchemy schema, 980+ records in under 30 minutes.",
+    evidence: "MK-05 — FastAPI serving a model and a React bundle from one container on Azure. This site itself — Next.js + WebGL, built by directing Claude Code.",
   },
 ];
 
