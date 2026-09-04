@@ -98,15 +98,19 @@ export default function ProjectHologram({
             aria-modal="true"
             aria-labelledby="holo-title"
             tabIndex={-1}
-            initial={reduced ? { opacity: 0 } : { opacity: 0, y: 24, scale: 0.96, filter: "brightness(2)" }}
-            animate={{ opacity: 1, y: 0, scale: 1, filter: "brightness(1)" }}
-            exit={reduced ? { opacity: 0 } : { opacity: 0, y: 16, scale: 0.97 }}
-            transition={{ duration: 0.4, ease: EASE }}
+            /* Settles with a plain fade — no scale-up, no brightness flash.
+               This panel is a reading surface, and anything that moves the
+               text while you're reading it costs more than it adds. */
+            initial={reduced ? { opacity: 0 } : { opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.28, ease: EASE }}
             className="scanlines relative z-10 flex max-h-[92vh] sm:max-h-[88vh] w-full max-w-3xl flex-col overflow-hidden rounded-xl border border-cyan/40 bg-gradient-to-br from-cyan/[0.08] via-surface/85 to-surface/90 shadow-[inset_0_0_28px_-14px_rgba(34,211,238,0.6),0_0_60px_-10px_rgba(34,211,238,0.5)] outline-none backdrop-blur-[15px]"
           >
-            {/* Glitch layer — brief skew blip every 3s, kept off the motion
-                element so it can't fight the entrance/exit transform */}
-            <div className={`flex min-h-0 flex-1 flex-col${reduced ? "" : " holo-glitch"}`}>
+            {/* The holo-glitch skew blip used to run here every 3s. Removed:
+                on a panel you actually read, a recurring jolt is a distraction,
+                not atmosphere. The static scanlines carry the hologram look. */}
+            <div className="flex min-h-0 flex-1 flex-col">
             {/* Corner brackets */}
             {[
               "left-2.5 top-2.5",
@@ -175,12 +179,13 @@ export default function ProjectHologram({
 
                 {/* Schematic readout */}
                 <dl className="min-w-0 flex-1 space-y-3">
-                  {project.brief.map((row, i) => (
-                    <motion.div
+                  {/* Static: the brief rows used to slide in on a stagger, which
+                      both moved the text as you started reading and left the
+                      whole readout gated behind an animation frame. It reads as
+                      soon as the panel does now. */}
+                  {project.brief.map((row) => (
+                    <div
                       key={row.label}
-                      initial={reduced ? false : { opacity: 0, x: -8 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.15 + i * 0.06, ease: EASE }}
                       className="grid grid-cols-[92px_1fr] gap-3 border-b border-line/50 pb-3 last:border-0"
                     >
                       <dt className="mono flex items-start gap-1.5 text-[10px] leading-5 tracking-[0.15em] text-gold/90">
@@ -188,7 +193,7 @@ export default function ProjectHologram({
                         {row.label}
                       </dt>
                       <dd className="text-sm leading-relaxed text-text/90">{row.value}</dd>
-                    </motion.div>
+                    </div>
                   ))}
                 </dl>
               </div>
