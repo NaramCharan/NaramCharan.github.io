@@ -404,6 +404,58 @@ export default function DossierHologram() {
                       </ul>
                     </div>
                   </div>
+
+                  {/* Selected projects — the three that go on the paper resume.
+                      Resolved from `projects` by id so codes, metrics and links
+                      can't drift out of sync with the Projects section. */}
+                  <div className="mt-4 border-t border-line pt-4">
+                    <p className="mono mb-2 text-[9px] tracking-[0.3em] text-text-dim">
+                      SELECTED PROJECTS
+                    </p>
+                    <ul className="space-y-2">
+                      {dossier.selectedProjectIds.map((id) => {
+                        const p = projects.find((x) => x.id === id);
+                        if (!p) return null;
+                        return (
+                          <li
+                            key={p.id}
+                            className="rounded-md border border-line bg-bg-2/50 px-3 py-2"
+                          >
+                            <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                              <span className="mono text-[10px] tracking-[0.16em] text-cyan">
+                                {p.code}
+                              </span>
+                              <span className="min-w-0 flex-1 text-[13px] font-medium text-text">
+                                {p.name}
+                              </span>
+                              <span className="mono text-[11px] text-gold">{p.metric}</span>
+                            </div>
+                            <div className="mono mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] tracking-wide">
+                              <a
+                                href={p.repo}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-cyan/80 underline-offset-2 hover:text-cyan-bright hover:underline"
+                              >
+                                CODE ↗
+                              </a>
+                              {p.demo && (
+                                <a
+                                  href={p.demo}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-gold/90 underline-offset-2 hover:text-gold hover:underline"
+                                >
+                                  LIVE APP ↗
+                                </a>
+                              )}
+                              <span className="text-text-dim">{p.tech.slice(0, 3).join(" · ")}</span>
+                            </div>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
                 </div>
               </div>
 

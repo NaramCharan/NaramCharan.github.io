@@ -151,7 +151,7 @@ function ProjectCard({
 
           {/* Action buttons on desktop for featured card */}
           {split && (
-            <div data-part className="hidden md:flex items-center justify-between gap-3 border-t border-line pt-4 mt-4">
+            <div data-part className="hidden md:flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-t border-line pt-4 mt-4">
               <button
                 type="button"
                 onClick={() => onBrief(p)}
@@ -166,16 +166,19 @@ function ProjectCard({
                 <span className="text-cyan/60 transition-colors group-hover/friday:text-cyan">◈ BRIEF</span>
               </button>
 
-              <a
-                href={p.repo}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`${p.name} — open repository on GitHub`}
-                className="mono inline-flex min-h-11 items-center gap-1.5 text-xs text-cyan transition-transform duration-200 hover:translate-x-1"
-              >
-                <GitHubMark className="h-3.5 w-3.5" />
-                VIEW CODE →
-              </a>
+              <div className="flex flex-wrap items-center gap-3">
+                {p.demo && <LiveDemoLink href={p.demo} name={p.name} />}
+                <a
+                  href={p.repo}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`${p.name} — open repository on GitHub`}
+                  className="mono inline-flex min-h-11 items-center gap-1.5 text-xs text-cyan transition-transform duration-200 hover:translate-x-1"
+                >
+                  <GitHubMark className="h-3.5 w-3.5" />
+                  VIEW CODE →
+                </a>
+              </div>
             </div>
           )}
         </div>
@@ -226,7 +229,7 @@ function ProjectCard({
 
       {/* Action buttons for normal cards (and mobile for featured card) */}
       {(!p.featured || true) && (
-        <div data-part className={`mt-4 flex items-center justify-between gap-3 border-t border-line pt-3.5 ${split ? "md:hidden" : ""}`}>
+        <div data-part className={`mt-4 flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-t border-line pt-3.5 ${split ? "md:hidden" : ""}`}>
           <button
             type="button"
             onClick={() => onBrief(p)}
@@ -241,19 +244,42 @@ function ProjectCard({
             <span className="text-cyan/60 transition-colors group-hover/friday:text-cyan">◈ BRIEF</span>
           </button>
 
-          <a
-            href={p.repo}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`${p.name} — open repository on GitHub`}
-            className="mono inline-flex min-h-11 items-center gap-1.5 text-xs text-cyan transition-transform duration-200 hover:translate-x-1"
-          >
-            <GitHubMark className="h-3.5 w-3.5" />
-            VIEW CODE →
-          </a>
+          <div className="flex flex-wrap items-center gap-3">
+            {p.demo && <LiveDemoLink href={p.demo} name={p.name} />}
+            <a
+              href={p.repo}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${p.name} — open repository on GitHub`}
+              className="mono inline-flex min-h-11 items-center gap-1.5 text-xs text-cyan transition-transform duration-200 hover:translate-x-1"
+            >
+              <GitHubMark className="h-3.5 w-3.5" />
+              VIEW CODE →
+            </a>
+          </div>
         </div>
       )}
     </motion.article>
+  );
+}
+
+/* A deployed project is worth more than a repo — when there's a public URL,
+   it gets the loud gold treatment and sits ahead of VIEW CODE. */
+function LiveDemoLink({ href, name }: { href: string; name: string }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`${name} — open the live app (opens in new tab)`}
+      className="mono inline-flex min-h-11 items-center gap-1.5 rounded-md border border-gold/50 bg-gold/10 px-3 py-1.5 text-[11px] tracking-[0.2em] text-gold transition-all duration-200 hover:border-gold hover:bg-gold/20 hover:shadow-[0_0_16px_-4px_rgba(255,178,62,0.55)]"
+    >
+      <span aria-hidden className="relative flex h-2 w-2">
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-gold opacity-60" />
+        <span className="relative inline-flex h-2 w-2 rounded-full bg-gold" />
+      </span>
+      LIVE DEMO ↗
+    </a>
   );
 }
 

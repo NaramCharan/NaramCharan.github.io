@@ -150,9 +150,8 @@ export const ML_TREE: { root: string; branches: [TreeBranch, TreeBranch] } = {
               id: "chestxray",
               label: "Pneumonia Detection · Chest X-Ray",
               projectIds: ["rsna"],
-              wip: true,
               note:
-                "MK-06, in progress — a CNN over chest radiographs from the RSNA dataset. First build on this branch: the features are learned from pixels rather than engineered by hand.",
+                "MK-05 — transfer learning over chest radiographs: DenseNet-121, EfficientNet-B2 and ResNet-34 benchmarked under one protocol, ResNet-34 fine-tuned shipping at 83% pneumonia recall. The features are learned from pixels rather than engineered by hand, and it's deployed — DICOM pipeline, FastAPI, React, one container on Azure.",
             },
           ],
         },
