@@ -42,6 +42,21 @@ export default function MiniDemo({ id }: { id: string }) {
             "-=220"
           );
         break;
+      case "rsna":
+        t.add($(".md-film"), {
+          scale: [0.6, 1],
+          opacity: [0, 1],
+          duration: 420,
+          delay: stagger(70),
+          ease: "outBack(2)",
+        })
+          .add(
+            $(".md-hit"),
+            { scale: [0, 1], opacity: [0, 1], duration: 380, delay: stagger(90), ease: "outBack(2.5)" },
+            "-=220"
+          )
+          .add($(".md-miss"), { opacity: [0, 1], duration: 420, ease: "outQuad" }, "-=160");
+        break;
       case "churn":
         t.add($(".md-roc"), {
           strokeDashoffset: [340, 0],
@@ -168,6 +183,82 @@ function Demo({ id }: { id: string }) {
               filter: "drop-shadow(0 0 7px rgba(255,178,62,0.9))",
             }}
           />
+        </Svg>
+      );
+    }
+    case "rsna": {
+      /* 83% recall, said the way the README says it: the model catches roughly
+         five in six actual cases. Six film glyphs, five flagged gold, the last
+         left hollow — the miss is shown, not hidden. */
+      const CAUGHT = 5;
+      const TOTAL = 6;
+      return (
+        <Svg label="CATCHES ~5 IN 6 CASES · 83% RECALL">
+          {Array.from({ length: TOTAL }).map((_, i) => {
+            const x = 14 + i * 36.5;
+            const hit = i < CAUGHT;
+            return (
+              <g
+                key={i}
+                className="md-film"
+                style={{ transformBox: "fill-box", transformOrigin: "center" }}
+              >
+                {/* the film */}
+                <rect
+                  x={x}
+                  y="12"
+                  width="28"
+                  height="38"
+                  rx="3"
+                  fill="#0b1220"
+                  stroke={hit ? "#ffb23e" : "#88a6b3"}
+                  strokeOpacity={hit ? "0.75" : "0.35"}
+                  strokeWidth="1"
+                />
+                {/* two lungs */}
+                <path
+                  d={`M${x + 12} 20 C ${x + 6} 24, ${x + 5} 36, ${x + 10} 42 L ${x + 12} 42 Z`}
+                  fill="none"
+                  stroke="#7de7f5"
+                  strokeOpacity="0.45"
+                  strokeWidth="1"
+                />
+                <path
+                  d={`M${x + 16} 20 C ${x + 22} 24, ${x + 23} 36, ${x + 18} 42 L ${x + 16} 42 Z`}
+                  fill="none"
+                  stroke="#7de7f5"
+                  strokeOpacity="0.45"
+                  strokeWidth="1"
+                />
+                {hit ? (
+                  <circle
+                    className="md-hit"
+                    cx={x + 18}
+                    cy="33"
+                    r="3.4"
+                    fill="#ffb23e"
+                    style={{
+                      transformBox: "fill-box",
+                      transformOrigin: "center",
+                      filter: "drop-shadow(0 0 6px rgba(255,178,62,0.9))",
+                    }}
+                  />
+                ) : (
+                  <circle
+                    className="md-miss"
+                    cx={x + 18}
+                    cy="33"
+                    r="3.4"
+                    fill="none"
+                    stroke="#88a6b3"
+                    strokeOpacity="0.5"
+                    strokeWidth="1"
+                    strokeDasharray="2 2"
+                  />
+                )}
+              </g>
+            );
+          })}
         </Svg>
       );
     }
