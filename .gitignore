@@ -42,3 +42,6 @@ next-env.d.ts
 
 # vendored skill installs (bulky, not source)
 .claude/skills/
+
+# python venv for scripts/make_resume.py
+.venv/
