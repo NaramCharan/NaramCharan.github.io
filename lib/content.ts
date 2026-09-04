@@ -43,6 +43,9 @@ export const dossier = {
     "Pandas",
     "SQL",
   ],
+  /** The three that go on the paper resume, by id — resolved against
+   *  `projects` at render so the codes, metrics and links can never drift. */
+  selectedProjectIds: ["rsna", "walmart", "churn"],
 };
 
 export const stats = [
@@ -171,18 +174,30 @@ export const projects: Project[] = [
     id: "rsna",
     code: "MK-05",
     featured: true,
-    wip: true,
     name: "RSNA Pneumonia Detection",
-    domain: "Computer Vision",
-    metric: "IN PROGRESS",
+    domain: "Medical Imaging · Deployed",
+    // Recall, not accuracy: ~70% of studies are negative, so a model that
+    // always says "no" scores 68% and catches nothing. Recall is the number
+    // that describes whether this finds pneumonia.
+    metric: "83% recall",
     description:
-      "Detecting pneumonia (lung opacity) in chest radiographs from the RSNA dataset — a CNN on medical imaging, and the first build on the unstructured-data branch.",
-    tech: ["Python", "PyTorch", "CNN", "Computer Vision"],
+      "Pneumonia screening on chest radiographs — transfer learning across three CNNs on the RSNA challenge dataset, then shipped: DICOM pipeline, FastAPI service, React interface, one Docker container live on Azure.",
+    tech: ["PyTorch", "pydicom", "FastAPI", "React", "Docker", "Azure"],
     repo: "https://github.com/NaramCharan/RSNA-Pneumonia-Detection",
-    wins: [],
+    demo: "https://rsna-app.salmonmeadow-7644e67e.eastasia.azurecontainerapps.io",
+    wins: [
+      "83% pneumonia recall · 0.79 F1 on 1,836 held-out studies",
+      "Found RandomCrop discarding 95% of every 1024² X-ray — the single biggest fix",
+      "Live on Azure: one container serves API + UI at $5.06/month",
+    ],
     brief: [
-      { label: "OBJECTIVE", value: "Classify chest radiographs for pneumonia / lung opacity using the RSNA Pneumonia Detection dataset" },
-      { label: "STATUS", value: "In progress — building the pipeline. Results go here once the model is validated, not before." },
+      { label: "OBJECTIVE", value: "Screen chest radiographs for pneumonia — triage which studies a radiologist reads first, on the RSNA Pneumonia Detection Challenge dataset (~30,000 DICOM studies)" },
+      { label: "THE BUG", value: "A copied ImageNet pipeline ran RandomCrop(224) first on 1024×1024 radiographs — every training image was a random 4.8% patch still labelled 'pneumonia'. Deleting one line beat every architecture swap in the project combined" },
+      { label: "INTEGRITY", value: "Split on unique patient IDs, never rows — the label file has one row per bounding box, so row-splitting puts the same patient in train and validation and inflates every metric silently. Test set (6%) evaluated exactly once, at the end" },
+      { label: "IMBALANCE", value: "~70% negative, so the first unweighted model learned to say 'no'. Weighted CrossEntropyLoss reprices a missed pneumonia; scheduler and early stopping both watch F1, not accuracy" },
+      { label: "MODELS", value: "DenseNet-121 vs EfficientNet-B2 vs ResNet-34, two-stage transfer learning under one protocol. ResNet-34 fine-tuned won on F1 (0.77 val) — DenseNet hit higher recall but at 0.67 precision" },
+      { label: "RESULT", value: "83% recall · 75% precision · 0.79 F1 · 86% accuracy on the pneumonia class, against a 68% always-negative baseline" },
+      { label: "SHIPPED", value: "FastAPI serves the React bundle and the API from one origin — no CORS, no second service. Priced the Postgres layer at $25.68/mo to store a 4KB CSV, deleted it, cut hosting 84%" },
     ],
   },
 ];
