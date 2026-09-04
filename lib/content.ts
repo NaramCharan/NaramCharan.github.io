@@ -1,6 +1,8 @@
 // Single source of truth for all portfolio content.
 // Authoritative source: NARAM_RESUME.pdf (June 2026).
 
+import { RESUME_VERSION } from "./resumeVersion";
+
 export const profile = {
   name: "Naram Charan",
   fullName: "Naramreddy Charan Kumar Reddy",
@@ -13,7 +15,10 @@ export const profile = {
     "I'm a 3rd-year CS student specializing in AI & Machine Learning, focused on end-to-end data pipelines, predictive modeling, and scalable systems — not notebook exercises.",
     "I build recommendation architectures with deep learning and vector-index search, tune tree-based classifiers with hyperparameter optimization, and obsess over data-separation methodology so models hold up in production, not just on a leaderboard.",
   ],
-  resume: "/NARAM_RESUME.pdf",
+  /* Content-hashed so a regenerated resume can't be served from a stale cache —
+     GitHub Pages sends max-age=600 and phones hold downloaded PDFs far longer.
+     The hash is stamped by scripts/make_resume.py on every build. */
+  resume: `/NARAM_RESUME.pdf?v=${RESUME_VERSION}`,
 };
 
 // Personnel-file dossier — the hologram short-resume projected straight after
