@@ -217,27 +217,28 @@ export const projects: Project[] = [
     id: "transformer",
     code: "MK-06",
     name: "Handbuilt Transformer",
-    domain: "Deep Learning · NLP",
-    // No benchmark to headline: this project is about understanding the
-    // architecture, and the README says so. Don't invent a number.
-    metric: "Built from scratch",
+    domain: "Learning Project · NLP",
+    // A learning build, not a benchmarked system — there is no number to
+    // headline, and none is invented.
+    metric: "Learning build",
     description:
-      "A decoder-only, GPT-style Transformer implemented by hand in PyTorch — causal multi-head self-attention, residual blocks and LayerNorm — trained character-by-character on Shakespeare to generate Shakespeare-style text.",
+      "A small decoder-only Transformer I built by hand in PyTorch while learning how GPT-style models work — causal multi-head self-attention, residual blocks, LayerNorm — trained character-by-character on Shakespeare. A learning project, not a production system; I'll keep extending it.",
     tech: ["PyTorch", "Transformers", "NLP"],
     repo: "https://github.com/NaramCharan/Handbuilt-Transformer",
     wins: [
-      "Causal multi-head self-attention written from scratch — no prebuilt Transformer",
-      "Character-level language model with autoregressive text generation",
-      "Built following Andrej Karpathy's \"Let's build GPT\" lecture",
+      "Wrote causal multi-head self-attention myself to understand how it works",
+      "Small character-level model that generates Shakespeare-style text",
+      "Built along Andrej Karpathy's \"Let's build GPT\" lecture — more to come",
     ],
     brief: [
-      { label: "OBJECTIVE", value: "Understand how GPT-style models work by implementing the core architecture manually instead of importing a pre-built Transformer" },
-      { label: "ARCHITECTURE", value: "Decoder-only: token + positional embeddings → Transformer blocks (multi-head self-attention, feed-forward network, LayerNorm, residual connections) → linear layer → next-character prediction" },
-      { label: "ATTENTION", value: "Query / Key / Value projections with a causal mask, so no position can see a future token; multiple heads run in parallel" },
-      { label: "DATA", value: "Shakespeare's works, character-level tokenization — the model predicts the next character from the preceding context" },
-      { label: "GENERATION", value: "Autoregressive sampling, one character at a time" },
-      { label: "RESULT", value: "Generates text that loosely resembles Shakespeare — vocabulary, words and dialogue structure. Not meant to reproduce him; the point is the architecture" },
-      { label: "LIMITS", value: "Character-level tokenization, a small model next to modern LLMs, and only loose stylistic resemblance. Next: temperature and top-k sampling, larger models, larger datasets" },
+      { label: "WHAT IT IS", value: "A learning project — built to understand how GPT-style Transformers work by implementing the core pieces manually instead of importing a pre-built one. Not a production system" },
+      { label: "ARCHITECTURE", value: "Small decoder-only model: token + positional embeddings → Transformer blocks (multi-head self-attention, feed-forward network, LayerNorm, residual connections) → linear layer → next-character prediction" },
+      { label: "WHAT I LEARNED", value: "How Query / Key / Value work in self-attention, how causal masking stops a position seeing future tokens, how heads combine, and how autoregressive generation predicts the next token" },
+      { label: "DATA", value: "Shakespeare's works, character-level tokenization" },
+      { label: "RESULT", value: "Generates text that loosely resembles Shakespeare — some vocabulary, words and dialogue. It doesn't reproduce him, and isn't meant to" },
+      { label: "LIMITS", value: "Character-level tokenization, a small model next to modern LLMs, and only loose resemblance to the source" },
+      { label: "NEXT", value: "Ongoing — I'll keep updating it: temperature and top-k sampling, larger models, larger datasets" },
+      { label: "CREDIT", value: "Inspired by Andrej Karpathy's \"Let's build GPT: from scratch, in code, spelled out\" lecture" },
     ],
   },
 ];

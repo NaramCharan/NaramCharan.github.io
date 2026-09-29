@@ -204,13 +204,13 @@ S.append(project(
 
 S.append(project(
     "Handbuilt Transformer",
-    "Decoder-only GPT-style LM | PyTorch, NLP",
+    "Learning project | PyTorch, NLP",
     "github.com/NaramCharan/Handbuilt-Transformer",
     None,
     [
-        "Implemented a decoder-only Transformer from scratch in PyTorch &mdash; causal multi-head "
-        "self-attention, LayerNorm and residual blocks, no pre-built Transformer modules &mdash; "
-        "trained character-level on Shakespeare to generate text autoregressively.",
+        "Built a small decoder-only Transformer by hand in PyTorch to learn how GPT-style models work "
+        "&mdash; causal multi-head self-attention, LayerNorm, residual blocks &mdash; trained "
+        "character-level on Shakespeare; ongoing, being extended.",
     ]))
 
 S.append(project(
