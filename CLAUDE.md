@@ -123,7 +123,7 @@ content is REAL, sourced from naramcharan.me.
 - `Blueprint.tsx` — **bespoke commissioned-feel** SVG schematic of the neural
   recommendation engine, annotated with real specs (32-dim, <10ms, FAISS·L2).
 - `About.tsx` — origin story + education GPAs + cert timeline.
-- `Contact.tsx` — terminal-style contact panel (email, GitHub, LinkedIn, WhatsApp).
+- `Contact.tsx` — terminal-style contact panel (email, GitHub, LinkedIn — no phone/WhatsApp, removed for privacy).
 - `HudFrame.tsx` — fixed decorative corner brackets overlay.
 
 ## Content source

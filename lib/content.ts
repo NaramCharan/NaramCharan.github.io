@@ -365,10 +365,8 @@ export const certifications = [
 
 export const contact = {
   email: "charannaram1710@gmail.com",
-  phone: "+91 99662 14989",
   github: "https://github.com/NaramCharan",
   linkedin: "https://www.linkedin.com/in/naramcharan/",
-  whatsapp: "https://wa.me/919966214989",
   site: "https://naramcharan.me",
 };
 

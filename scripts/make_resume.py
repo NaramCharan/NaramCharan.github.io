@@ -122,7 +122,7 @@ S = []
 S.append(Paragraph("NARAMREDDY CHARAN KUMAR REDDY", name_s))
 S.append(Spacer(1, 3))
 S.append(Paragraph(
-    "+91-9966214989 &nbsp;|&nbsp; charannaram1710@gmail.com &nbsp;|&nbsp; Portfolio: "
+    "charannaram1710@gmail.com &nbsp;|&nbsp; Portfolio: "
     + link("naramcharan.me") + " &nbsp;|&nbsp; " + link("github.com/NaramCharan")
     + " &nbsp;|&nbsp; " + link("linkedin.com/in/naramcharan")
     + " &nbsp;|&nbsp; Gurugram, India", contact_s))
