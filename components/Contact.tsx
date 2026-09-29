@@ -34,7 +34,6 @@ const links = [
   { label: "Email", value: contact.email, href: gmailCompose, cmd: "open --mail" },
   { label: "GitHub", value: "github.com/NaramCharan", href: contact.github, cmd: "git remote" },
   { label: "LinkedIn", value: "in/naramcharan", href: contact.linkedin, cmd: "connect --pro" },
-  { label: "WhatsApp", value: "direct chat", href: contact.whatsapp, cmd: "ping --direct" },
 ];
 
 export default function Contact() {
