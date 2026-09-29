@@ -213,6 +213,33 @@ export const projects: Project[] = [
       { label: "BUILD SPLIT", value: "The ML pipeline — dataset handling, transforms, training, evaluation, model selection — and the FastAPI backend are mine. The React frontend and the Azure deployment were built by an AI coding agent working to my instructions: I directed it, followed every step, and came out understanding the deployment path rather than just owning the output" },
     ],
   },
+  {
+    id: "transformer",
+    code: "MK-06",
+    name: "Handbuilt Transformer",
+    domain: "Deep Learning · NLP",
+    // No benchmark to headline: this project is about understanding the
+    // architecture, and the README says so. Don't invent a number.
+    metric: "Built from scratch",
+    description:
+      "A decoder-only, GPT-style Transformer implemented by hand in PyTorch — causal multi-head self-attention, residual blocks and LayerNorm — trained character-by-character on Shakespeare to generate Shakespeare-style text.",
+    tech: ["PyTorch", "Transformers", "NLP"],
+    repo: "https://github.com/NaramCharan/Handbuilt-Transformer",
+    wins: [
+      "Causal multi-head self-attention written from scratch — no prebuilt Transformer",
+      "Character-level language model with autoregressive text generation",
+      "Built following Andrej Karpathy's \"Let's build GPT\" lecture",
+    ],
+    brief: [
+      { label: "OBJECTIVE", value: "Understand how GPT-style models work by implementing the core architecture manually instead of importing a pre-built Transformer" },
+      { label: "ARCHITECTURE", value: "Decoder-only: token + positional embeddings → Transformer blocks (multi-head self-attention, feed-forward network, LayerNorm, residual connections) → linear layer → next-character prediction" },
+      { label: "ATTENTION", value: "Query / Key / Value projections with a causal mask, so no position can see a future token; multiple heads run in parallel" },
+      { label: "DATA", value: "Shakespeare's works, character-level tokenization — the model predicts the next character from the preceding context" },
+      { label: "GENERATION", value: "Autoregressive sampling, one character at a time" },
+      { label: "RESULT", value: "Generates text that loosely resembles Shakespeare — vocabulary, words and dialogue structure. Not meant to reproduce him; the point is the architecture" },
+      { label: "LIMITS", value: "Character-level tokenization, a small model next to modern LLMs, and only loose stylistic resemblance. Next: temperature and top-k sampling, larger models, larger datasets" },
+    ],
+  },
 ];
 
 export type SkillSystem = {
