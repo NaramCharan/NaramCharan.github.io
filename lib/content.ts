@@ -213,6 +213,34 @@ export const projects: Project[] = [
       { label: "BUILD SPLIT", value: "The ML pipeline — dataset handling, transforms, training, evaluation, model selection — and the FastAPI backend are mine. The React frontend and the Azure deployment were built by an AI coding agent working to my instructions: I directed it, followed every step, and came out understanding the deployment path rather than just owning the output" },
     ],
   },
+  {
+    id: "transformer",
+    code: "MK-06",
+    name: "Handbuilt Transformer",
+    domain: "Learning Project · NLP",
+    // A learning build, not a benchmarked system — there is no number to
+    // headline, and none is invented.
+    metric: "Learning build",
+    description:
+      "A small decoder-only Transformer I built by hand in PyTorch while learning how GPT-style models work — causal multi-head self-attention, residual blocks, LayerNorm — trained character-by-character on Shakespeare. A learning project, not a production system; I'll keep extending it.",
+    tech: ["PyTorch", "Transformers", "NLP"],
+    repo: "https://github.com/NaramCharan/Handbuilt-Transformer",
+    wins: [
+      "Wrote causal multi-head self-attention myself to understand how it works",
+      "Small character-level model that generates Shakespeare-style text",
+      "Built along Andrej Karpathy's \"Let's build GPT\" lecture — more to come",
+    ],
+    brief: [
+      { label: "WHAT IT IS", value: "A learning project — built to understand how GPT-style Transformers work by implementing the core pieces manually instead of importing a pre-built one. Not a production system" },
+      { label: "ARCHITECTURE", value: "Small decoder-only model: token + positional embeddings → Transformer blocks (multi-head self-attention, feed-forward network, LayerNorm, residual connections) → linear layer → next-character prediction" },
+      { label: "WHAT I LEARNED", value: "How Query / Key / Value work in self-attention, how causal masking stops a position seeing future tokens, how heads combine, and how autoregressive generation predicts the next token" },
+      { label: "DATA", value: "Shakespeare's works, character-level tokenization" },
+      { label: "RESULT", value: "Generates text that loosely resembles Shakespeare — some vocabulary, words and dialogue. It doesn't reproduce him, and isn't meant to" },
+      { label: "LIMITS", value: "Character-level tokenization, a small model next to modern LLMs, and only loose resemblance to the source" },
+      { label: "NEXT", value: "Ongoing — I'll keep updating it: temperature and top-k sampling, larger models, larger datasets" },
+      { label: "CREDIT", value: "Inspired by Andrej Karpathy's \"Let's build GPT: from scratch, in code, spelled out\" lecture" },
+    ],
+  },
 ];
 
 export type SkillSystem = {

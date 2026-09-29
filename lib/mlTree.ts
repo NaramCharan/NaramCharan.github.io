@@ -188,10 +188,9 @@ export const ML_TREE: { root: string; branches: [TreeBranch, TreeBranch] } = {
             {
               id: "attention",
               label: "Self-Attention",
-              projectIds: [],
-              foundation: true,
+              projectIds: ["transformer"],
               note:
-                "The mechanism I studied to understand how modern models actually work. It drops recurrence entirely — every position attends to every other in a single step, so the whole sequence computes in parallel instead of one token at a time. That single change is what made training at today's scale possible.",
+                "MK-06 — a small learning project: I wrote causal multi-head self-attention by hand in PyTorch, inside a decoder-only Transformer trained on Shakespeare, to understand the mechanism (more to come). It drops recurrence entirely — every position attends to every earlier one in a single step, so the whole sequence computes in parallel instead of one token at a time. That single change is what made training at today's scale possible.",
             },
             {
               id: "pretrained",

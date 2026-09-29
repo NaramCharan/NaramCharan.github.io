@@ -107,7 +107,7 @@ def project(title, stack, repo, demo, bullets, demo_label="Live application"):
             ParagraphStyle("demo", parent=body_s, fontSize=7.6, leading=9.6, spaceAfter=1.4)))
     for b in bullets:
         parts.append(Paragraph(b, bullet_s, bulletText="•"))
-    parts.append(Spacer(1, 4.5))
+    parts.append(Spacer(1, 3))
     return KeepTogether(parts)
 
 
@@ -136,7 +136,7 @@ S.append(Paragraph(
     "thousands of parallel series, and recommendation architectures on learned embeddings — "
     "plus the serving layer around them. Strong bias toward leakage-free validation and "
     "metrics that describe real behaviour.", body_s))
-S.append(Spacer(1, 7))
+S.append(Spacer(1, 5))
 
 S.append(SectionHeader("Technical Skills"))
 skills = [
@@ -155,7 +155,7 @@ t.setStyle(TableStyle([
     ("BOTTOMPADDING", (0, 0), (-1, -1), 1.1),
 ]))
 S.append(t)
-S.append(Spacer(1, 7))
+S.append(Spacer(1, 5))
 
 S.append(SectionHeader("Engineering Projects"))
 
@@ -203,17 +203,25 @@ S.append(project(
     ]))
 
 S.append(project(
+    "Handbuilt Transformer",
+    "Learning project | PyTorch, NLP",
+    "github.com/NaramCharan/Handbuilt-Transformer",
+    None,
+    [
+        "Built a small decoder-only Transformer by hand in PyTorch to learn how GPT-style models work "
+        "&mdash; causal multi-head self-attention, LayerNorm, residual blocks &mdash; trained "
+        "character-level on Shakespeare; ongoing, being extended.",
+    ]))
+
+S.append(project(
     "Personal Portfolio — naramcharan.me",
     "Next.js 16, React 19, TypeScript, Three.js, Tailwind v4, GitHub Actions",
     "github.com/NaramCharan/NaramCharan.github.io",
     "naramcharan.me",
     [
-        "Designed and shipped a production portfolio — WebGL hero assembled under scroll, "
-        "interactive project briefs, an ML taxonomy mapping models to projects — statically "
-        "exported and auto-deployed to GitHub Pages on every push.",
-        "Built by <b>directing Claude Code</b> across 75+ commits — architecture, design system and "
-        "product decisions mine, every change reviewed before merge — including a performance pass "
-        "taking Lighthouse from 65 to 87.",
+        "Shipped a WebGL-hero portfolio with interactive project briefs, statically exported and "
+        "auto-deployed to GitHub Pages; built by <b>directing Claude Code</b> across 75+ commits "
+        "(architecture and product decisions mine, every change reviewed), lifting Lighthouse from 65 to 87.",
     ],
     demo_label="Live site"))
 
@@ -231,7 +239,7 @@ edu.setStyle(TableStyle([
     ("BOTTOMPADDING", (0, 0), (-1, -1), 0),
 ]))
 S.append(edu)
-S.append(Spacer(1, 7))
+S.append(Spacer(1, 5))
 
 S.append(SectionHeader("Certifications"))
 certs = [
@@ -239,8 +247,8 @@ certs = [
     "Claude Code: Agentic Coding Assistant &ndash; DeepLearning.AI, Anthropic (Jul 2026)",
     "Machine Learning Specialization &ndash; DeepLearning.AI, Stanford (May 2026)",
     "Databases and SQL for Data Science &ndash; IBM, Coursera (Nov 2025)",
-    "Python for Everybody Specialization &ndash; Univ. of Michigan (Mar 2025)",
-    "Prompt Engineering &amp; Generative AI &ndash; Google, Vanderbilt (Mar 2025)",
+    "Python for Everybody &ndash; Univ. of Michigan (Mar 2025)",
+    "Prompt Engineering &amp; GenAI &ndash; Google, Vanderbilt (Mar 2025)",
 ]
 cert_rows = [
     [Paragraph(certs[i], bullet_s, bulletText="\u2022"),
