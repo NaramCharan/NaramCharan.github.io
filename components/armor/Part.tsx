@@ -42,7 +42,7 @@ export default function Part({
   rotation?: V3;
   children: ReactNode;
 }) {
-  const { progressRef, assets, reduced } = useArmor();
+  const { progressRef, assets, reduced, spread } = useArmor();
   const inner = useRef<Group>(null);
   // Deterministic per-part phase for the idle drift (no Math.random).
   const seed = useMemo(() => [...id].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 997, 7), [id]);
@@ -54,10 +54,11 @@ export default function Part({
     if (!g) return;
     const t = win(progressRef.current, at[0], at[1]);
     const k = t <= 0 ? 0 : t >= 1 ? 1 : lockIn(t);
-    const r = 1 - k; // residual offset (goes slightly negative on overshoot)
+    const r = (1 - k) * spread; // residual offset (goes slightly negative on overshoot)
     const drift = reduced || t >= 1 ? 0 : Math.sin(clock.elapsedTime * 0.9 + seed) * 0.018 * (1 - t);
     g.position.set(from[0] * r, from[1] * r + drift, from[2] * r);
-    g.rotation.set(spin[0] * r, spin[1] * r + drift * 2, spin[2] * r);
+    const q = 1 - k; // rotation residual is not spread-scaled
+    g.rotation.set(spin[0] * q, spin[1] * q + drift * 2, spin[2] * q);
   });
 
   return (

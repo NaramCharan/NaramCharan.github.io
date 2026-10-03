@@ -218,7 +218,8 @@ export default function HeroHud() {
       );
       [pathL.current, pathR.current].forEach((p, i) => {
         const dot = root.querySelector<SVGElement>(i === 0 ? ".hud-packet-l" : ".hud-packet-r");
-        if (!p || !dot) return;
+        // Panels (and so the conduits) are hidden below lg: no path, no packet.
+        if (!p || !dot || !p.getAttribute("d")) return;
         add(
           animate(dot, {
             ...svg.createMotionPath(p),
@@ -375,6 +376,7 @@ function RimNode({ pathRef, color }: { pathRef: RefObject<SVGPathElement | null>
     const g = ref.current;
     if (!p || !g) return;
     const place = () => {
+      if (!p.getAttribute("d")) return; // panels hidden (mobile): nothing to dock
       const len = p.getTotalLength?.();
       if (!len) return;
       const pt = p.getPointAtLength(len);

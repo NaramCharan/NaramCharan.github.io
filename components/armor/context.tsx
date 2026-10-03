@@ -58,6 +58,8 @@ type Ctx = {
   reduced: boolean;
   /** Optional GLB replacements keyed by part id — see <Part/>. */
   assets: Record<string, THREE.Object3D> | null;
+  /** Scales every part's fly-in offset (tighter in small embeds). */
+  spread: number;
 };
 
 const ArmorCtx = createContext<Ctx | null>(null);
@@ -66,15 +68,20 @@ export function ArmorProvider({
   progress,
   reduced,
   assets = null,
+  spread = 1,
   children,
 }: {
   progress: MutableRefObject<number>;
   reduced: boolean;
   assets?: Record<string, THREE.Object3D> | null;
+  spread?: number;
   children: ReactNode;
 }) {
   const mats = useMemo(() => createMaterials(), []);
-  const value = useMemo(() => ({ progressRef: progress, mats, reduced, assets }), [progress, mats, reduced, assets]);
+  const value = useMemo(
+    () => ({ progressRef: progress, mats, reduced, assets, spread }),
+    [progress, mats, reduced, assets, spread],
+  );
   return <ArmorCtx.Provider value={value}>{children}</ArmorCtx.Provider>;
 }
 
