@@ -77,19 +77,12 @@ content is REAL, sourced from naramcharan.me.
   renders the FINAL readable state (SSR/SEO safe). **Reduced motion** skips WebGL
   entirely → static `ArcReactorStatic` + all content shown. (History: framer
   `useScroll` and anime.js `onScroll` did NOT track on this page; GSAP ScrollTrigger
-  works.) The opening lock-on is `HelmetHero.tsx` (2026-10): the SAME 3D Mark III helmet as
-  /armor (`armor/HelmetGLB`), rendered in its own transparent canvas
-  (`armor/HelmetHeroCanvas`, next/dynamic, canvas 2× the helmet box so plates fly in
-  from outside it, `ArmorProvider spread` 0.55, 0.4 under 640px). The build is **scroll-driven**
-  (2026-10): its own ScrollTrigger on #top maps hero progress 0 → `HELMET_END` (0.2)
-  to helmet 0 → 1, damped in the render loop; pieces float apart at the top of the
-  page and reverse on scroll-up. The hero track grew 180vh → 260vh for this runway;
-  the reticle/helmet fades at 0.215 and the welcome block at 0.22 (both were earlier);
-  the reactor canvas stays at 0.25 opacity until p 0.2. The helmet canvas stops
-  rendering (`frameloop="never"`) outside segment A. Keeps the `.ia-reticle` class so
-  GSAP still scales+fades it out. The at-rest identity block sits below it
-  (`items-end pb-[15vh]`). (Replaced the SVG
-  `HelmetAssembly.tsx`, deleted.)
+  works.) **Reactor-first (2026-10, user decision):** the homepage hero has ONE
+  3D sequence — the arc reactor. The 3D helmet briefly led this hero (scroll-built,
+  track 260vh) but was removed so visitors reach projects faster and the palette stays
+  cyan/gold; it lives only on /armor, linked from the hero. Track is back to 180vh, the
+  welcome block is centred (fades at 0.15), and there is no opening lock-on overlay.
+  Don't re-add a second 3D scene to the homepage without asking.
 - **Helmet model** (2026-10): `public/models/mark3-helmet.glb` is "Ironman Mark III
   Helmet *free*" by Demonic Arts (Sketchfab, **CC-BY-4.0** — attribution REQUIRED; it
   sits in the Contact footer and bottom-right of /armor). Optimised from the 18 MB
