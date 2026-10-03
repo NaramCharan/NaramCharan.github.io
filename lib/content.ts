@@ -218,27 +218,27 @@ export const projects: Project[] = [
     code: "MK-06",
     name: "Handbuilt Transformer",
     domain: "Learning Project · NLP",
-    // A learning build, not a benchmarked system — there is no number to
-    // headline, and none is invented.
-    metric: "Learning build",
+    // Real number from the README's training run (validation loss, 5,000
+    // steps) — a learning project, so no accuracy-style claim is made.
+    metric: "1.82 val loss",
     description:
-      "A small decoder-only Transformer I built by hand in PyTorch while learning how GPT-style models work — causal multi-head self-attention, residual blocks, LayerNorm — trained character-by-character on Shakespeare. A learning project, not a production system; I'll keep extending it.",
-    tech: ["PyTorch", "Transformers", "NLP"],
+      "A mini GPT and a mini GPT tokenizer, both built from scratch in PyTorch while learning how ChatGPT-style models work: a small decoder-only Transformer that writes Shakespeare-like text, and a GPT-2-style byte-level BPE tokenizer. A learning project I'm still extending.",
+    tech: ["PyTorch", "Transformers", "BPE Tokenizer", "NLP"],
     repo: "https://github.com/NaramCharan/Handbuilt-Transformer",
     wins: [
-      "Wrote causal multi-head self-attention myself to understand how it works",
-      "Small character-level model that generates Shakespeare-style text",
-      "Built along Andrej Karpathy's \"Let's build GPT\" lecture — more to come",
+      "~0.21M-param decoder-only GPT: loss 4.41 → 1.66 train, 1.82 validation",
+      "GPT-2-style BPE tokenizer: regex chunking + byte-level merges, lossless round-trip",
+      "Learning project, still growing — next up: train the GPT on BPE tokens",
     ],
     brief: [
-      { label: "WHAT IT IS", value: "A learning project — built to understand how GPT-style Transformers work by implementing the core pieces manually instead of importing a pre-built one. Not a production system" },
-      { label: "ARCHITECTURE", value: "Small decoder-only model: token + positional embeddings → Transformer blocks (multi-head self-attention, feed-forward network, LayerNorm, residual connections) → linear layer → next-character prediction" },
-      { label: "WHAT I LEARNED", value: "How Query / Key / Value work in self-attention, how causal masking stops a position seeing future tokens, how heads combine, and how autoregressive generation predicts the next token" },
-      { label: "DATA", value: "Shakespeare's works, character-level tokenization" },
-      { label: "RESULT", value: "Generates text that loosely resembles Shakespeare — some vocabulary, words and dialogue. It doesn't reproduce him, and isn't meant to" },
-      { label: "LIMITS", value: "Character-level tokenization, a small model next to modern LLMs, and only loose resemblance to the source" },
-      { label: "NEXT", value: "Ongoing — I'll keep updating it: temperature and top-k sampling, larger models, larger datasets" },
-      { label: "CREDIT", value: "Inspired by Andrej Karpathy's \"Let's build GPT: from scratch, in code, spelled out\" lecture" },
+      { label: "WHAT IT IS", value: "A learning project — a mini GPT and a mini GPT tokenizer, built by hand to understand the two halves of how ChatGPT works: a tokenizer turns text into numbers, a Transformer predicts what comes next. Not a production system" },
+      { label: "PART 1 · GPT", value: "Decoder-only Transformer, character-level, trained on Shakespeare: 4 blocks, 4 attention heads, 64-dim embeddings, 32-character context, dropout 0.2, ~0.21M parameters. Each block has causal self-attention, a feed-forward network, LayerNorm and residual connections" },
+      { label: "TRAINING", value: "5,000 steps, Adam at lr 0.001, batch 32. Loss fell from 4.41 to 1.66 on train and 1.82 on validation" },
+      { label: "RESULT", value: "Writes text with the shape of a Shakespeare play — capitalised speaker names, short lines, punctuation, many real English words — though the meaning doesn't hold together. Expected for a tiny model that sees one character at a time" },
+      { label: "PART 2 · TOKENIZER", value: "GPT-2-style byte-level BPE: the GPT-2 regex first splits text into chunks (so \"dog.\" and \"dog!\" share a \"dog\" token), each chunk becomes UTF-8 bytes, then the most frequent neighbouring pair is merged repeatedly — counted inside a chunk, never across chunks. encode() and decode() round-trip the original text exactly, and I compared it against OpenAI's tiktoken for GPT-2 and GPT-4" },
+      { label: "LIMITS", value: "The Transformer still reads characters, not tokens from my tokenizer; the model is tiny; the tokenizer trained on one short article with a small vocabulary and uses the older GPT-2 split pattern, not GPT-4's" },
+      { label: "NEXT", value: "Ongoing — upgrade to the GPT-4 split pattern, add special tokens like <|endoftext|>, train the Transformer on my BPE tokens instead of characters, then a bigger model on more data" },
+      { label: "CREDIT", value: "Follows Andrej Karpathy's \"Let's build GPT\" and \"Let's build the GPT Tokenizer\" lectures and his minbpe repo; tokenizer trained on Nathan Reed's \"A Programmer's Introduction to Unicode\"" },
     ],
   },
 ];

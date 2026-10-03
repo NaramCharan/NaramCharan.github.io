@@ -208,9 +208,10 @@ S.append(project(
     "github.com/NaramCharan/Handbuilt-Transformer",
     None,
     [
-        "Built a small decoder-only Transformer by hand in PyTorch to learn how GPT-style models work "
-        "&mdash; causal multi-head self-attention, LayerNorm, residual blocks &mdash; trained "
-        "character-level on Shakespeare; ongoing, being extended.",
+        "Built a mini GPT and a mini GPT tokenizer from scratch in PyTorch to learn how ChatGPT-style "
+        "models work: a ~0.21M-parameter decoder-only Transformer (causal multi-head attention, "
+        "4 blocks) trained on Shakespeare, and a GPT-2-style byte-level BPE tokenizer with regex "
+        "chunking, checked against <b>tiktoken</b>; ongoing &mdash; next, training on BPE tokens.",
     ]))
 
 S.append(project(
