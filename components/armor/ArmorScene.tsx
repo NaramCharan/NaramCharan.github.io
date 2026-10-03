@@ -2,11 +2,11 @@
 
 import { useMemo, useRef, type MutableRefObject } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { ContactShadows, Environment, Lightformer } from "@react-three/drei";
+import { Environment, Lightformer } from "@react-three/drei";
 import { Bloom, EffectComposer, Noise, Vignette } from "@react-three/postprocessing";
 import { BlendFunction } from "postprocessing";
 import * as THREE from "three";
-import ArmorModel from "./ArmorModel";
+import HelmetModel from "./HelmetModel";
 import { ArmorProvider, useArmor } from "./context";
 import { BODY, sampleCamera } from "./timeline";
 
@@ -36,10 +36,11 @@ function CameraRig() {
   useFrame(() => {
     const aspect = size.width / size.height;
     const tanHalf = Math.tan((FOV / 2) * DEG);
-    // ~80% of the viewport height; 76% on portrait so the title clears the helmet.
-    const fill = aspect < 0.8 ? 0.76 : 0.8;
+    // The helmet fills ~70% of the height (62% on portrait, leaving the
+    // title clear above it).
+    const fill = aspect < 0.8 ? 0.62 : 0.7;
     const byHeight = (BODY.height / fill) / 2 / tanHalf;
-    const byWidth = 0.95 / 2 / (tanHalf * aspect); // arms + margin
+    const byWidth = (BODY.width / 0.8) / 2 / (tanHalf * aspect);
     const finalR = Math.max(byHeight, byWidth);
     // Narrow screens pull every earlier shot back a little too.
     const rScale = aspect < 0.8 ? 1.35 : aspect < 1.2 ? 1.12 : 1;
@@ -67,7 +68,7 @@ function Particles({ count = 700 }: { count?: number }) {
     const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
     for (let i = 0; i < count; i++) {
       a[i * 3] = (rnd() - 0.5) * 8;
-      a[i * 3 + 1] = rnd() * 3.6;
+      a[i * 3 + 1] = (rnd() - 0.5) * 4.4;
       a[i * 3 + 2] = (rnd() - 0.6) * 6;
     }
     return a;
@@ -75,7 +76,7 @@ function Particles({ count = 700 }: { count?: number }) {
   useFrame((_, dt) => {
     if (reduced || !ref.current) return;
     ref.current.rotation.y += dt * 0.012;
-    ref.current.position.y = (ref.current.position.y + dt * 0.03) % 0.4;
+    ref.current.position.y = ((ref.current.position.y + 0.2 + dt * 0.03) % 0.4) - 0.2;
   });
   return (
     <points ref={ref}>
@@ -87,67 +88,33 @@ function Particles({ count = 700 }: { count?: number }) {
   );
 }
 
-/** Fake volumetric shaft from above + a halo wall behind the armor. */
-function Volumetrics() {
-  const { progressRef } = useArmor();
-  const beam = useRef<THREE.MeshBasicMaterial>(null);
-  useFrame(() => {
-    if (beam.current) beam.current.opacity = 0.006 + progressRef.current * 0.01;
-  });
-  return (
-    <>
-      <mesh position={[0, 2.3, -0.3]}>
-        <coneGeometry args={[0.95, 4.6, 48, 1, true]} />
-        <meshBasicMaterial ref={beam} color="#bfe6ff" transparent opacity={0.006} side={THREE.DoubleSide} depthWrite={false} blending={THREE.AdditiveBlending} />
-      </mesh>
-    </>
-  );
-}
-
 function Stage({ raw }: { raw: MutableRefObject<number> }) {
   return (
     <>
       <color attach="background" args={["#030405"]} />
-      <fog attach="fog" args={["#030405", 6, 14]} />
+      <fog attach="fog" args={["#030405", 7, 16]} />
       <ProgressDriver raw={raw} />
       <CameraRig />
 
-      <ambientLight intensity={0.08} />
-      {/* key — warm, high front-left, casts the shadows */}
-      <directionalLight
-        position={[2.2, 4.2, 3.6]}
-        intensity={2.2}
-        color="#fff1e2"
-        castShadow
-        shadow-mapSize={[2048, 2048]}
-        shadow-bias={-0.0004}
-        shadow-camera-left={-1.5}
-        shadow-camera-right={1.5}
-        shadow-camera-top={2.4}
-        shadow-camera-bottom={-0.4}
-      />
-      {/* rims — cool from back-left, warm from back-right: the silhouette */}
-      <directionalLight position={[-3.5, 2.8, -3.2]} intensity={3.2} color="#8fd6ff" />
-      <directionalLight position={[3.4, 2.0, -3.0]} intensity={2.4} color="#ffad7a" />
-      <spotLight position={[0, 4.6, 0.4]} angle={0.3} penumbra={0.85} intensity={9} color="#dfefff" distance={7} decay={2} />
+      <ambientLight intensity={0.06} />
+      {/* key — warm, high front-left: the hot highlight across the faceplate */}
+      <directionalLight position={[-2.4, 3.2, 4.2]} intensity={2.6} color="#fff1e2" />
+      {/* soft cool fill from the right so the shadow side keeps its red */}
+      <directionalLight position={[3.2, -0.4, 3]} intensity={0.55} color="#cfe3ff" />
+      {/* rims — cool back-left, warm back-right: cuts the silhouette out of the black */}
+      <directionalLight position={[-3.5, 2.2, -3.2]} intensity={3.4} color="#8fd6ff" />
+      <directionalLight position={[3.4, 1.4, -3.0]} intensity={2.6} color="#ffad7a" />
 
       {/* studio reflections for the metal — framed lightformers, no HDR fetch */}
       <Environment resolution={256} frames={1}>
-        <Lightformer form="rect" intensity={2} color="#ffffff" position={[0, 4, 2]} scale={[6, 2, 1]} rotation-x={Math.PI / 2} />
-        <Lightformer form="rect" intensity={1.1} color="#ffd9b0" position={[-4, 1.5, 1]} scale={[2, 5, 1]} rotation-y={Math.PI / 2} />
-        <Lightformer form="rect" intensity={0.9} color="#e6eeff" position={[4, 1.5, -1]} scale={[2, 5, 1]} rotation-y={-Math.PI / 2} />
-        <Lightformer form="ring" intensity={0.5} color="#ffffff" position={[0, 1, 5]} scale={2} />
+        <Lightformer form="rect" intensity={2.2} color="#ffffff" position={[-1.5, 3.5, 3]} scale={[5, 1.6, 1]} rotation-x={Math.PI / 2.6} />
+        <Lightformer form="rect" intensity={1.1} color="#ffd9b0" position={[-4, 0.5, 1]} scale={[2, 5, 1]} rotation-y={Math.PI / 2} />
+        <Lightformer form="rect" intensity={0.9} color="#e6eeff" position={[4, 0.5, -1]} scale={[2, 5, 1]} rotation-y={-Math.PI / 2} />
+        <Lightformer form="ring" intensity={0.5} color="#ffffff" position={[0, 0, 5]} scale={2} />
       </Environment>
 
-      <ArmorModel />
-
-      <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <circleGeometry args={[20, 64]} />
-        <meshStandardMaterial color="#030304" metalness={0} roughness={0.92} envMapIntensity={0} />
-      </mesh>
-      <ContactShadows position={[0, 0.002, 0]} scale={3} blur={2.2} far={1.4} opacity={0.75} resolution={512} />
+      <HelmetModel />
       <Particles />
-      <Volumetrics />
 
       <EffectComposer multisampling={0}>
         <Bloom intensity={0.75} luminanceThreshold={1} luminanceSmoothing={0.1} mipmapBlur radius={0.55} />
@@ -163,7 +130,6 @@ export default function ArmorScene({ raw, reduced }: { raw: MutableRefObject<num
   return (
     <Canvas
       className="!absolute inset-0"
-      shadows
       dpr={[1, 1.75]}
       camera={{ fov: FOV, near: 0.05, far: 40, position: [3, 1.6, 3] }}
       gl={{ antialias: false, powerPreference: "high-performance" }}

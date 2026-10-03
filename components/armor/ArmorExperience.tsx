@@ -26,28 +26,28 @@ const fade = (s: number, e: number): CSSProperties => ({
 
 const CHAPTERS = [
   {
-    at: [0.1, 0.245],
+    at: [0.09, 0.29],
     n: "01",
-    title: "Cranial assembly",
-    body: "Rear shell seats. Side panels lock. The faceplate seals and the optics come online.",
+    title: "Shell",
+    body: "Rear dome seats over the inner frame. Shell halves close from both sides; ear housings lock.",
   },
   {
-    at: [0.27, 0.445],
+    at: [0.31, 0.55],
     n: "02",
-    title: "Chassis & reactor",
-    body: "Chest plating closes over the exposed frame. Reactor ignition. Shoulder mounts engage.",
+    title: "Plating",
+    body: "Forehead tab drops into its channel. Gold jaw rises, chin plate seals underneath.",
   },
   {
-    at: [0.47, 0.645],
+    at: [0.57, 0.71],
     n: "03",
-    title: "Actuated limbs",
-    body: "Upper arm, elbow, forearm, gauntlet — then every finger segment, indexed and locked.",
+    title: "Faceplate",
+    body: "The faceplate swings down and forward — and locks.",
   },
   {
-    at: [0.67, 0.795],
+    at: [0.73, 0.83],
     n: "04",
-    title: "Load-bearing frame",
-    body: "Hip, thigh, knee, shin and boot. Stance stabilised.",
+    title: "Optics online",
+    body: "Ocular arrays ignite. Calibrating.",
   },
 ] as const;
 
@@ -129,15 +129,15 @@ export default function ArmorExperience() {
           {/* ── 01 initialization ──────────────────────────────────── */}
           <div
             className="pointer-events-none absolute inset-x-5 bottom-[12%] z-10 sm:inset-x-auto sm:bottom-auto sm:left-10 sm:top-1/2 sm:-translate-y-1/2 lg:left-16"
-            style={fade(-1, 0.085)}
+            style={fade(-1, 0.07)}
           >
-            <p className="mono mb-4 text-[10px] tracking-[0.45em] text-gold">◢ MK-I PROTOTYPE</p>
+            <p className="mono mb-4 text-[10px] tracking-[0.45em] text-gold">◢ MK-I HELMET</p>
             <h1 className="font-display text-5xl font-semibold leading-[0.9] tracking-tight text-white sm:text-7xl lg:text-8xl">
               PROJECT
               <br />
               AEGIS
             </h1>
-            <p className="mono mt-5 text-[11px] tracking-[0.4em] text-cyan/90 sm:text-xs">ARMOR ASSEMBLY SEQUENCE</p>
+            <p className="mono mt-5 text-[11px] tracking-[0.4em] text-cyan/90 sm:text-xs">HELMET ASSEMBLY SEQUENCE</p>
           </div>
 
           {/* ── 02–05 chapter captions ─────────────────────────────── */}
@@ -156,11 +156,11 @@ export default function ArmorExperience() {
           {/* ── 06 system online ───────────────────────────────────── */}
           <div
             className="pointer-events-none absolute inset-x-0 top-[5.5%] z-10 text-center sm:inset-x-auto sm:left-10 sm:top-1/2 sm:-translate-y-1/2 sm:text-left lg:left-16"
-            style={fade(0.88, 2)}
+            style={fade(0.9, 2)}
           >
             <p className="mono hidden text-[10px] tracking-[0.45em] text-gold sm:block">◢ SEQUENCE COMPLETE</p>
             <h2 className="font-display text-xl font-semibold tracking-tight text-white sm:mt-3 sm:text-6xl">SYSTEM ONLINE</h2>
-            <p className="mono mt-1 text-[8px] tracking-[0.3em] text-cyan/90 sm:mt-4 sm:text-[11px] sm:tracking-[0.35em]">ALL ARMOR SYSTEMS OPERATIONAL</p>
+            <p className="mono mt-1 text-[8px] tracking-[0.3em] text-cyan/90 sm:mt-4 sm:text-[11px] sm:tracking-[0.35em]">ALL HELMET SYSTEMS OPERATIONAL</p>
           </div>
 
           {/* scroll hint */}
