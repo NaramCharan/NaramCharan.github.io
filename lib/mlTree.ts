@@ -121,13 +121,6 @@ export const ML_TREE: { root: string; branches: [TreeBranch, TreeBranch] } = {
               projectIds: [],
               note: "On the roadmap.",
             },
-            {
-              id: "ncf",
-              label: "Latent Embeddings",
-              projectIds: ["recsys"],
-              note:
-                "32-dim user/item vectors learned from interaction data alone, served through a FAISS index.",
-            },
           ],
         },
       ],
@@ -151,7 +144,7 @@ export const ML_TREE: { root: string; branches: [TreeBranch, TreeBranch] } = {
               label: "Pneumonia Detection · Chest X-Ray",
               projectIds: ["rsna"],
               note:
-                "MK-05 — transfer learning over chest radiographs: DenseNet-121, EfficientNet-B2 and ResNet-34 benchmarked under one protocol, ResNet-34 fine-tuned shipping at 83% pneumonia recall. The features are learned from pixels rather than engineered by hand, and it's deployed — DICOM pipeline, FastAPI, React, one container on Azure.",
+                "MK-04 — transfer learning over chest radiographs: DenseNet-121, EfficientNet-B2 and ResNet-34 benchmarked under one protocol, ResNet-34 fine-tuned shipping at 83% pneumonia recall. The features are learned from pixels rather than engineered by hand, and it's deployed — DICOM pipeline, FastAPI, React, one container on Azure.",
             },
           ],
         },
@@ -190,7 +183,7 @@ export const ML_TREE: { root: string; branches: [TreeBranch, TreeBranch] } = {
               label: "Self-Attention",
               projectIds: ["transformer"],
               note:
-                "MK-06 — a small learning project: I wrote causal multi-head self-attention by hand in PyTorch, inside a decoder-only Transformer trained on Shakespeare, alongside a GPT-2-style BPE tokenizer, to understand the mechanism (more to come). It drops recurrence entirely — every position attends to every earlier one in a single step, so the whole sequence computes in parallel instead of one token at a time. That single change is what made training at today's scale possible.",
+                "MK-05 — a small learning project: I wrote causal multi-head self-attention by hand in PyTorch, inside a decoder-only Transformer trained on Shakespeare, alongside a GPT-2-style BPE tokenizer, to understand the mechanism (more to come). It drops recurrence entirely — every position attends to every earlier one in a single step, so the whole sequence computes in parallel instead of one token at a time. That single change is what made training at today's scale possible.",
             },
             {
               id: "pretrained",

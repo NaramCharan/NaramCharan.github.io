@@ -136,14 +136,13 @@ content is REAL, sourced from naramcharan.me.
   (no `Math.random()` in render) to avoid SSR/client mismatch.
 - Branded favicon: `app/icon.svg` (mini arc reactor). No Three.js deps — the reactors
   are all pure SVG + anime.js/CSS.
-- `Projects.tsx` — 6 repos as HUD scan cards, numbered chronologically
-  (MK-01 scraper → MK-02 titanic → MK-03 recsys → MK-04 churn → MK-05 walmart,
-  FEATURED on Walmart; MK-06 RSNA pneumonia is `wip: true` — renders IN PROGRESS,
-  no metric glow, no results block).
+- `Projects.tsx` — 5 repos as HUD scan cards, numbered chronologically (2026-10:
+  the recommendation-system project was removed from the site at the user's request
+  and the rest renumbered): MK-01 scraper → MK-02 churn → MK-03 Walmart → MK-04 RSNA
+  pneumonia (deployed) → MK-05 Handbuilt Transformer (learning project). Shown
+  newest-first. Any "MK-0x" in skill/ML-tree prose must match these codes.
 - `Skills.tsx` + `SystemIcons.tsx` — "Suit Systems" with **icon emblems, NO numbers**
   (brain=Deep Learning, circuit=ML, database=Data, terminal=Engineering) in rotating reticles.
-- `Blueprint.tsx` — **bespoke commissioned-feel** SVG schematic of the neural
-  recommendation engine, annotated with real specs (32-dim, <10ms, FAISS·L2).
 - `About.tsx` — origin story + education GPAs + cert timeline.
 - `Contact.tsx` — terminal-style contact panel (email, GitHub, LinkedIn — no phone/WhatsApp, removed for privacy).
 - `HudFrame.tsx` — fixed decorative corner brackets overlay.
@@ -152,8 +151,7 @@ content is REAL, sourced from naramcharan.me.
 All content in `lib/content.ts` is from the **real resume** (`public/NARAM_RESUME.pdf`,
 the actual file). Key authoritative facts: name "Naramreddy Charan Kumar Reddy";
 CGPA **8.98/10** (user-corrected 2026-07-02; earlier 8.89/8.7 mentions are stale);
-NCF uses **PyTorch, no Keras** (resume PDF edited TensorFlow→PyTorch; backup at
-iCloud `NARAM_RESUME.pdf.bak-tensorflow`); Walmart **95.55% R² with LightGBM**
+Walmart **95.55% R² with LightGBM**
 (user-supplied README 2026-07-07 — earlier "95.5% Random Forest" is stale; the
 churn project's final numbers are 98.28% acc · **94.74% F1** · 91.58% recall,
 XGBoost chosen over a 98.76% PyTorch net on compute/interpretability); skill groups = ML /

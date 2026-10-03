@@ -133,7 +133,7 @@ S.append(Paragraph(
     "3rd-year Computer Science student specializing in AI and Machine Learning, building "
     "end-to-end systems that reach production rather than stopping at a notebook metric. "
     "Experience spans medical-imaging deep learning, gradient-boosted forecasting across "
-    "thousands of parallel series, and recommendation architectures on learned embeddings — "
+    "thousands of parallel series, and transformers built from scratch — "
     "plus the serving layer around them. Strong bias toward leakage-free validation and "
     "metrics that describe real behaviour.", body_s))
 S.append(Spacer(1, 5))
@@ -141,7 +141,7 @@ S.append(Spacer(1, 5))
 S.append(SectionHeader("Technical Skills"))
 skills = [
     ("Machine Learning:", "XGBoost, LightGBM, Random Forest, Logistic Regression, Scikit-Learn, Optuna."),
-    ("Deep Learning & CV:", "PyTorch, Transfer Learning (ResNet / DenseNet / EfficientNet), CNNs, pydicom, Neural Collaborative Filtering, Vector Embeddings, FAISS."),
+    ("Deep Learning & CV:", "PyTorch, Transfer Learning (ResNet / DenseNet / EfficientNet), CNNs, pydicom, Transformers (Self-Attention), BPE Tokenization."),
     ("Data Intelligence:", "Pandas, NumPy, Feature Engineering, KNNImputer, Imbalance Handling, RobustScaler."),
     ("Engineering & Deploy:", "Python 3 (Advanced OOP), Data Structures, FastAPI, REST APIs, SQL (Schema Design), SQLAlchemy, Docker, Azure Container Apps, Git, Claude Code (agentic development)."),
 ]

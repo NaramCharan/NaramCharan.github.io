@@ -66,34 +66,6 @@ export default function MiniDemo({ id }: { id: string }) {
           .add($(".md-auc"), { scale: [0, 1], duration: 450, ease: "outBack(2.5)" }, "-=250")
           .add($(".md-auclabel"), { opacity: [0, 1], duration: 300 }, "-=200");
         break;
-      case "recsys":
-        t.add($(".md-query"), {
-          scale: [0, 1],
-          duration: 400,
-          ease: "outBack(3)",
-        })
-          .add(
-            $(".md-edge"),
-            {
-              strokeDashoffset: [60, 0],
-              duration: 350,
-              delay: stagger(110),
-              ease: "outQuad",
-            },
-            "-=100"
-          )
-          .add(
-            $(".md-hit"),
-            {
-              scale: [0, 1],
-              opacity: [0, 1],
-              duration: 320,
-              delay: stagger(110),
-              ease: "outBack(2)",
-            },
-            "-=380"
-          );
-        break;
       case "scraper":
         t.add($(".md-fill"), {
           scaleX: [0, 1],
@@ -292,55 +264,6 @@ function Demo({ id }: { id: string }) {
           <text className="md-auclabel mono" x="64" y="18" fontSize="10" fill="#ffd089">
             98.28% ACC
           </text>
-        </Svg>
-      );
-    }
-    case "recsys": {
-      const items: [number, number][] = [
-        [40, 18], [80, 40], [60, 58], [130, 14], [150, 50],
-        [180, 26], [205, 54], [110, 60], [95, 20], [170, 62],
-      ];
-      const hits = [0, 8, 1, 3, 5];
-      const q: [number, number] = [120, 36];
-      return (
-        <Svg label="FAISS · k-NN RETRIEVAL">
-          {items.map(([x, y], i) => (
-            <circle key={`b-${i}`} cx={x} cy={y} r="2.4" fill="#22d3ee" fillOpacity="0.25" />
-          ))}
-          {hits.map((h, i) => (
-            <line
-              key={`e-${i}`}
-              className="md-edge"
-              x1={q[0]}
-              y1={q[1]}
-              x2={items[h][0]}
-              y2={items[h][1]}
-              stroke="#22d3ee"
-              strokeOpacity="0.55"
-              strokeWidth="1"
-              strokeDasharray="60"
-              strokeDashoffset="0"
-            />
-          ))}
-          {hits.map((h, i) => (
-            <circle
-              key={`h-${i}`}
-              className="md-hit"
-              cx={items[h][0]}
-              cy={items[h][1]}
-              r="3.4"
-              fill="#7de7f5"
-              style={{ transformBox: "fill-box", transformOrigin: "center", filter: "drop-shadow(0 0 4px rgba(125,231,245,0.7))" }}
-            />
-          ))}
-          <circle
-            className="md-query animate-pulse-core"
-            cx={q[0]}
-            cy={q[1]}
-            r="5"
-            fill="#ffb23e"
-            style={{ transformBox: "fill-box", transformOrigin: "center", filter: "drop-shadow(0 0 6px rgba(255,178,62,0.9))" }}
-          />
         </Svg>
       );
     }
