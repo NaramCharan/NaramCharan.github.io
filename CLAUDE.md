@@ -27,7 +27,10 @@ content is REAL, sourced from naramcharan.me.
 - **Theme:** OLED black-navy `#05080F` base, cyan `#22D3EE` HUD lines, gold `#FFB23E`
   accents. 3–4 colors only. Tokens in `app/globals.css` `@theme`.
 - **Typography (chosen, NOT Inter/Roboto):** Space Grotesk (display/headings) +
-  Sora (body) + JetBrains Mono (HUD readouts). Headings auto-use display face via
+  Sora (body) + JetBrains Mono (HUD readouts). **Self-hosted** via `next/font/local`
+  from `app/fonts/` (latin variable woff2 from @fontsource-variable, OFL-1.1 licence
+  files alongside) — NOT next/font/google, whose build-time fetch failed the Pages
+  deploy twice (2026-10). Builds need no network for fonts. Headings auto-use display face via
   global `h1–h4` rule. Font vars: `--font-display`, `--font-body`, `--font-mono-face`.
 - **Motion language:** one easing curve `EASE = [0.16,1,0.3,1]` in `lib/motion.ts`
   (helpers `enter()` / `reveal()`). Section reveals use a clip-wipe rule line.

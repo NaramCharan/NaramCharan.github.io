@@ -1,28 +1,33 @@
 import type { Metadata, Viewport } from "next";
-import { Space_Grotesk, Sora, JetBrains_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { profile, contact, education } from "@/lib/content";
 
 // Chosen pairing — NOT Inter/Roboto. Space Grotesk (technical display)
 // carries headlines; Sora (humanist grotesk) handles body; JetBrains Mono
 // is reserved for HUD readouts and code.
-const display = Space_Grotesk({
+//
+// Self-hosted (app/fonts/, latin variable woff2 from @fontsource-variable,
+// SIL OFL 1.1 — licences alongside) rather than next/font/google: the Google
+// fetch at build time failed the Pages deploy twice in one day.
+const display = localFont({
+  src: "./fonts/space-grotesk-latin-wght-normal.woff2",
   variable: "--font-display",
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
+  weight: "300 700",
   display: "swap",
 });
 
-const body = Sora({
+const body = localFont({
+  src: "./fonts/sora-latin-wght-normal.woff2",
   variable: "--font-body",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
+  weight: "100 800",
   display: "swap",
 });
 
-const mono = JetBrains_Mono({
+const mono = localFont({
+  src: "./fonts/jetbrains-mono-latin-wght-normal.woff2",
   variable: "--font-mono-face",
-  subsets: ["latin"],
+  weight: "100 800",
   display: "swap",
 });
 
