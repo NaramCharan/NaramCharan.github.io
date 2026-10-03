@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, type ReactNode, type RefObject } from "react";
-import { animate, createSpring, stagger, svg } from "animejs";
+import { animate, spring, stagger, svg } from "animejs";
 import { projects } from "@/lib/content";
 import { usePrefersReducedMotion } from "@/lib/useReducedMotion";
 
@@ -154,7 +154,7 @@ export default function HeroHud() {
           scale: [0.7, 1],
           delay: stagger(85, { start: 250 }),
           duration: 900,
-          ease: createSpring({ stiffness: 160, damping: 11 }),
+          ease: spring({ stiffness: 160, damping: 11 }),
         }),
       );
       // …then a scanner sweep passes over them, on a loop.
@@ -213,7 +213,7 @@ export default function HeroHud() {
           opacity: [0, 1],
           delay: stagger(220, { start: 1600 }),
           duration: 600,
-          ease: createSpring({ stiffness: 200, damping: 9 }),
+          ease: spring({ stiffness: 200, damping: 9 }),
         }),
       );
       [pathL.current, pathR.current].forEach((p, i) => {
@@ -257,7 +257,7 @@ export default function HeroHud() {
   return (
     <div ref={rootRef} className="absolute inset-0">
       {/* Conduits — d is filled in from the measured panel/reactor positions */}
-      <svg aria-hidden className="absolute inset-0 h-full w-full overflow-visible">
+      <svg aria-hidden className="ia-hud-wire absolute inset-0 h-full w-full overflow-visible">
         <defs>
           <linearGradient id="hud-wire-l" x1="0" x2="1">
             <stop offset="0%" stopColor="#22d3ee" stopOpacity="0.15" />
@@ -359,7 +359,7 @@ export default function HeroHud() {
       </Panel>
 
       {/* Rim nodes — where the conduits dock on the reactor */}
-      <svg aria-hidden className="pointer-events-none absolute inset-0 h-full w-full overflow-visible">
+      <svg aria-hidden className="ia-hud-wire pointer-events-none absolute inset-0 h-full w-full overflow-visible">
         <RimNode pathRef={pathL} color="#22d3ee" />
         <RimNode pathRef={pathR} color="#ffb23e" />
       </svg>

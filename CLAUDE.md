@@ -72,10 +72,14 @@ content is REAL, sourced from naramcharan.me.
   renders the FINAL readable state (SSR/SEO safe). **Reduced motion** skips WebGL
   entirely → static `ArcReactorStatic` + all content shown. (History: framer
   `useScroll` and anime.js `onScroll` did NOT track on this page; GSAP ScrollTrigger
-  works.) The opening lock-on is the `ScanReticle` DOM/SVG overlay (JARVIS optical
-  scanner — spinning dashed rings, tick ring, crosshair, corner brackets, radar
-  sweep, "OPTICAL SCAN / CALIBRATING · MK XLII" labels) which GSAP scales+fades out
-  entering assembly (replaced the earlier 3D EDITH glasses, which the user cut).
+  works.) The opening lock-on is `HelmetAssembly.tsx` (2026-10, replaced `ScanReticle`):
+  an original Mark XLII-style helmet drawn as a JARVIS hologram schematic (cyan shell
+  + side plates, gold faceplate, glowing optics), assembled by an anime.js timeline —
+  scan beam, outline traced, side plates fly in (left half = right half under a
+  mirror transform), faceplate drops shut, optics ignite, callouts. Rebuilds when
+  the scroll returns to segment A. Keeps the `.ia-reticle` class, so GSAP still
+  scales+fades it out entering assembly. The at-rest identity block now sits below
+  it (`items-end pb-[15vh]`).
 - `reactor3d/` — the WebGL hero. `HeroCanvas.tsx`: client-only `<Canvas>` (mounts
   post-hydration; camera z **9.2**, reactor group offset **y 0.35** — sized/placed so
   the assembled reactor clears the sticky navbar), lights + framed
