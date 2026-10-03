@@ -13,7 +13,7 @@ export const profile = {
   about: [
     "It started with a man in a suit of armor — the coolest hero I'd ever seen. But my interest went past the armor, to the AI he talked to. Because you know what was even cooler than the suit? His AI.",
     "I'm a 3rd-year CS student specializing in AI & Machine Learning, focused on end-to-end data pipelines, predictive modeling, and scalable systems — not notebook exercises.",
-    "I build recommendation architectures with deep learning and vector-index search, tune tree-based classifiers with hyperparameter optimization, and obsess over data-separation methodology so models hold up in production, not just on a leaderboard.",
+    "I train deep networks on medical images, build transformers from scratch to understand how they work, tune tree-based classifiers with hyperparameter optimization, and obsess over data-separation methodology so models hold up in production, not just on a leaderboard.",
   ],
   /* Content-hashed so a regenerated resume can't be served from a stale cache —
      GitHub Pages sends max-age=600 and phones hold downloaded PDFs far longer.
@@ -27,7 +27,7 @@ export const profile = {
 export const dossier = {
   fileId: "NC-MK42-001",
   summary:
-    "Third-year CS undergrad specializing in AI & Machine Learning. I build end-to-end ML systems — recommendation architectures on learned embeddings, gradient-boosted forecasters spanning thousands of parallel time series, and the data pipelines underneath them. Strong bias toward models that survive production, not just leaderboards.",
+    "Third-year CS undergrad specializing in AI & Machine Learning. I build end-to-end ML systems — deep-learning models for medical imaging, gradient-boosted forecasters spanning thousands of parallel time series, and the data pipelines underneath them. Strong bias toward models that survive production, not just leaderboards.",
   identity: [
     { label: "DESIGNATION", value: "AI & Machine Learning Engineer" },
     { label: "BASE", value: "Gurugram, India" },
@@ -35,7 +35,7 @@ export const dossier = {
   ],
   focus: [
     "Predictive modeling & forecasting",
-    "Recommender systems · vector retrieval",
+    "Deep learning · computer vision",
     "Leakage-free validation methodology",
     "Directing AI coding agents",
   ],
@@ -44,7 +44,7 @@ export const dossier = {
     "PyTorch",
     "XGBoost",
     "LightGBM",
-    "FAISS",
+    "FastAPI",
     "Scikit-Learn",
     "Pandas",
     "SQL",
@@ -57,7 +57,7 @@ export const dossier = {
 export const stats = [
   { value: 98.28, suffix: "%", label: "Churn Model Accuracy" },
   { value: 95.55, suffix: "%", label: "Walmart Validation R²" },
-  { value: 10, prefix: "<", suffix: "ms", label: "FAISS Retrieval Speed" },
+  { value: 83, suffix: "%", label: "Pneumonia Recall" },
   { value: 8.98, suffix: "", label: "CGPA Average · /10" },
 ];
 
@@ -110,31 +110,8 @@ export const projects: Project[] = [
     ],
   },
   {
-    id: "recsys",
-    code: "MK-02",
-    name: "Neural Collaborative Filtering Architecture",
-    domain: "Recommender Systems",
-    metric: "<10ms retrieval",
-    description:
-      "Custom recommendation engine training 32-dimensional latent embedding vectors on sparse user-item interaction data with L2 regularization, built from scratch in PyTorch.",
-    tech: ["PyTorch", "FAISS"],
-    repo: "https://github.com/NaramCharan/Collaborative_Filtering_Recommendation_system",
-    wins: [
-      "Sub-10ms FAISS similarity search at inference",
-      "32-dim latent embeddings with L2 regularization",
-      "Meta's FAISS index for real-time retrieval",
-    ],
-    brief: [
-      { label: "OBJECTIVE", value: "Recommend items from sparse user-item interaction data" },
-      { label: "ARCHITECTURE", value: "Neural collaborative filtering, built from scratch in PyTorch" },
-      { label: "EMBEDDINGS", value: "32-dimensional latent vectors trained with L2 regularization" },
-      { label: "RETRIEVAL", value: "Meta's FAISS index over item embeddings for real-time nearest-neighbour search" },
-      { label: "RESULT", value: "Sub-10ms similarity search at inference" },
-    ],
-  },
-  {
     id: "churn",
-    code: "MK-03",
+    code: "MK-02",
     name: "E-Commerce Customer Churn Prediction",
     domain: "Classification",
     metric: "98.28% acc",
@@ -158,7 +135,7 @@ export const projects: Project[] = [
   },
   {
     id: "walmart",
-    code: "MK-04",
+    code: "MK-03",
     name: "Walmart Store Weekly Sales Forecasting",
     featured: true,
     domain: "Time-Series Forecasting",
@@ -182,7 +159,7 @@ export const projects: Project[] = [
   },
   {
     id: "rsna",
-    code: "MK-05",
+    code: "MK-04",
     featured: true,
     name: "RSNA Pneumonia Detection",
     period: "Aug 1 – Sep 4, 2026",
@@ -215,7 +192,7 @@ export const projects: Project[] = [
   },
   {
     id: "transformer",
-    code: "MK-06",
+    code: "MK-05",
     name: "Handbuilt Transformer",
     domain: "Learning Project · NLP",
     // Real number from the README's training run (validation loss, 5,000
@@ -260,12 +237,12 @@ export const skillSystems: SkillSystem[] = [
     tag: "NEURAL",
     items: [
       "PyTorch",
-      "Neural Collaborative Filtering",
-      "Vector Embeddings",
-      "FAISS Similarity Search",
+      "Transfer Learning · CNNs",
+      "Transformers · Self-Attention",
+      "BPE Tokenization",
       "Prompt Engineering",
     ],
-    evidence: "MK-03 — neural collaborative filtering built from scratch, 32-dim embeddings, FAISS L2 retrieval under 10ms.",
+    evidence: "MK-04 & MK-05 — ResNet-34 transfer learning on chest X-rays at 83% pneumonia recall; causal self-attention and a BPE tokenizer written by hand in PyTorch.",
   },
   {
     system: "Machine Learning",
@@ -279,7 +256,7 @@ export const skillSystems: SkillSystem[] = [
       "Scikit-Learn",
       "Optuna",
     ],
-    evidence: "MK-05 & MK-04 — LightGBM at 95.55% R² across ~3,000 series; XGBoost at 98.28% accuracy, tuned with Optuna.",
+    evidence: "MK-03 & MK-02 — LightGBM at 95.55% R² across ~3,000 series; XGBoost at 98.28% accuracy, tuned with Optuna.",
   },
   {
     system: "Data Intelligence",
@@ -293,7 +270,7 @@ export const skillSystems: SkillSystem[] = [
       "Imbalance Handling",
       "RobustScaler",
     ],
-    evidence: "MK-05 — recursive walk-forward feature engine; diagnosed and killed the leakage inflating R² to 0.98.",
+    evidence: "MK-03 — recursive walk-forward feature engine; diagnosed and killed the leakage inflating R² to 0.98.",
   },
   {
     system: "Engineering Core",
@@ -310,7 +287,7 @@ export const skillSystems: SkillSystem[] = [
       "Git Workflow",
       "BeautifulSoup",
     ],
-    evidence: "MK-05 — FastAPI serving a model and a React bundle from one container on Azure. This site itself — Next.js + WebGL, built by directing Claude Code.",
+    evidence: "MK-04 — FastAPI serving a model and a React bundle from one container on Azure. This site itself — Next.js + WebGL, built by directing Claude Code.",
   },
 ];
 

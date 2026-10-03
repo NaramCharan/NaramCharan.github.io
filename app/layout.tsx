@@ -35,7 +35,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: "Naram Charan — ML & Data Science Engineer",
   description:
-    "JARVIS-grade portfolio of Naram Charan: production ML models, recommendation systems, and data engineering. From Iron Man fan to AI obsession.",
+    "JARVIS-grade portfolio of Naram Charan: production ML models, computer vision, and data engineering. From Iron Man fan to AI obsession.",
   metadataBase: new URL("https://naramcharan.me"),
   openGraph: {
     title: "Naram Charan — ML & Data Science Engineer",
@@ -66,7 +66,7 @@ const personJsonLd = {
   knowsAbout: [
     "Machine Learning",
     "Deep Learning",
-    "Recommender Systems",
+    "Computer Vision",
     "Data Engineering",
     "PyTorch",
     "XGBoost",

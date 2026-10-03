@@ -85,20 +85,20 @@ const BUILT_COUNT = projects.length;
 const DEPLOYED_COUNT = projects.filter((p) => p.demo).length;
 
 const SPECIALTIES = [
-  "Recommendation Systems",
+  "Computer Vision",
   "Demand Forecasting",
   "Data Engineering",
   "Neural Networks",
 ];
 
 const CODE_LINES = [
-  "model = NCF(n_users, n_items, dim=32)",
-  "opt = torch.optim.Adam(model.parameters())",
-  "loss = bce(preds, interactions) + l2(emb)",
-  "index = faiss.IndexFlatL2(32)",
-  "index.add(item_embeddings)",
-  "D, I = index.search(user_vec, k=10)",
-  "assert latency_ms < 10",
+  "model = resnet34(weights='DEFAULT')",
+  "loss = CrossEntropyLoss(weight=class_w)",
+  "f1_score(y_true, y_pred)  # 0.79",
+  "att = q @ k.transpose(-2, -1) * hs**-0.5",
+  "att = att.masked_fill(tril == 0, -inf)",
+  "ids = bpe.encode(text)  # GPT-2 regex",
+  "assert bpe.decode(ids) == text",
   "study = optuna.create_study()",
   "study.optimize(objective, n_trials=120)",
   "r2_score(y_val, y_pred)  # 0.9555",
