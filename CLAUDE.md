@@ -72,17 +72,16 @@ content is REAL, sourced from naramcharan.me.
   renders the FINAL readable state (SSR/SEO safe). **Reduced motion** skips WebGL
   entirely → static `ArcReactorStatic` + all content shown. (History: framer
   `useScroll` and anime.js `onScroll` did NOT track on this page; GSAP ScrollTrigger
-  works.) The opening lock-on is `HelmetAssembly.tsx` (2026-10, replaced `ScanReticle`):
-  an original Mark III-style helmet (2026-10 user ask: "like the real helmet") in
-  realistic candy-red + polished-gold metal — SVG gradients, an feSpecularLighting
-  bevel filter per plate, dark panel seams, recessed glowing optics. Red is a
-  deliberate exception to the 3–4 colour palette, confined to the helmet. Assembled
-  by an anime.js timeline — cyan blueprint outline traced, red under-shell fades in,
-  side plates fly in (left half = right half under a
-  mirror transform), faceplate drops shut, optics ignite, callouts. Rebuilds when
-  the scroll returns to segment A. Keeps the `.ia-reticle` class, so GSAP still
-  scales+fades it out entering assembly. The at-rest identity block now sits below
-  it (`items-end pb-[15vh]`).
+  works.) The opening lock-on is `HelmetHero.tsx` (2026-10): the SAME 3D Mark III helmet as
+  /armor (`armor/HelmetModel`), rendered in its own transparent canvas
+  (`armor/HelmetHeroCanvas`, next/dynamic, canvas 2× the helmet box so plates fly in
+  from outside it, `ArmorProvider spread={0.55}` for tighter offsets). The build is a
+  4.6s timed sequence driven off the R3F clock — NOT a GSAP tween (lag smoothing
+  stalls it on a busy first load) — and replays when the scroll returns to segment A;
+  the canvas stops rendering (`frameloop="never"`) outside segment A. Keeps the
+  `.ia-reticle` class so GSAP still scales+fades it out entering assembly. The
+  at-rest identity block sits below it (`items-end pb-[15vh]`). (Replaced the SVG
+  `HelmetAssembly.tsx`, deleted.)
 - `/armor` — **Project Aegis** (2026-10): standalone scroll-driven 3D **helmet-only**
   assembly page (user cut the full body: "only keep the helmet"). `components/armor/`:
   `HelmetModel.tsx` builds the classic Mark III front from 2D plate outlines traced in

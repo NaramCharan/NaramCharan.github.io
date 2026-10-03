@@ -13,7 +13,7 @@ import { EASE } from "@/lib/motion";
 import { useMagnetic } from "@/lib/useMagnetic";
 import ArcReactorStatic from "./ArcReactorStatic";
 import HeroHud from "./HeroHud";
-import HelmetAssembly from "./HelmetAssembly";
+import HelmetHero from "./HelmetHero";
 
 /** The shimmer shown while three.js is still on the wire (and before we ask
  *  for it at all). Doubles as the pre-idle placeholder so the swap is seamless. */
@@ -255,7 +255,7 @@ export default function IntroDashboard() {
         <div className="hud-grid pointer-events-none absolute inset-0 z-0 opacity-30" />
 
         {/* Segment A — JARVIS optical-scan reticle (the opening "lock-on") */}
-        {!reduced && <HelmetAssembly />}
+        {!reduced && <HelmetHero />}
 
         {/* Segment A — at-rest identity: name + role at headline scale, no scroll needed */}
         {!reduced && (
