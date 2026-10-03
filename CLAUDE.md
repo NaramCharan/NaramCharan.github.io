@@ -131,9 +131,10 @@ content is REAL, sourced from naramcharan.me.
   hologram stack: glass (backdrop-blur 15px + cyan gradient), glow (inset + outer
   cyan shadows), glitch (`.holo-glitch` skew blip every 3s, on an INNER wrapper so
   it can't fight framer's entrance/exit transform).
-- **Custom cursor:** Iron Man arrowhead — `public/cursor.svg/.png` (+ gold
-  `cursor-pointer.*` for links/buttons), wired in `globals.css` under
-  `@media (pointer: fine)`. PNGs regenerable via PIL (see git history).
+- **Cursor:** the system default (2026-10: the custom Iron Man arrowhead cursor was
+  removed at the user's request). The hero is also static under the mouse — the
+  `.par-layer` pointer parallax and the magnetic View Projects button were removed.
+  `par-layer` / `--par-m` attributes are now inert.
 - Hydration safety: GlyphRail glyphs and reactor coil coords are deterministic
   (no `Math.random()` in render) to avoid SSR/client mismatch.
 - Branded favicon: `app/icon.svg` (mini arc reactor). No Three.js deps — the reactors
