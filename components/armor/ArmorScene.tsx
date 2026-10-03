@@ -1,12 +1,12 @@
 "use client";
 
-import { useMemo, useRef, type MutableRefObject } from "react";
+import { Suspense, useMemo, useRef, type MutableRefObject } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Environment, Lightformer } from "@react-three/drei";
 import { Bloom, EffectComposer, Noise, Vignette } from "@react-three/postprocessing";
 import { BlendFunction } from "postprocessing";
 import * as THREE from "three";
-import HelmetModel from "./HelmetModel";
+import HelmetGLB from "./HelmetGLB";
 import { ArmorProvider, useArmor } from "./context";
 import { BODY, sampleCamera } from "./timeline";
 
@@ -36,9 +36,9 @@ function CameraRig() {
   useFrame(() => {
     const aspect = size.width / size.height;
     const tanHalf = Math.tan((FOV / 2) * DEG);
-    // The helmet fills ~70% of the height (62% on portrait, leaving the
+    // The helmet fills ~62% of the height (56% on portrait, leaving the
     // title clear above it).
-    const fill = aspect < 0.8 ? 0.62 : 0.7;
+    const fill = aspect < 0.8 ? 0.56 : 0.62;
     const byHeight = (BODY.height / fill) / 2 / tanHalf;
     const byWidth = (BODY.width / 0.8) / 2 / (tanHalf * aspect);
     const finalR = Math.max(byHeight, byWidth);
@@ -113,7 +113,9 @@ function Stage({ raw }: { raw: MutableRefObject<number> }) {
         <Lightformer form="ring" intensity={0.5} color="#ffffff" position={[0, 0, 5]} scale={2} />
       </Environment>
 
-      <HelmetModel />
+      <Suspense fallback={null}>
+          <HelmetGLB />
+        </Suspense>
       <Particles />
 
       <EffectComposer multisampling={0}>

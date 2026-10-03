@@ -163,6 +163,18 @@ export default function ArmorExperience() {
             <p className="mono mt-1 text-[8px] tracking-[0.3em] text-cyan/90 sm:mt-4 sm:text-[11px] sm:tracking-[0.35em]">ALL HELMET SYSTEMS OPERATIONAL</p>
           </div>
 
+          {/* CC-BY-4.0 attribution for the helmet model */}
+          <p className="absolute bottom-3 right-5 z-20 text-[10px] text-text-dim sm:right-10">
+            Model:{" "}
+            <a href="https://sketchfab.com/3d-models/ironman-mark-iii-helmet-free-71a03274781145699ac9f88d03609c43" target="_blank" rel="noopener noreferrer" className="underline decoration-dotted underline-offset-2 hover:text-cyan">
+              Ironman Mark III Helmet
+            </a>{" "}
+            by Demonic Arts ·{" "}
+            <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer" className="underline decoration-dotted underline-offset-2 hover:text-cyan">
+              CC BY 4.0
+            </a>
+          </p>
+
           {/* scroll hint */}
           {!reduced && (
             <div

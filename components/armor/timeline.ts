@@ -47,12 +47,12 @@ export const FINAL = -1;
 export type CamKey = { p: number; az: number; el: number; r: number; tx: number; ty: number };
 
 export const CAMERA_KEYS: CamKey[] = [
-  { p: 0.0, az: 50, el: 10, r: 7.6, tx: -1.15, ty: 0.05 }, // 3/4, helmet parked right
-  { p: 0.12, az: 44, el: 8, r: 6.4, tx: -0.6, ty: 0.05 },
-  { p: 0.3, az: 30, el: 6, r: 4.9, tx: -0.15, ty: 0.05 }, // shell docked
-  { p: 0.46, az: -32, el: 5, r: 4.6, tx: 0, ty: 0 }, // swing across: jaw + chin
-  { p: 0.62, az: -16, el: 9, r: 4.2, tx: 0, ty: 0.05 }, // faceplate drop, from above
-  { p: 0.76, az: -4, el: 3, r: 4.4, tx: 0, ty: 0.05 }, // optics ignite
+  { p: 0.0, az: 50, el: 10, r: 9.9, tx: -1.15, ty: 0.05 }, // 3/4, helmet parked right
+  { p: 0.12, az: 44, el: 8, r: 8.3, tx: -0.6, ty: 0.05 },
+  { p: 0.3, az: 30, el: 6, r: 6.4, tx: -0.15, ty: 0.05 }, // shell docked
+  { p: 0.46, az: -32, el: 5, r: 6.0, tx: 0, ty: 0 }, // swing across: jaw + chin
+  { p: 0.62, az: -16, el: 9, r: 5.5, tx: 0, ty: 0.05 }, // faceplate drop, from above
+  { p: 0.76, az: -4, el: 3, r: 5.7, tx: 0, ty: 0.05 }, // optics ignite
   { p: 0.9, az: 0, el: 0, r: FINAL, tx: 0, ty: 0 }, // locked front hero shot
   { p: 1.0, az: 0, el: 0, r: FINAL, tx: 0, ty: 0 },
 ];
@@ -87,6 +87,6 @@ export function sampleCamera(p: number, finalR: number, rScale: number) {
 /** Helmet proportions (world units, centred on the origin). */
 export const BODY = {
   height: 2.04,
-  width: 1.32,
+  width: 1.55, // real Mark III model (bbox 118.5 × 159.5 → 2.04 tall)
   centerY: 0,
 };
