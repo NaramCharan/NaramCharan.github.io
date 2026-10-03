@@ -82,7 +82,9 @@ content is REAL, sourced from naramcharan.me.
   track 260vh) but was removed so visitors reach projects faster and the palette stays
   cyan/gold; it lives only on /armor, linked from the hero. Track is back to 180vh, the
   welcome block is centred (fades at 0.15), and there is no opening lock-on overlay.
-  Don't re-add a second 3D scene to the homepage without asking.
+  Don't add more 3D to the hero without asking. The helmet DOES appear once on the
+  homepage — in the Origin Story (see `About.tsx`), at the user's request, since the
+  story opens with "a man in a suit of armor".
 - **Helmet model** (2026-10): `public/models/mark3-helmet.glb` is "Ironman Mark III
   Helmet *free*" by Demonic Arts (Sketchfab, **CC-BY-4.0** — attribution REQUIRED; it
   sits in the Contact footer and bottom-right of /armor). Optimised from the 18 MB
@@ -148,7 +150,12 @@ content is REAL, sourced from naramcharan.me.
   newest-first. Any "MK-0x" in skill/ML-tree prose must match these codes.
 - `Skills.tsx` + `SystemIcons.tsx` — "Suit Systems" with **icon emblems, NO numbers**
   (brain=Deep Learning, circuit=ML, database=Data, terminal=Engineering) in rotating reticles.
-- `About.tsx` — origin story + education GPAs + cert timeline.
+- `About.tsx` — origin story + education GPAs + cert timeline. Row 1: story paragraphs
+  beside `OriginHelmet` (→ `armor/OriginHelmetCanvas`, next/dynamic): the Mark III helmet
+  assembles on scroll — its own figure is the ScrollTrigger (top 95% → center 62%), so
+  it works beside the story (desktop) or above it (phone); renders only while on screen
+  (IntersectionObserver → frameloop); reduced motion = assembled. Row 2: education +
+  certifications.
 - `Contact.tsx` — terminal-style contact panel (email, GitHub, LinkedIn — no phone/WhatsApp, removed for privacy).
 - `HudFrame.tsx` — fixed decorative corner brackets overlay.
 
