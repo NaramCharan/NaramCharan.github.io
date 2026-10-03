@@ -1,16 +1,18 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { AnimatePresence, motion } from "framer-motion";
+import { animate } from "animejs";
 import { profile, projects } from "@/lib/content";
 import { usePrefersReducedMotion } from "@/lib/useReducedMotion";
 import { useDecode, useRotate } from "@/lib/useDecode";
 import { EASE } from "@/lib/motion";
 import { useMagnetic } from "@/lib/useMagnetic";
 import ArcReactorStatic from "./ArcReactorStatic";
+import HeroHud from "./HeroHud";
 
 /** The shimmer shown while three.js is still on the wire (and before we ask
  *  for it at all). Doubles as the pre-idle placeholder so the swap is seamless. */
@@ -40,6 +42,39 @@ const HeroCanvas = dynamic(() => import("./reactor3d/HeroCanvas"), {
 });
 
 gsap.registerPlugin(ScrollTrigger);
+
+/** Chip number that counts up once the boot stagger has revealed it. The
+ *  rendered text is already the final value, so SSR / reduced motion are fine. */
+function Tick({ to, delay }: { to: number; delay: number }) {
+  const ref = useRef<HTMLElement>(null);
+  const reduced = usePrefersReducedMotion();
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || reduced) return;
+    const o = { v: 0 };
+    el.textContent = "0";
+    const a = animate(o, {
+      v: to,
+      delay,
+      duration: 1300,
+      ease: "outExpo",
+      onUpdate: () => {
+        el.textContent = String(Math.round(o.v));
+      },
+      onComplete: () => {
+        el.textContent = String(to);
+      },
+    });
+    return () => {
+      a.revert();
+    };
+  }, [to, delay, reduced]);
+  return (
+    <b ref={ref} className="font-semibold">
+      {to}
+    </b>
+  );
+}
 
 /** Every project on the page — learning builds included, so the hero says
  *  "built", not "shipped". Counted from content so it can't drift. */
@@ -275,14 +310,14 @@ export default function IntroDashboard() {
                 {/* Counted, not typed — this line read "5 SHIPPED" for a while
                     after the project list changed underneath it. */}
                 <li className="rounded-full border border-cyan/30 bg-cyan/[0.06] px-3 py-1 text-cyan">
-                  <b className="font-semibold">{BUILT_COUNT}</b> PROJECTS BUILT
+                  <Tick to={BUILT_COUNT} delay={1100} /> PROJECTS BUILT
                 </li>
                 <li className="flex items-center gap-1.5 rounded-full border border-gold/40 bg-gold/[0.07] px-3 py-1 text-gold">
                   <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-gold" />
-                  <b className="font-semibold">{DEPLOYED_COUNT}</b> DEPLOYED LIVE
+                  <Tick to={DEPLOYED_COUNT} delay={1300} /> DEPLOYED LIVE
                 </li>
                 <li className="rounded-full border border-cyan/30 bg-cyan/[0.06] px-3 py-1 text-cyan">
-                  <b className="font-semibold">83%</b> PNEUMONIA RECALL
+                  <Tick to={83} delay={1500} />% PNEUMONIA RECALL
                 </li>
               </motion.ul>
             </motion.div>
@@ -363,20 +398,7 @@ export default function IntroDashboard() {
           className="par-layer pointer-events-none absolute inset-0 z-10 hidden lg:block"
           style={{ "--par-m": -10 } as React.CSSProperties}
         >
-          {/* Two plain counts, both derived from content.ts. The earlier
-              metric panels (churn chart, forecast bars, NCF rig) were
-              decoration competing with the name — the hero now states only
-              what a recruiter needs: how much was built, how much is live. */}
-          <Panel className="left-8 top-1/2 w-[220px] -translate-y-1/2">
-            <PanelHead label="PROJECTS BUILT" code="PORTFOLIO" />
-            <span className="mono text-4xl font-bold text-cyan glow-cyan">{BUILT_COUNT}</span>
-          </Panel>
-
-          <Panel className="right-8 top-1/2 w-[220px] -translate-y-1/2">
-            <PanelHead label="DEPLOYED ONLINE" code="● LIVE" />
-            <span className="mono text-4xl font-bold text-gold glow-gold">{DEPLOYED_COUNT}</span>
-            <p className="mono mt-1 text-[9px] tracking-wide text-text-dim">ON AZURE · RSNA PNEUMONIA</p>
-          </Panel>
+          <HeroHud />
         </div>
 
         {/* Header + scroll hint (sits below the always-visible navbar) */}
@@ -502,25 +524,6 @@ function ScanReticle() {
           CALIBRATING · MK XLII
         </span>
       </div>
-    </div>
-  );
-}
-
-/* ── HUD panel shell ────────────────────────────────────────── */
-function Panel({ className, children }: { className: string; children: ReactNode }) {
-  return (
-    <div className={`ia-panel absolute rounded-lg border border-cyan/25 bg-surface/70 p-3 shadow-[0_0_28px_-10px_rgba(34,211,238,0.45)] backdrop-blur-sm ${className}`}>
-      <span aria-hidden className="absolute right-2.5 top-2.5 h-2.5 w-2.5 border-r border-t border-cyan/50" />
-      {children}
-    </div>
-  );
-}
-
-function PanelHead({ label, code }: { label: string; code: string }) {
-  return (
-    <div className="mb-2 flex items-center justify-between">
-      <span className="mono text-[9px] tracking-[0.25em] text-text-muted">{label}</span>
-      <span className="mono rounded border border-cyan/30 px-1.5 text-[8px] tracking-widest text-cyan/90">{code}</span>
     </div>
   );
 }
