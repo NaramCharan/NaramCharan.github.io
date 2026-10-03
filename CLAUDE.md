@@ -58,8 +58,8 @@ content is REAL, sourced from naramcharan.me.
   drifts out on scroll); **B 28–74%** the 3D assembly (owned by the canvas) +
   streaming code columns; **C 74–100%** status → name → SPECIALIZING IN → tagline
   "types" on (clip-path wipe + caret, caret hidden outside its 0.85–0.96 window) →
-  CTAs; 6 HUD panels stagger in ("CHURN MODEL ACCURACY · XGBOOST" labels the 98.28%
-  so it can't be misread). The canvas is wrapped in a div with
+  CTAs; 2 HUD panels stagger in (PROJECTS BUILT / DEPLOYED ONLINE — counts derived from
+  `projects`, 2026-10 pass; the old churn/forecast/NCF metric panels were removed). The canvas is wrapped in a div with
   `opacity: calc(0.25 + var(--p)*6)` — scattered parts stay faint at rest so they
   can't glint over the identity text (GSAP can't target the canvas: it mounts after
   the timeline is built). Navbar is ALWAYS visible now (no scroll gate) — the
