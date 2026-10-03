@@ -152,7 +152,7 @@ content is REAL, sourced from naramcharan.me.
   (brain=Deep Learning, circuit=ML, database=Data, terminal=Engineering) in rotating reticles.
 - `About.tsx` — origin story + education GPAs + cert timeline. Row 1: story paragraphs
   beside `OriginHelmet` (→ `armor/OriginHelmetCanvas`, next/dynamic): the Mark III helmet
-  assembles on scroll — its own figure is the ScrollTrigger (top 95% → center 62%), so
+  assembles on scroll — its own figure is the ScrollTrigger (bottom 92% → center 45%: starts only once fully in view), so
   it works beside the story (desktop) or above it (phone); renders only while on screen
   (IntersectionObserver → frameloop); reduced motion = assembled. Row 2: education +
   certifications.

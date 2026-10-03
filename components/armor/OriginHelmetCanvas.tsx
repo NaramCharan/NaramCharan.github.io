@@ -12,8 +12,8 @@ import { smooth } from "./timeline";
 
 /**
  * The Mark III helmet beside the Origin Story — "It started with a man in a
- * suit of armor". Scroll-driven like /armor: the pieces float apart as the
- * helmet enters the viewport and lock together by the time it is centred
+ * suit of armor". Scroll-driven like /armor: the pieces float apart until the
+ * whole helmet is in view, then lock together as it reaches the centre
  * (scrolling back up takes it apart). The helmet itself is the trigger, so
  * this holds whether it sits beside the story (desktop) or above it (phone). The canvas renders only while the
  * section is on screen.
@@ -69,8 +69,11 @@ export default function OriginHelmetCanvas({
     gsap.registerPlugin(ScrollTrigger);
     const st = ScrollTrigger.create({
       trigger: el,
-      start: "top 95%",
-      end: "center 62%",
+      // Start only once the whole helmet is on screen (its bottom edge has
+      // cleared the viewport), so the visitor sees it fully apart first;
+      // finish as it passes the middle of the screen.
+      start: "bottom 92%",
+      end: "center 45%",
       onUpdate: (self) => {
         raw.current = self.progress;
       },
