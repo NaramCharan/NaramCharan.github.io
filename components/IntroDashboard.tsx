@@ -1,16 +1,19 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { AnimatePresence, motion } from "framer-motion";
+import { animate } from "animejs";
 import { profile, projects } from "@/lib/content";
 import { usePrefersReducedMotion } from "@/lib/useReducedMotion";
 import { useDecode, useRotate } from "@/lib/useDecode";
 import { EASE } from "@/lib/motion";
 import { useMagnetic } from "@/lib/useMagnetic";
 import ArcReactorStatic from "./ArcReactorStatic";
+import HeroHud from "./HeroHud";
+import HelmetAssembly from "./HelmetAssembly";
 
 /** The shimmer shown while three.js is still on the wire (and before we ask
  *  for it at all). Doubles as the pre-idle placeholder so the swap is seamless. */
@@ -40,6 +43,39 @@ const HeroCanvas = dynamic(() => import("./reactor3d/HeroCanvas"), {
 });
 
 gsap.registerPlugin(ScrollTrigger);
+
+/** Chip number that counts up once the boot stagger has revealed it. The
+ *  rendered text is already the final value, so SSR / reduced motion are fine. */
+function Tick({ to, delay }: { to: number; delay: number }) {
+  const ref = useRef<HTMLElement>(null);
+  const reduced = usePrefersReducedMotion();
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || reduced) return;
+    const o = { v: 0 };
+    el.textContent = "0";
+    const a = animate(o, {
+      v: to,
+      delay,
+      duration: 1300,
+      ease: "outExpo",
+      onUpdate: () => {
+        el.textContent = String(Math.round(o.v));
+      },
+      onComplete: () => {
+        el.textContent = String(to);
+      },
+    });
+    return () => {
+      a.revert();
+    };
+  }, [to, delay, reduced]);
+  return (
+    <b ref={ref} className="font-semibold">
+      {to}
+    </b>
+  );
+}
 
 /** Every project on the page — learning builds included, so the hero says
  *  "built", not "shipped". Counted from content so it can't drift. */
@@ -167,6 +203,8 @@ export default function IntroDashboard() {
         .to(".ia-caret", { autoAlpha: 0, duration: 0.02 }, 0.94)
         .from(".ia-ctas", { autoAlpha: 0, y: 16, duration: 0.06 }, 0.86)
         // panels boot one-by-one — scale + wider stagger makes each land legibly
+        // conduits belong to the panels — invisible until segment C
+        .from(".ia-hud-wire", { autoAlpha: 0, duration: 0.06 }, 0.7)
         .from(
           ".ia-panel",
           { autoAlpha: 0, y: 18, scale: 0.94, duration: 0.07, stagger: 0.035 },
@@ -217,7 +255,7 @@ export default function IntroDashboard() {
         <div className="hud-grid pointer-events-none absolute inset-0 z-0 opacity-30" />
 
         {/* Segment A — JARVIS optical-scan reticle (the opening "lock-on") */}
-        {!reduced && <ScanReticle />}
+        {!reduced && <HelmetAssembly />}
 
         {/* Segment A — at-rest identity: name + role at headline scale, no scroll needed */}
         {!reduced && (
@@ -225,7 +263,7 @@ export default function IntroDashboard() {
             aria-hidden
             // Centred, not parked in the bottom 17%: the reticle is a halo
             // behind the name now rather than a 400px empty ring above it.
-            className="ia-welcome pointer-events-none absolute inset-0 z-20 flex items-center justify-center px-6"
+            className="ia-welcome pointer-events-none absolute inset-0 z-20 flex items-end justify-center px-6 pb-[15vh]"
           >
             {/* Inner wrapper: parallax + boot-in stagger live here, so GSAP
                 keeps sole ownership of .ia-welcome's own transform/opacity. */}
@@ -275,14 +313,14 @@ export default function IntroDashboard() {
                 {/* Counted, not typed — this line read "5 SHIPPED" for a while
                     after the project list changed underneath it. */}
                 <li className="rounded-full border border-cyan/30 bg-cyan/[0.06] px-3 py-1 text-cyan">
-                  <b className="font-semibold">{BUILT_COUNT}</b> PROJECTS BUILT
+                  <Tick to={BUILT_COUNT} delay={1100} /> PROJECTS BUILT
                 </li>
                 <li className="flex items-center gap-1.5 rounded-full border border-gold/40 bg-gold/[0.07] px-3 py-1 text-gold">
                   <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-gold" />
-                  <b className="font-semibold">{DEPLOYED_COUNT}</b> DEPLOYED LIVE
+                  <Tick to={DEPLOYED_COUNT} delay={1300} /> DEPLOYED LIVE
                 </li>
                 <li className="rounded-full border border-cyan/30 bg-cyan/[0.06] px-3 py-1 text-cyan">
-                  <b className="font-semibold">83%</b> PNEUMONIA RECALL
+                  <Tick to={83} delay={1500} />% PNEUMONIA RECALL
                 </li>
               </motion.ul>
             </motion.div>
@@ -363,20 +401,7 @@ export default function IntroDashboard() {
           className="par-layer pointer-events-none absolute inset-0 z-10 hidden lg:block"
           style={{ "--par-m": -10 } as React.CSSProperties}
         >
-          {/* Two plain counts, both derived from content.ts. The earlier
-              metric panels (churn chart, forecast bars, NCF rig) were
-              decoration competing with the name — the hero now states only
-              what a recruiter needs: how much was built, how much is live. */}
-          <Panel className="left-8 top-1/2 w-[220px] -translate-y-1/2">
-            <PanelHead label="PROJECTS BUILT" code="PORTFOLIO" />
-            <span className="mono text-4xl font-bold text-cyan glow-cyan">{BUILT_COUNT}</span>
-          </Panel>
-
-          <Panel className="right-8 top-1/2 w-[220px] -translate-y-1/2">
-            <PanelHead label="DEPLOYED ONLINE" code="● LIVE" />
-            <span className="mono text-4xl font-bold text-gold glow-gold">{DEPLOYED_COUNT}</span>
-            <p className="mono mt-1 text-[9px] tracking-wide text-text-dim">ON AZURE · RSNA PNEUMONIA</p>
-          </Panel>
+          <HeroHud />
         </div>
 
         {/* Header + scroll hint (sits below the always-visible navbar) */}
@@ -421,106 +446,3 @@ export default function IntroDashboard() {
   );
 }
 
-/* ── JARVIS optical-scan reticle — the opening lock-on ───────── */
-function ScanReticle() {
-  const ticks = Array.from({ length: 60 });
-  return (
-    <div
-      aria-hidden
-      className="ia-reticle pointer-events-none absolute left-1/2 top-[38%] z-[12] -translate-x-1/2 -translate-y-1/2"
-    >
-      {/* Nearest layer — the optical scanner tracks the cursor the most */}
-      <div
-        className="par-layer relative h-[min(58vw,400px)] w-[min(58vw,400px)]"
-        style={{ "--par-m": 14 } as React.CSSProperties}
-      >
-        <svg viewBox="0 0 400 400" className="absolute inset-0 h-full w-full">
-          <defs>
-            <radialGradient id="rt-sweep" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#22d3ee" stopOpacity="0.28" />
-              <stop offset="100%" stopColor="#22d3ee" stopOpacity="0" />
-            </radialGradient>
-          </defs>
-
-          {/* radar sweep */}
-          <g className="animate-radar" style={{ transformOrigin: "200px 200px" }}>
-            <path d="M200 200 L200 24 A176 176 0 0 1 324 96 Z" fill="url(#rt-sweep)" />
-          </g>
-
-          {/* outer dashed ring — slow spin */}
-          <g className="animate-spin-slow" style={{ transformOrigin: "200px 200px" }}>
-            <circle cx="200" cy="200" r="188" fill="none" stroke="#22d3ee" strokeOpacity="0.5" strokeWidth="1" strokeDasharray="2 8" />
-          </g>
-
-          {/* tick ring — reverse spin */}
-          <g className="animate-spin-rev" style={{ transformOrigin: "200px 200px" }}>
-            {ticks.map((_, i) => {
-              const a = (i / 60) * Math.PI * 2;
-              const r1 = i % 5 === 0 ? 156 : 164;
-              const x1 = +(200 + Math.cos(a) * r1).toFixed(2);
-              const y1 = +(200 + Math.sin(a) * r1).toFixed(2);
-              const x2 = +(200 + Math.cos(a) * 172).toFixed(2);
-              const y2 = +(200 + Math.sin(a) * 172).toFixed(2);
-              return (
-                <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#22d3ee" strokeOpacity={i % 5 === 0 ? 0.8 : 0.4} strokeWidth={i % 5 === 0 ? 1.4 : 0.8} />
-              );
-            })}
-          </g>
-
-          {/* static mid + inner rings */}
-          <circle cx="200" cy="200" r="150" fill="none" stroke="#22d3ee" strokeOpacity="0.25" strokeWidth="1" />
-          <circle cx="200" cy="200" r="96" fill="none" stroke="#7de7f5" strokeOpacity="0.5" strokeWidth="1" strokeDasharray="3 6" />
-
-          {/* crosshair (gapped at centre) */}
-          <g stroke="#22d3ee" strokeOpacity="0.55" strokeWidth="1">
-            <line x1="200" y1="30" x2="200" y2="78" />
-            <line x1="200" y1="322" x2="200" y2="370" />
-            <line x1="30" y1="200" x2="78" y2="200" />
-            <line x1="322" y1="200" x2="370" y2="200" />
-          </g>
-
-          {/* centre target */}
-          <circle cx="200" cy="200" r="5" fill="none" stroke="#7de7f5" strokeWidth="1.2" />
-          <circle cx="200" cy="200" r="1.6" fill="#7de7f5" />
-
-          {/* corner brackets on a square frame */}
-          {[
-            "M96 60 h-36 v36",
-            "M304 60 h36 v36",
-            "M96 340 h-36 v-36",
-            "M304 340 h36 v-36",
-          ].map((d) => (
-            <path key={d} d={d} fill="none" stroke="#22d3ee" strokeOpacity="0.7" strokeWidth="1.4" />
-          ))}
-        </svg>
-
-        {/* HUD labels */}
-        <span className="mono absolute left-1/2 top-[6%] -translate-x-1/2 text-[10px] tracking-[0.4em] text-cyan/80">
-          ◈ OPTICAL SCAN ◈
-        </span>
-        <span className="mono absolute left-1/2 top-[12%] -translate-x-1/2 whitespace-nowrap text-[9px] tracking-[0.35em] text-cyan/55">
-          CALIBRATING · MK XLII
-        </span>
-      </div>
-    </div>
-  );
-}
-
-/* ── HUD panel shell ────────────────────────────────────────── */
-function Panel({ className, children }: { className: string; children: ReactNode }) {
-  return (
-    <div className={`ia-panel absolute rounded-lg border border-cyan/25 bg-surface/70 p-3 shadow-[0_0_28px_-10px_rgba(34,211,238,0.45)] backdrop-blur-sm ${className}`}>
-      <span aria-hidden className="absolute right-2.5 top-2.5 h-2.5 w-2.5 border-r border-t border-cyan/50" />
-      {children}
-    </div>
-  );
-}
-
-function PanelHead({ label, code }: { label: string; code: string }) {
-  return (
-    <div className="mb-2 flex items-center justify-between">
-      <span className="mono text-[9px] tracking-[0.25em] text-text-muted">{label}</span>
-      <span className="mono rounded border border-cyan/30 px-1.5 text-[8px] tracking-widest text-cyan/90">{code}</span>
-    </div>
-  );
-}
