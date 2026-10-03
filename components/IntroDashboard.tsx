@@ -164,8 +164,9 @@ export default function IntroDashboard() {
       });
       // positions below are in scroll-fraction terms; pad total to ~1 at the end.
       tl.to(".ia-hint", { autoAlpha: 0, duration: 0.05 }, 0.03)
-        .to(".ia-reticle", { autoAlpha: 0, scale: 1.6, duration: 0.12, ease: "power1.in" }, 0.06)
-        .to(".ia-welcome", { autoAlpha: 0, y: -40, scale: 1.05, duration: 0.1, ease: "power1.in" }, 0.15)
+        // helmet assembles on scroll over 0 → HELMET_END (HelmetHeroCanvas), then exits
+        .to(".ia-reticle", { autoAlpha: 0, scale: 1.4, duration: 0.07, ease: "power1.in" }, 0.215)
+        .to(".ia-welcome", { autoAlpha: 0, y: -40, scale: 1.05, duration: 0.06, ease: "power1.in" }, 0.22)
         .fromTo(".ia-code", { autoAlpha: 0 }, { autoAlpha: 0.55, duration: 0.08 }, 0.3)
         // each code line streams in on its own beat (container caps opacity)
         .fromTo(
@@ -204,9 +205,9 @@ export default function IntroDashboard() {
       ref={trackRef}
       aria-label="Intro"
       data-seg="a"
-      // 180vh, down from 320vh. At 320 the hero was 29% of the whole page and
-      // segment B ran ~1,300px with no text on screen at all.
-      className={reduced ? "relative" : "relative h-[180vh]"}
+      // 260vh (was 180vh): the first ~22% of this scroll now assembles the 3D
+      // helmet, so it needed its own runway without rushing the reactor.
+      className={reduced ? "relative" : "relative h-[260vh]"}
     >
       <div
         className="sticky top-0 flex h-dvh flex-col items-center justify-center overflow-hidden bg-bg"
@@ -217,13 +218,13 @@ export default function IntroDashboard() {
             <ArcReactorStatic />
           </div>
         ) : (
-          // Faint at rest (scattered parts can't glint over the identity text),
-          // full strength as soon as the scroll assembly begins. --p is written
+          // Faint at rest and while the helmet assembles (scattered parts can't
+          // glint over it), full strength once the reactor assembly begins. --p is written
           // on the track by the canvas ScrollTrigger, so CSS handles the fade.
           <div
             aria-hidden
             className="absolute inset-0"
-            style={{ opacity: "calc(0.25 + var(--p, 0) * 6)" }}
+            style={{ opacity: "max(0.25, calc(0.25 + (var(--p, 0) - 0.2) * 6))" }}
           >
             {canvasReady ? <HeroCanvas trackId="top" /> : <ReactorShimmer />}
           </div>

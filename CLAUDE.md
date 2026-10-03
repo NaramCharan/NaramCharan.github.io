@@ -77,12 +77,15 @@ content is REAL, sourced from naramcharan.me.
   works.) The opening lock-on is `HelmetHero.tsx` (2026-10): the SAME 3D Mark III helmet as
   /armor (`armor/HelmetGLB`), rendered in its own transparent canvas
   (`armor/HelmetHeroCanvas`, next/dynamic, canvas 2× the helmet box so plates fly in
-  from outside it, `ArmorProvider spread={0.55}` for tighter offsets). The build is a
-  4.6s timed sequence driven off the R3F clock — NOT a GSAP tween (lag smoothing
-  stalls it on a busy first load) — and replays when the scroll returns to segment A;
-  the canvas stops rendering (`frameloop="never"`) outside segment A. Keeps the
-  `.ia-reticle` class so GSAP still scales+fades it out entering assembly. The
-  at-rest identity block sits below it (`items-end pb-[15vh]`). (Replaced the SVG
+  from outside it, `ArmorProvider spread` 0.55, 0.4 under 640px). The build is **scroll-driven**
+  (2026-10): its own ScrollTrigger on #top maps hero progress 0 → `HELMET_END` (0.2)
+  to helmet 0 → 1, damped in the render loop; pieces float apart at the top of the
+  page and reverse on scroll-up. The hero track grew 180vh → 260vh for this runway;
+  the reticle/helmet fades at 0.215 and the welcome block at 0.22 (both were earlier);
+  the reactor canvas stays at 0.25 opacity until p 0.2. The helmet canvas stops
+  rendering (`frameloop="never"`) outside segment A. Keeps the `.ia-reticle` class so
+  GSAP still scales+fades it out. The at-rest identity block sits below it
+  (`items-end pb-[15vh]`). (Replaced the SVG
   `HelmetAssembly.tsx`, deleted.)
 - **Helmet model** (2026-10): `public/models/mark3-helmet.glb` is "Ironman Mark III
   Helmet *free*" by Demonic Arts (Sketchfab, **CC-BY-4.0** — attribution REQUIRED; it
