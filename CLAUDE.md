@@ -73,9 +73,12 @@ content is REAL, sourced from naramcharan.me.
   entirely → static `ArcReactorStatic` + all content shown. (History: framer
   `useScroll` and anime.js `onScroll` did NOT track on this page; GSAP ScrollTrigger
   works.) The opening lock-on is `HelmetAssembly.tsx` (2026-10, replaced `ScanReticle`):
-  an original Mark XLII-style helmet drawn as a JARVIS hologram schematic (cyan shell
-  + side plates, gold faceplate, glowing optics), assembled by an anime.js timeline —
-  scan beam, outline traced, side plates fly in (left half = right half under a
+  an original Mark III-style helmet (2026-10 user ask: "like the real helmet") in
+  realistic candy-red + polished-gold metal — SVG gradients, an feSpecularLighting
+  bevel filter per plate, dark panel seams, recessed glowing optics. Red is a
+  deliberate exception to the 3–4 colour palette, confined to the helmet. Assembled
+  by an anime.js timeline — cyan blueprint outline traced, red under-shell fades in,
+  side plates fly in (left half = right half under a
   mirror transform), faceplate drops shut, optics ignite, callouts. Rebuilds when
   the scroll returns to segment A. Keeps the `.ia-reticle` class, so GSAP still
   scales+fades it out entering assembly. The at-rest identity block now sits below
