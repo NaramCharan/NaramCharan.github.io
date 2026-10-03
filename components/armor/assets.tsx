@@ -8,8 +8,8 @@ import type * as THREE from "three";
  * GLB replacement path for the procedural placeholder rig.
  *
  * Export one node per armor component from your DCC tool, named exactly as
- * the <Part id> it replaces ("helmet_back", "faceplate", "chest_l",
- * "forearm_r", "finger_2_l", … — see ArmorModel.tsx), modelled in that
+ * the <Part id> it replaces ("helmet_back", "shell_l",
+ * "faceplate", "jaw", "chin", … — see HelmetModel.tsx), modelled in that
  * part's FINAL docked pose in the bone's local space. Then:
  *
  *   const assets = useArmorAssets("/models/aegis.glb");
