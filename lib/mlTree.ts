@@ -190,7 +190,7 @@ export const ML_TREE: { root: string; branches: [TreeBranch, TreeBranch] } = {
               label: "Self-Attention",
               projectIds: ["transformer"],
               note:
-                "MK-06 — a small learning project: I wrote causal multi-head self-attention by hand in PyTorch, inside a decoder-only Transformer trained on Shakespeare, to understand the mechanism (more to come). It drops recurrence entirely — every position attends to every earlier one in a single step, so the whole sequence computes in parallel instead of one token at a time. That single change is what made training at today's scale possible.",
+                "MK-06 — a small learning project: I wrote causal multi-head self-attention by hand in PyTorch, inside a decoder-only Transformer trained on Shakespeare, alongside a GPT-2-style BPE tokenizer, to understand the mechanism (more to come). It drops recurrence entirely — every position attends to every earlier one in a single step, so the whole sequence computes in parallel instead of one token at a time. That single change is what made training at today's scale possible.",
             },
             {
               id: "pretrained",
