@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type MutableRefObject } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState, type MutableRefObject } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Environment, Lightformer } from "@react-three/drei";
 import * as THREE from "three";
-import HelmetModel from "./HelmetModel";
+import HelmetGLB from "./HelmetGLB";
 import { ArmorProvider, useArmor } from "./context";
 import { smooth } from "./timeline";
 
@@ -49,7 +49,7 @@ function Rig({
     const el = 8 * (1 - k) * DEG;
     // Helmet (2.04 tall) fills ~half the canvas height; the rest is room
     // for the plates to fly in from.
-    const r = 2.04 / Math.tan((FOV / 2) * DEG) + (1 - k) * 0.8;
+    const r = (2.04 / Math.tan((FOV / 2) * DEG)) * 1.15 + (1 - k) * 0.8;
     camera.position.set(r * Math.sin(az) * Math.cos(el), r * Math.sin(el), r * Math.cos(az) * Math.cos(el));
     camera.lookAt(target);
   }, -1);
@@ -108,7 +108,9 @@ export default function HelmetHeroCanvas({ onStatus }: { onStatus?: (s: string) 
           <Lightformer form="rect" intensity={0.9} color="#e6eeff" position={[4, 0.5, -1]} scale={[2, 5, 1]} rotation-y={-Math.PI / 2} />
           <Lightformer form="ring" intensity={0.5} color="#ffffff" position={[0, 0, 5]} scale={2} />
         </Environment>
-        <HelmetModel />
+        <Suspense fallback={null}>
+          <HelmetGLB />
+        </Suspense>
       </ArmorProvider>
     </Canvas>
   );

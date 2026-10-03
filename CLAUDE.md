@@ -75,7 +75,7 @@ content is REAL, sourced from naramcharan.me.
   entirely → static `ArcReactorStatic` + all content shown. (History: framer
   `useScroll` and anime.js `onScroll` did NOT track on this page; GSAP ScrollTrigger
   works.) The opening lock-on is `HelmetHero.tsx` (2026-10): the SAME 3D Mark III helmet as
-  /armor (`armor/HelmetModel`), rendered in its own transparent canvas
+  /armor (`armor/HelmetGLB`), rendered in its own transparent canvas
   (`armor/HelmetHeroCanvas`, next/dynamic, canvas 2× the helmet box so plates fly in
   from outside it, `ArmorProvider spread={0.55}` for tighter offsets). The build is a
   4.6s timed sequence driven off the R3F clock — NOT a GSAP tween (lag smoothing
@@ -84,19 +84,22 @@ content is REAL, sourced from naramcharan.me.
   `.ia-reticle` class so GSAP still scales+fades it out entering assembly. The
   at-rest identity block sits below it (`items-end pb-[15vh]`). (Replaced the SVG
   `HelmetAssembly.tsx`, deleted.)
+- **Helmet model** (2026-10): `public/models/mark3-helmet.glb` is "Ironman Mark III
+  Helmet *free*" by Demonic Arts (Sketchfab, **CC-BY-4.0** — attribution REQUIRED; it
+  sits in the Contact footer and bottom-right of /armor). Optimised from the 18 MB
+  download with gltf-transform (resize 1024, WebP q85, meshopt) to ~0.59 MB; drei's
+  bundled meshopt decoder loads it (`useGLTF(url, false, true)` — no Draco CDN).
+  `armor/HelmetGLB.tsx` normalises it to BODY.height and splits its five nodes
+  (Back_low, Middle_low, Bottom_low, Front_low, Glas_low) into <Part/>s; the single
+  shared material is cloned and its emissiveIntensity drives the eye glow.
 - `/armor` — **Project Aegis** (2026-10): standalone scroll-driven 3D **helmet-only**
-  assembly page (user cut the full body: "only keep the helmet"). `components/armor/`:
-  `HelmetModel.tsx` builds the classic Mark III front from 2D plate outlines traced in
-  a 512px sketch space (red shell halves, ear housings, forehead tab, gold faceplate
-  with eye holes, jaw, chin) → ExtrudeGeometry with bevel → TessellateModifier →
-  warped onto a curved head form (z −= 1.1x² + 0.26y²); a red rear dome gives side
-  volume. `timeline.ts` (scene windows + Catmull-Rom camera keys; final radius solved
-  so the helmet fills ~70% of height, 62% portrait), `Part.tsx` (scroll-decaying offset
-  with lock-in overshoot; GLB node of the same id replaces it — `assets.tsx`),
-  `ArmorScene.tsx` (damped progress, studio lights + lightformers, particles, bloom
-  threshold 1), `ArmorExperience.tsx` (900vh pinned track, ScrollTrigger → `--p`,
-  CSS-only captions). Gotcha: anything placed behind the plates must stay behind the
-  warped front surface (z ≤ ~0.05 at centre) or it pokes through the faceplate.
+  assembly page using the model above. `components/armor/`: `timeline.ts` (scene
+  windows + Catmull-Rom camera keys; final radius solved so the helmet fills ~62% of
+  height, 56% portrait; BODY = 2.04 × 1.55), `Part.tsx` (scroll-decaying offset with
+  lock-in overshoot), `ArmorScene.tsx` (damped progress, studio lights + lightformers,
+  particles, bloom threshold 1), `ArmorExperience.tsx` (900vh pinned track,
+  ScrollTrigger → `--p`, CSS-only captions). (The earlier procedural `HelmetModel.tsx`
+  was deleted once the real model landed.)
 - `reactor3d/` — the WebGL hero. `HeroCanvas.tsx`: client-only `<Canvas>` (mounts
   post-hydration; camera z **9.2**, reactor group offset **y 0.35** — sized/placed so
   the assembled reactor clears the sticky navbar), lights + framed
@@ -131,9 +134,10 @@ content is REAL, sourced from naramcharan.me.
   hologram stack: glass (backdrop-blur 15px + cyan gradient), glow (inset + outer
   cyan shadows), glitch (`.holo-glitch` skew blip every 3s, on an INNER wrapper so
   it can't fight framer's entrance/exit transform).
-- **Custom cursor:** Iron Man arrowhead — `public/cursor.svg/.png` (+ gold
-  `cursor-pointer.*` for links/buttons), wired in `globals.css` under
-  `@media (pointer: fine)`. PNGs regenerable via PIL (see git history).
+- **Cursor:** the system default (2026-10: the custom Iron Man arrowhead cursor was
+  removed at the user's request). The hero is also static under the mouse — the
+  `.par-layer` pointer parallax and the magnetic View Projects button were removed.
+  `par-layer` / `--par-m` attributes are now inert.
 - Hydration safety: GlyphRail glyphs and reactor coil coords are deterministic
   (no `Math.random()` in render) to avoid SSR/client mismatch.
 - Branded favicon: `app/icon.svg` (mini arc reactor). No Three.js deps — the reactors

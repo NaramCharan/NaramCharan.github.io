@@ -11,7 +11,6 @@ import { profile, projects } from "@/lib/content";
 import { usePrefersReducedMotion } from "@/lib/useReducedMotion";
 import { useDecode, useRotate } from "@/lib/useDecode";
 import { EASE } from "@/lib/motion";
-import { useMagnetic } from "@/lib/useMagnetic";
 import ArcReactorStatic from "./ArcReactorStatic";
 import HeroHud from "./HeroHud";
 import HelmetHero from "./HelmetHero";
@@ -150,29 +149,9 @@ export default function IntroDashboard() {
     return cleanup;
   }, [reduced]);
   const trackRef = useRef<HTMLElement>(null);
-  const stageRef = useRef<HTMLDivElement>(null);
   const specialty = useRotate(SPECIALTIES);
   // JARVIS boot: the at-rest name scrambles in on load.
   const bootName = useDecode(profile.name, 42);
-  const magProjects = useMagnetic();
-
-  // Pointer parallax — writes --par-x/--par-y on the stage; the .par-layer
-  // wrappers (each with its own --par-m depth) drift in CSS. GSAP never
-  // touches these wrappers, so the scroll timeline and parallax can't fight.
-  const onStagePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (reduced || e.pointerType !== "mouse") return;
-    const el = stageRef.current;
-    if (!el) return;
-    const r = el.getBoundingClientRect();
-    el.style.setProperty("--par-x", (((e.clientX - r.left) / r.width - 0.5) * 2).toFixed(3));
-    el.style.setProperty("--par-y", (((e.clientY - r.top) / r.height - 0.5) * 2).toFixed(3));
-  };
-  const onStagePointerLeave = () => {
-    const el = stageRef.current;
-    if (!el) return;
-    el.style.setProperty("--par-x", "0");
-    el.style.setProperty("--par-y", "0");
-  };
 
   useLayoutEffect(() => {
     const track = trackRef.current;
@@ -230,9 +209,6 @@ export default function IntroDashboard() {
       className={reduced ? "relative" : "relative h-[180vh]"}
     >
       <div
-        ref={stageRef}
-        onPointerMove={onStagePointerMove}
-        onPointerLeave={onStagePointerLeave}
         className="sticky top-0 flex h-dvh flex-col items-center justify-center overflow-hidden bg-bg"
       >
         {/* WebGL reactor (or static fallback under reduced motion) */}
@@ -403,7 +379,6 @@ export default function IntroDashboard() {
               in the dossier immediately below — three entry points was noise. */}
           <div className="ia-ctas pointer-events-auto mt-6 flex flex-col items-center gap-3 sm:flex-row">
             <a
-              ref={magProjects}
               href="#projects"
               className="group inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-cyan/50 bg-cyan/10 px-7 py-3 text-sm font-medium text-cyan transition-all duration-300 hover:bg-cyan/20 hover:shadow-[0_0_26px_rgba(34,211,238,0.35)]"
             >

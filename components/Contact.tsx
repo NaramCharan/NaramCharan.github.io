@@ -117,6 +117,22 @@ export default function Contact() {
       <p className="mt-10 text-center mono text-[11px] tracking-[0.25em] text-text-muted">
         DESIGNED & BUILT BY {profile.name.toUpperCase()} · POWERED BY J.A.R.V.I.S
       </p>
+      {/* CC-BY-4.0 attribution for the 3D helmet in the hero and on /armor. */}
+      <p className="mt-3 text-center text-[11px] text-text-dim">
+        Helmet model:{" "}
+        <a href="https://sketchfab.com/3d-models/ironman-mark-iii-helmet-free-71a03274781145699ac9f88d03609c43" target="_blank" rel="noopener noreferrer" className="underline decoration-dotted underline-offset-2 hover:text-cyan">
+          &ldquo;Ironman Mark III Helmet *free*&rdquo;
+        </a>{" "}
+        by{" "}
+        <a href="https://sketchfab.com/Jesterz86" target="_blank" rel="noopener noreferrer" className="underline decoration-dotted underline-offset-2 hover:text-cyan">
+          Demonic Arts
+        </a>
+        , licensed{" "}
+        <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer" className="underline decoration-dotted underline-offset-2 hover:text-cyan">
+          CC BY 4.0
+        </a>
+        ; textures resized and compressed.
+      </p>
     </section>
   );
 }
