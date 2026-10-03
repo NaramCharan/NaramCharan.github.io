@@ -229,8 +229,12 @@ export default function IntroDashboard() {
           >
             {/* Inner wrapper: parallax + boot-in stagger live here, so GSAP
                 keeps sole ownership of .ia-welcome's own transform/opacity. */}
+            <div
+              aria-hidden
+              className="hero-aura absolute left-1/2 top-1/2 h-[520px] w-[min(92vw,820px)] -translate-x-1/2 -translate-y-1/2"
+            />
             <motion.div
-              className="par-layer flex flex-col items-center gap-2.5 text-center"
+              className="par-layer relative flex flex-col items-center gap-2.5 text-center"
               style={{ "--par-m": 6 } as React.CSSProperties}
               initial="boot"
               animate="on"
@@ -250,7 +254,7 @@ export default function IntroDashboard() {
                 // font-display: this is a <p>, so without it the name renders in
                 // Sora here but Space Grotesk in segment C — one hero, one name,
                 // two typefaces.
-                className="font-display text-balance text-5xl font-semibold tracking-tight text-text glow-cyan sm:text-6xl lg:text-7xl"
+                className="font-display text-balance text-5xl font-semibold tracking-tight text-hero-gradient sm:text-6xl lg:text-7xl"
               >
                 {bootName || " "}
               </motion.p>
@@ -264,15 +268,23 @@ export default function IntroDashboard() {
               {/* Proof, at rest. These numbers used to sit three viewport
                   scrolls away behind the assembly; LET'S DIVE IN moved into
                   the scroll-hint stack so the two can't collide. */}
-              <motion.p
+              <motion.ul
                 variants={{ boot: { opacity: 0, y: 8 }, on: { opacity: 1, y: 0, transition: { duration: 0.85, ease: EASE } } }}
-                className="mono mt-1 max-w-xs text-balance text-[10px] leading-relaxed tracking-[0.14em] text-cyan/85 sm:max-w-none sm:text-[11px]"
+                className="mono mt-2 flex flex-wrap items-center justify-center gap-2 text-[10px] tracking-[0.14em] sm:text-[11px]"
               >
                 {/* Counted, not typed — this line read "5 SHIPPED" for a while
                     after the project list changed underneath it. */}
-                {BUILT_COUNT} PROJECTS BUILT · {DEPLOYED_COUNT} DEPLOYED LIVE ON AZURE ·
-                83% RECALL PNEUMONIA SCREEN
-              </motion.p>
+                <li className="rounded-full border border-cyan/30 bg-cyan/[0.06] px-3 py-1 text-cyan">
+                  <b className="font-semibold">{BUILT_COUNT}</b> PROJECTS BUILT
+                </li>
+                <li className="flex items-center gap-1.5 rounded-full border border-gold/40 bg-gold/[0.07] px-3 py-1 text-gold">
+                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-gold" />
+                  <b className="font-semibold">{DEPLOYED_COUNT}</b> DEPLOYED LIVE
+                </li>
+                <li className="rounded-full border border-cyan/30 bg-cyan/[0.06] px-3 py-1 text-cyan">
+                  <b className="font-semibold">83%</b> PNEUMONIA RECALL
+                </li>
+              </motion.ul>
             </motion.div>
           </div>
         )}
@@ -298,7 +310,7 @@ export default function IntroDashboard() {
               above and the dossier's AVAILABILITY field below. Cut — the hero
               is the cinematic beat, the dossier carries the facts. */}
           <h1 className="ia-name text-balance text-4xl font-semibold leading-[0.95] tracking-tight sm:text-6xl lg:text-7xl">
-            <span className="glow-cyan">{profile.name}</span>
+            <span className="text-hero-gradient">{profile.name}</span>
           </h1>
           {/* Stacks below sm: as one row the reserved 13ch pushed the line to
               308px, so it overflowed and sat visibly left of the name's axis. */}
@@ -361,7 +373,7 @@ export default function IntroDashboard() {
           </Panel>
 
           <Panel className="right-8 top-1/2 w-[220px] -translate-y-1/2">
-            <PanelHead label="DEPLOYED ONLINE" code="LIVE" />
+            <PanelHead label="DEPLOYED ONLINE" code="● LIVE" />
             <span className="mono text-4xl font-bold text-gold glow-gold">{DEPLOYED_COUNT}</span>
             <p className="mono mt-1 text-[9px] tracking-wide text-text-dim">ON AZURE · RSNA PNEUMONIA</p>
           </Panel>
@@ -486,7 +498,7 @@ function ScanReticle() {
         <span className="mono absolute left-1/2 top-[6%] -translate-x-1/2 text-[10px] tracking-[0.4em] text-cyan/80">
           ◈ OPTICAL SCAN ◈
         </span>
-        <span className="mono absolute bottom-[7%] left-1/2 -translate-x-1/2 whitespace-nowrap text-[9px] tracking-[0.35em] text-cyan/55">
+        <span className="mono absolute left-1/2 top-[12%] -translate-x-1/2 whitespace-nowrap text-[9px] tracking-[0.35em] text-cyan/55">
           CALIBRATING · MK XLII
         </span>
       </div>
@@ -497,7 +509,7 @@ function ScanReticle() {
 /* ── HUD panel shell ────────────────────────────────────────── */
 function Panel({ className, children }: { className: string; children: ReactNode }) {
   return (
-    <div className={`ia-panel absolute rounded-lg border border-line bg-surface/70 p-3 backdrop-blur-sm ${className}`}>
+    <div className={`ia-panel absolute rounded-lg border border-cyan/25 bg-surface/70 p-3 shadow-[0_0_28px_-10px_rgba(34,211,238,0.45)] backdrop-blur-sm ${className}`}>
       <span aria-hidden className="absolute right-2.5 top-2.5 h-2.5 w-2.5 border-r border-t border-cyan/50" />
       {children}
     </div>
