@@ -58,7 +58,9 @@ content is REAL, sourced from naramcharan.me.
   drifts out on scroll); **B 28–74%** the 3D assembly (owned by the canvas) +
   streaming code columns; **C 74–100%** status → name → SPECIALIZING IN → tagline
   "types" on (clip-path wipe + caret, caret hidden outside its 0.85–0.96 window) →
-  CTAs; 2 HUD panels stagger in — `HeroHud.tsx` (anime.js, 2026-10): PROJECTS BUILT
+  CTAs (View Projects + a gold "Project Aegis 3D" link to /armor; segment A also has a
+  small tabIndex=-1 "PROJECT AEGIS — WATCH THE FULL BUILD" link under the chips, since
+  that block is aria-hidden); 2 HUD panels stagger in — `HeroHud.tsx` (anime.js, 2026-10): PROJECTS BUILT
   build log (count-up + one MK tag per project, gold = has `demo`, looping scanner sweep)
   and DEPLOYED ONLINE segmented ring (one arc per project, gold sonar ping), each wired to
   the reactor rim by a drawn conduit with a travelling packet. Replays on entering

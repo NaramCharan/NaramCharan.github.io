@@ -2,6 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { AnimatePresence, motion } from "framer-motion";
@@ -323,6 +324,23 @@ export default function IntroDashboard() {
                   <Tick to={83} delay={1500} />% PNEUMONIA RECALL
                 </li>
               </motion.ul>
+              {/* Doorway to the full scroll-driven build. This block is
+                  aria-hidden (it duplicates the real h1), so the link is kept
+                  out of the tab order — the accessible one sits beside the
+                  View Projects CTA in segment C. */}
+              <motion.div
+                variants={{ boot: { opacity: 0, y: 8 }, on: { opacity: 1, y: 0, transition: { duration: 0.85, ease: EASE } } }}
+              >
+                <Link
+                  href="/armor/"
+                  tabIndex={-1}
+                  className="pointer-events-auto group mono mt-1 inline-flex items-center gap-2 text-[10px] tracking-[0.3em] text-gold/80 transition-colors hover:text-gold sm:text-[11px]"
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-gold/80 group-hover:bg-gold" />
+                  PROJECT AEGIS — WATCH THE FULL BUILD
+                  <span className="transition-transform duration-300 group-hover:translate-x-0.5">→</span>
+                </Link>
+              </motion.div>
             </motion.div>
           </div>
         )}
@@ -383,7 +401,7 @@ export default function IntroDashboard() {
           </p>
           {/* One CTA only. Resume is always reachable in the navbar and again
               in the dossier immediately below — three entry points was noise. */}
-          <div className="ia-ctas pointer-events-auto mt-6 flex">
+          <div className="ia-ctas pointer-events-auto mt-6 flex flex-col items-center gap-3 sm:flex-row">
             <a
               ref={magProjects}
               href="#projects"
@@ -392,6 +410,14 @@ export default function IntroDashboard() {
               View Projects
               <span className="transition-transform duration-300 group-hover:translate-x-0.5">→</span>
             </a>
+            <Link
+              href="/armor/"
+              className="group inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-gold/40 px-6 py-3 text-sm font-medium text-gold/90 transition-all duration-300 hover:border-gold/70 hover:bg-gold/10 hover:text-gold"
+            >
+              Project Aegis
+              <span className="mono text-[10px] tracking-[0.2em] text-gold/60">3D</span>
+              <span className="transition-transform duration-300 group-hover:translate-x-0.5">→</span>
+            </Link>
           </div>
         </div>
 
