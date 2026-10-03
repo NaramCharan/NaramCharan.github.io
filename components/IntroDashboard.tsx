@@ -41,8 +41,9 @@ const HeroCanvas = dynamic(() => import("./reactor3d/HeroCanvas"), {
 
 gsap.registerPlugin(ScrollTrigger);
 
-/** Work in progress isn't shipped — the hero kicker only counts finished builds. */
-const SHIPPED_COUNT = projects.filter((p) => !p.wip).length;
+/** Every project on the page — learning builds included, so the hero says
+ *  "built", not "shipped". Counted from content so it can't drift. */
+const BUILT_COUNT = projects.length;
 /** Anything with a public URL — a deployed app is the strongest claim here,
  *  so the hero states how many there are rather than leaving it to be found. */
 const DEPLOYED_COUNT = projects.filter((p) => p.demo).length;
@@ -269,7 +270,7 @@ export default function IntroDashboard() {
               >
                 {/* Counted, not typed — this line read "5 SHIPPED" for a while
                     after the project list changed underneath it. */}
-                {SHIPPED_COUNT} SHIPPED ML SYSTEMS · {DEPLOYED_COUNT} DEPLOYED LIVE ON AZURE ·
+                {BUILT_COUNT} PROJECTS BUILT · {DEPLOYED_COUNT} DEPLOYED LIVE ON AZURE ·
                 83% RECALL PNEUMONIA SCREEN
               </motion.p>
             </motion.div>
@@ -350,48 +351,19 @@ export default function IntroDashboard() {
           className="par-layer pointer-events-none absolute inset-0 z-10 hidden lg:block"
           style={{ "--par-m": -10 } as React.CSSProperties}
         >
-          {/* Three panels, all real. SUIT SYSTEMS (100% POWER LEVEL), SYSTEM
-              FEED and GLOBAL NODES were invented telemetry sitting at equal
-              weight beside the two genuine metrics — once a viewer clocks the
-              theatre, the 98.28% next to it inherits the doubt. */}
-          <Panel className="left-8 top-1/2 w-[250px] -translate-y-1/2">
-            <PanelHead label="CHURN MODEL ACCURACY" code="MK-04" />
-            <div className="flex items-end justify-between">
-              <span className="mono text-2xl font-bold text-gold glow-gold">98.28%</span>
-              <span className="mono text-[9px] text-text-dim">XGBOOST · 10-FOLD CV</span>
-            </div>
-            <AccuracyChart />
+          {/* Two plain counts, both derived from content.ts. The earlier
+              metric panels (churn chart, forecast bars, NCF rig) were
+              decoration competing with the name — the hero now states only
+              what a recruiter needs: how much was built, how much is live. */}
+          <Panel className="left-8 top-1/2 w-[220px] -translate-y-1/2">
+            <PanelHead label="PROJECTS BUILT" code="PORTFOLIO" />
+            <span className="mono text-4xl font-bold text-cyan glow-cyan">{BUILT_COUNT}</span>
           </Panel>
 
-          <Panel className="bottom-16 left-8 w-[260px]">
-            <PanelHead label="STORE-DEPT FORECAST" code="MK-05" />
-            <ForecastBars />
-            <p className="mono mt-2 flex items-center gap-2 text-[9px] tracking-wide text-text-dim">
-              <span className="text-gold">■</span> ACTUAL
-              <span className="ml-1 text-cyan">■</span> FORECAST
-              <span className="ml-auto">95.55% R²</span>
-            </p>
-          </Panel>
-
-          {/* Third real panel: the NCF retrieval rig, from MK-03's actual specs */}
-          <Panel className="right-8 top-1/2 w-[250px] -translate-y-1/2">
-            <PanelHead label="NCF RETRIEVAL" code="MK-03" />
-            <div className="grid grid-cols-3 gap-2 text-center">
-              {[
-                ["32", "D", "EMBEDDING"],
-                ["<10", "MS", "RETRIEVAL"],
-                ["L2", "", "FAISS"],
-              ].map(([v, u, k]) => (
-                <div key={k}>
-                  <div className="mono text-lg font-bold text-cyan glow-cyan">
-                    {v}
-                    <span className="text-xs">{u}</span>
-                  </div>
-                  <div className="mono text-[8px] tracking-[0.2em] text-text-dim">{k}</div>
-                </div>
-              ))}
-            </div>
-            <NodeNet />
+          <Panel className="right-8 top-1/2 w-[220px] -translate-y-1/2">
+            <PanelHead label="DEPLOYED ONLINE" code="LIVE" />
+            <span className="mono text-4xl font-bold text-gold glow-gold">{DEPLOYED_COUNT}</span>
+            <p className="mono mt-1 text-[9px] tracking-wide text-text-dim">ON AZURE · RSNA PNEUMONIA</p>
           </Panel>
         </div>
 
@@ -538,72 +510,5 @@ function PanelHead({ label, code }: { label: string; code: string }) {
       <span className="mono text-[9px] tracking-[0.25em] text-text-muted">{label}</span>
       <span className="mono rounded border border-cyan/30 px-1.5 text-[8px] tracking-widest text-cyan/90">{code}</span>
     </div>
-  );
-}
-
-function AccuracyChart() {
-  const pts = [40, 46, 44, 52, 58, 55, 64, 70, 76, 82, 90, 98];
-  const w = 260, h = 56;
-  const d = pts.map((v, i) => `${i === 0 ? "M" : "L"}${((i / (pts.length - 1)) * w).toFixed(1)} ${(h - (v / 100) * h).toFixed(1)}`).join(" ");
-  return (
-    <svg viewBox={`0 0 ${w} ${h}`} className="mt-1 w-full" preserveAspectRatio="none">
-      <defs>
-        <linearGradient id="id-acc" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#22d3ee" stopOpacity="0.35" />
-          <stop offset="100%" stopColor="#22d3ee" stopOpacity="0" />
-        </linearGradient>
-      </defs>
-      <path d={`${d} L${w} ${h} L0 ${h} Z`} fill="url(#id-acc)" />
-      <path d={d} fill="none" stroke="#22d3ee" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ filter: "drop-shadow(0 0 4px rgba(34,211,238,0.6))" }} />
-    </svg>
-  );
-}
-
-// Gold = the four observed weeks, cyan = the three forecast weeks. The
-// alternating colours used to encode nothing at all.
-function ForecastBars() {
-  const bars = [110, 135, 205, 120, 190, 150, 225];
-  const max = 240;
-  const forecastFrom = 4;
-  return (
-    <svg viewBox="0 0 240 80" className="mt-1 w-full">
-      {bars.map((v, i) => {
-        const bw = 22, gap = 12, x = i * (bw + gap) + 6, bh = (v / max) * 70, y = 76 - bh;
-        return (
-          <rect
-            key={i}
-            x={x}
-            y={y}
-            width={bw}
-            height={bh}
-            rx="2"
-            fill={i < forecastFrom ? "#ffb23e" : "#22d3ee"}
-            fillOpacity={i < forecastFrom ? 0.75 : 0.55}
-          />
-        );
-      })}
-    </svg>
-  );
-}
-
-function NodeNet() {
-  const nodes = [
-    [30, 30], [90, 18], [150, 34], [210, 22],
-    [55, 60], [120, 70], [185, 58], [230, 78],
-  ];
-  return (
-    <svg viewBox="0 0 250 90" className="mt-1 w-full">
-      {nodes.map(([x1, y1], i) =>
-        nodes.slice(i + 1).map(([x2, y2], j) => {
-          const near = Math.hypot(x2 - x1, y2 - y1) < 85;
-          return near ? <line key={`${i}-${j}`} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#22d3ee" strokeOpacity="0.2" strokeWidth="0.6" /> : null;
-        })
-      )}
-      {nodes.map(([x, y], i) => (
-        <circle key={i} cx={x} cy={y} r={i % 3 === 0 ? 2.6 : 1.6} fill={i % 3 === 0 ? "#ffb23e" : "#22d3ee"}>
-          {i % 3 === 0 && <animate attributeName="opacity" values="1;0.3;1" dur="2.4s" repeatCount="indefinite" />}
-        </circle>
-      ))}
-    </svg>
   );
 }
