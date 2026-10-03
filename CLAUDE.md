@@ -83,6 +83,17 @@ content is REAL, sourced from naramcharan.me.
   the scroll returns to segment A. Keeps the `.ia-reticle` class, so GSAP still
   scales+fades it out entering assembly. The at-rest identity block now sits below
   it (`items-end pb-[15vh]`).
+- `/armor` — **Project Aegis** (2026-10): standalone scroll-driven 3D armor assembly
+  page, separate from the portfolio. `components/armor/`: `timeline.ts` (storyboard
+  windows + Catmull-Rom camera keyframes; final radius solved so head→feet fills ~80%
+  of height, 76% portrait), `Part.tsx` (one animated component: final pose in its
+  bone's space + scroll-decaying offset with lock-in overshoot; swaps in a GLB node of
+  the same `id` if `<ArmorProvider assets>` has one — see `assets.tsx`),
+  `ArmorModel.tsx` (procedural placeholder rig: exposed skeleton, ~70 parts, arm
+  bones animate reach → symmetric rest), `ArmorScene.tsx` (R3F canvas, damped
+  progress, lights/env/particles, bloom threshold 1 so only emissives glow),
+  `ArmorExperience.tsx` (900vh pinned track, GSAP ScrollTrigger → `--p`, CSS-only
+  captions). Everything is a pure function of progress — fully reversible.
 - `reactor3d/` — the WebGL hero. `HeroCanvas.tsx`: client-only `<Canvas>` (mounts
   post-hydration; camera z **9.2**, reactor group offset **y 0.35** — sized/placed so
   the assembled reactor clears the sticky navbar), lights + framed
