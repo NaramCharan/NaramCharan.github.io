@@ -94,6 +94,40 @@ h1 { letter-spacing: -0.035em; }
   text-shadow: 0 0 12px rgba(255, 178, 62, 0.5);
 }
 
+/* Hero name: white-to-cyan metal with a slow light sweep. text-shadow would
+   show through background-clip:text, so the glow is a drop-shadow filter. */
+.text-hero-gradient {
+  background-image: linear-gradient(
+    100deg,
+    #e8fbff 0%,
+    #e8fbff 38%,
+    #7de7f5 50%,
+    #e8fbff 62%,
+    #e8fbff 100%
+  );
+  background-size: 250% 100%;
+  background-position: 100% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 14px rgba(34, 211, 238, 0.45));
+  animation: name-sheen 7s ease-in-out 1.5s infinite;
+}
+@keyframes name-sheen {
+  0%, 55% { background-position: 100% 0; }
+  100% { background-position: -50% 0; }
+}
+
+/* Soft cyan bloom behind the identity block so the name sits in light. */
+.hero-aura {
+  background: radial-gradient(
+    closest-side,
+    rgba(34, 211, 238, 0.14),
+    rgba(34, 211, 238, 0.05) 55%,
+    transparent 100%
+  );
+}
+
 .mono {
   font-family: var(--font-mono);
   letter-spacing: 0.04em;
