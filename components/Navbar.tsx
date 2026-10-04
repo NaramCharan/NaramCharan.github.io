@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { AnimatePresence, motion, useScroll, useSpring } from "framer-motion";
 import { navLinks, profile } from "@/lib/content";
 import { EASE } from "@/lib/motion";
@@ -110,6 +111,19 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center gap-2">
+            {/* Project Aegis — the 3D armor assembly page */}
+            <Link
+              href="/armor/"
+              aria-label="Explore Armor — Project Aegis 3D assembly"
+              className="group inline-flex min-h-11 items-center gap-1.5 rounded-md border border-cyan/50 bg-cyan/10 px-3 py-1.5 mono text-[11px] tracking-[0.15em] text-cyan transition-all duration-300 hover:border-cyan hover:bg-cyan/20 hover:shadow-[0_0_18px_rgba(34,211,238,0.3)] sm:px-4"
+            >
+              <svg aria-hidden viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round">
+                <path d="M12 3 5 6v6c0 4 3 7.5 7 9 4-1.5 7-5 7-9V6l-7-3Z" />
+                <path d="M8.5 11.5h2.5M13 11.5h2.5" strokeLinecap="round" />
+              </svg>
+              <span className="hidden sm:inline">EXPLORE</span>ARMOR
+            </Link>
+
             <a
               ref={magnetic}
               href={profile.resume}

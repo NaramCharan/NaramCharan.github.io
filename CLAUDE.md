@@ -51,7 +51,7 @@ content is REAL, sourced from naramcharan.me.
 ### Key components
 - `Navbar.tsx` — scroll-aware sticky nav: top scroll-progress line, reveals after
   hero, active-section tracking (IntersectionObserver) with animated `layoutId`
-  indicator, RESUME button. Wired in `app/page.tsx`.
+  indicator, cyan EXPLORE ARMOR link (→ /armor/, "ARMOR" under 640px) + gold RESUME button. Wired in `app/page.tsx`.
 - `IntroDashboard.tsx` — **the hero**: pinned `h-[320vh]` track + sticky `h-dvh`
   stage. The 3D reactor is `reactor3d/HeroCanvas` (WebGL, absolute inset-0). A GSAP
   timeline scrubbed on the same `#top` track drives the **DOM overlays** in lockstep:
