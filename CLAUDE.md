@@ -93,14 +93,25 @@ content is REAL, sourced from naramcharan.me.
   `armor/HelmetGLB.tsx` normalises it to BODY.height and splits its five nodes
   (Back_low, Middle_low, Bottom_low, Front_low, Glas_low) into <Part/>s; the single
   shared material is cloned and its emissiveIntensity drives the eye glow.
-- `/armor` — **Project Aegis** (2026-10): standalone scroll-driven 3D **helmet-only**
-  assembly page using the model above. `components/armor/`: `timeline.ts` (scene
-  windows + Catmull-Rom camera keys; final radius solved so the helmet fills ~62% of
-  height, 56% portrait; BODY = 2.04 × 1.55), `Part.tsx` (scroll-decaying offset with
-  lock-in overshoot), `ArmorScene.tsx` (damped progress, studio lights + lightformers,
-  particles, bloom threshold 1), `ArmorExperience.tsx` (900vh pinned track,
-  ScrollTrigger → `--p`, CSS-only captions). (The earlier procedural `HelmetModel.tsx`
-  was deleted once the real model landed.)
+- **Suit model** (2026-10): `public/models/iron-man-suit.glb` is "Iron Man" by Grant
+  Riley (Sketchfab, **CC-BY-NC-4.0 — non-commercial only, attribution REQUIRED**; credit
+  sits bottom-right of /armor). Optimised from 12 MB → 3.6 MB (2048 WebP, meshopt). It
+  ships as three arbitrary 65k-vertex chunks, so `armor/SuitGLB.tsx` recovers the
+  ~670 armor plates at load (weld by position → union-find on triangles), assigns each
+  a scroll window / fly-in vector / spin by body region (legs → torso → arms shoulder-
+  to-hand → helmet), writes them as vertex attributes (aCenter, aOffset, aAxis, aWin)
+  and a vertex-shader patch (onBeforeCompile) animates every plate from one `uP`
+  uniform — 3 draw calls, no per-plate JS. Emissive (eyes + reactor) ignites at 0.78.
+- `/armor` — **Project Aegis** (2026-10): standalone scroll-driven 3D **full-suit**
+  assembly (the Mark III helmet model is used only in the Origin Story now).
+  `components/armor/`: `timeline.ts` (SCENES legs/torso/arms/helmet/online + Catmull-
+  Rom camera keys that follow the build upward, close on the helmet at ~0.66–0.8, then
+  pull back to a full-body front shot; BODY = 2.04 tall × 0.94 wide), `ArmorScene.tsx`
+  (damped progress, hemisphere + key/fill/rim lights, lightformers, particles; bloom
+  threshold 1.5 so only emissives glow — reflected highlights on the gold faceplate
+  used to bloom white; the suit's KHR specular is tamed to 0.55), `ArmorExperience.tsx`
+  (900vh pinned track, ScrollTrigger → `--p`, CSS-only captions). `Part.tsx` /
+  `HelmetGLB.tsx` remain for the Origin Story helmet.
 - `reactor3d/` — the WebGL hero. `HeroCanvas.tsx`: client-only `<Canvas>` (mounts
   post-hydration; camera z **9.2**, reactor group offset **y 0.35** — sized/placed so
   the assembled reactor clears the sticky navbar), lights + framed

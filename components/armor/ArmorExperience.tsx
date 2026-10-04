@@ -26,28 +26,28 @@ const fade = (s: number, e: number): CSSProperties => ({
 
 const CHAPTERS = [
   {
-    at: [0.09, 0.29],
+    at: [0.09, 0.27],
     n: "01",
-    title: "Shell",
-    body: "Rear dome seats over the inner frame. Shell halves close from both sides; ear housings lock.",
+    title: "Boots & legs",
+    body: "Sabatons lock first, then greaves and thigh plating climb into place.",
   },
   {
-    at: [0.31, 0.55],
+    at: [0.29, 0.43],
     n: "02",
-    title: "Plating",
-    body: "Forehead tab drops into its channel. Gold jaw rises, chin plate seals underneath.",
+    title: "Torso",
+    body: "Chest and back plates close around the core. The reactor housing seats.",
   },
   {
-    at: [0.57, 0.71],
+    at: [0.45, 0.61],
     n: "03",
-    title: "Faceplate",
-    body: "The faceplate swings down and forward — and locks.",
+    title: "Arms",
+    body: "Shoulder to gauntlet — every plate indexed and locked, hands last.",
   },
   {
-    at: [0.73, 0.83],
+    at: [0.63, 0.77],
     n: "04",
-    title: "Optics online",
-    body: "Ocular arrays ignite. Calibrating.",
+    title: "Helmet",
+    body: "Shell, jaw and faceplate seal. Optics online — calibrating.",
   },
 ] as const;
 
@@ -131,13 +131,13 @@ export default function ArmorExperience() {
             className="pointer-events-none absolute inset-x-5 bottom-[12%] z-10 sm:inset-x-auto sm:bottom-auto sm:left-10 sm:top-1/2 sm:-translate-y-1/2 lg:left-16"
             style={fade(-1, 0.07)}
           >
-            <p className="mono mb-4 text-[10px] tracking-[0.45em] text-gold">◢ MK-I HELMET</p>
+            <p className="mono mb-4 text-[10px] tracking-[0.45em] text-gold">◢ MARK III ARMOR</p>
             <h1 className="font-display text-5xl font-semibold leading-[0.9] tracking-tight text-white sm:text-7xl lg:text-8xl">
               PROJECT
               <br />
               AEGIS
             </h1>
-            <p className="mono mt-5 text-[11px] tracking-[0.4em] text-cyan/90 sm:text-xs">HELMET ASSEMBLY SEQUENCE</p>
+            <p className="mono mt-5 text-[11px] tracking-[0.4em] text-cyan/90 sm:text-xs">ARMOR ASSEMBLY SEQUENCE</p>
           </div>
 
           {/* ── 02–05 chapter captions ─────────────────────────────── */}
@@ -160,19 +160,24 @@ export default function ArmorExperience() {
           >
             <p className="mono hidden text-[10px] tracking-[0.45em] text-gold sm:block">◢ SEQUENCE COMPLETE</p>
             <h2 className="font-display text-xl font-semibold tracking-tight text-white sm:mt-3 sm:text-6xl">SYSTEM ONLINE</h2>
-            <p className="mono mt-1 text-[8px] tracking-[0.3em] text-cyan/90 sm:mt-4 sm:text-[11px] sm:tracking-[0.35em]">ALL HELMET SYSTEMS OPERATIONAL</p>
+            <p className="mono mt-1 text-[8px] tracking-[0.3em] text-cyan/90 sm:mt-4 sm:text-[11px] sm:tracking-[0.35em]">ALL ARMOR SYSTEMS OPERATIONAL</p>
           </div>
 
-          {/* CC-BY-4.0 attribution for the helmet model */}
-          <p className="absolute bottom-3 right-5 z-20 text-[10px] text-text-dim sm:right-10">
+          {/* Attribution required by the model's CC-BY-NC-4.0 licence */}
+          <p className="absolute bottom-3 right-5 z-20 max-w-[80vw] text-right text-[10px] text-text-dim sm:right-10">
             Model:{" "}
-            <a href="https://sketchfab.com/3d-models/ironman-mark-iii-helmet-free-71a03274781145699ac9f88d03609c43" target="_blank" rel="noopener noreferrer" className="underline decoration-dotted underline-offset-2 hover:text-cyan">
-              Ironman Mark III Helmet
+            <a href="https://sketchfab.com/3d-models/iron-man-69dde1ad49e94852984e3d83928efd65" target="_blank" rel="noopener noreferrer" className="underline decoration-dotted underline-offset-2 hover:text-cyan">
+              Iron Man
             </a>{" "}
-            by Demonic Arts ·{" "}
-            <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer" className="underline decoration-dotted underline-offset-2 hover:text-cyan">
-              CC BY 4.0
-            </a>
+            by{" "}
+            <a href="https://sketchfab.com/grandriley" target="_blank" rel="noopener noreferrer" className="underline decoration-dotted underline-offset-2 hover:text-cyan">
+              Grant Riley
+            </a>{" "}
+            ·{" "}
+            <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener noreferrer" className="underline decoration-dotted underline-offset-2 hover:text-cyan">
+              CC BY-NC 4.0
+            </a>{" "}
+            · textures compressed, plates animated
           </p>
 
           {/* scroll hint */}
