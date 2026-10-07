@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { Environment, Lightformer } from "@react-three/drei";
 import { EffectComposer, Bloom, Vignette, ChromaticAberration } from "@react-three/postprocessing";
@@ -8,7 +8,7 @@ import { BlendFunction } from "postprocessing";
 import * as THREE from "three";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import ReactorGLB from "./ReactorGLB";
+import Reactor3D from "./Reactor3D";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -103,9 +103,7 @@ export default function HeroCanvas({
       </Environment>
 
       <group position={[0, 0.35, 0]}>
-        <Suspense fallback={null}>
-          <ReactorGLB progress={progress} />
-        </Suspense>
+        <Reactor3D progress={progress} />
       </group>
 
       <EffectComposer multisampling={0}>

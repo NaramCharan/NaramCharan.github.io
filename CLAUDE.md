@@ -117,19 +117,23 @@ content is REAL, sourced from naramcharan.me.
   the assembled reactor clears the sticky navbar), lights + framed
   `<Environment>`/`<Lightformer>` (no network HDR fetch), `<Bloom>` postprocessing,
   and the single `ScrollTrigger` that writes 0..1 into a `progress` ref (+
-  `--p`/`data-seg` on the track). `ReactorGLB.tsx` (2026-10, replaced the procedural
-  `Reactor3D`/`parts`): the real model `public/models/arc-reactor.glb` — "Arc Reactor
-  bundle" by OPREXT (Sketchfab, **CC-BY-4.0**, credit in the Contact footer). Only the
-  bundle's ASSEMBLED reactor is kept (exploded copy + display boxes stripped), simplified
-  50%, 1024 WebP, meshopt → ~2.5 MB. At load its parts are re-parented into a flat rig
-  under pivots at their bbox centres; at rest it is an exploded stack along the reactor
-  axis (root tipped back 1.2 rad so it reads as a tower), and across 0.30–0.76 the
-  layers collapse back-to-front (housing → motors → radiator → capacitors → regulator →
-  9 copper coils swirl in radially → wiring rings → glass → centre bracket → bolts) as
-  the root turns face-on. White dielectric materials are retinted gunmetal; the glass is
-  smoked dark cyan until ignition (`win(p,.66,.78)`), then calms (`.78–.92`); the root
-  settles smaller/higher over `.72–.88` (phones build at 0.62× and park at 0.58×). A
-  dev-only `window.__pin` pins progress. `ArcReactorStatic.tsx` mirrors this machined design in pure SVG
+  `--p`/`data-seg` on the track). `Reactor3D.tsx`: the Mark XLII rig, reshaped
+  2026-07-08 to read as a real machined arc reactor — bezel + milled steel rim, tick
+  ring, recessed coil well (set-back floor, two concentric rings, 10 glowing radial
+  slots), **10 radial copper trapezoid coil segments** (`useTrapezoidGeometry`, wide
+  end outward, lit inner strip each), extruded triangular rotor, corner nodes, core
+  assembly (16-tooth steel collar + bright hub torus + glowing triangle + central
+  disc), 4 robotic arms; each part lerps from a scattered/scaled start to its locked
+  pose across its own progress window (read in `useFrame`, no React re-render); a
+  dev-only `window.__pin` (NODE_ENV-gated) pins progress for preview inspection; core
+  `pointLight` + emissive **ignite to a flash then CALM** (`win(p,0.8,0.94)`) so the
+  name/copy read in segment C (toned 2026-07-03: core light ×4.5, core emissive
+  flash ~1.5, coil glass 1.6, Bloom 0.5 @ luminanceThreshold 0.85 — never washes the
+  viewport gray). As the core calms the root also **settles** — scales to 0.74
+  (0.58 under 640px) and rises (+0.8 / +1.0 world y) so the tick ring parks clear
+  of the "3rd-year CS…" kicker line. `parts.tsx`: shared PBR materials (dark/bright metal,
+  copper, cyan glass, core glow, steel) + extruded-triangle and trapezoid-coil
+  geometry helpers. `ArcReactorStatic.tsx` mirrors this machined design in pure SVG
   (copper wedges + slots, tooth collar) for the reduced-motion hero + FRIDAY modal. **Quirk:**
   in the hidden preview tab rAF is throttled → the R3F loop + ScrollTrigger freeze;
   each `preview_screenshot` pumps a few frames (scroll via eval →
@@ -148,7 +152,8 @@ content is REAL, sourced from naramcharan.me.
   `par-layer` / `--par-m` attributes are now inert.
 - Hydration safety: GlyphRail glyphs and reactor coil coords are deterministic
   (no `Math.random()` in render) to avoid SSR/client mismatch.
-- Branded favicon: `app/icon.svg` (mini arc reactor).
+- Branded favicon: `app/icon.svg` (mini arc reactor). No Three.js deps — the reactors
+  are all pure SVG + anime.js/CSS.
 - `Projects.tsx` — 5 repos as HUD scan cards, numbered chronologically (2026-10:
   the recommendation-system project was removed from the site at the user's request
   and the rest renumbered): MK-01 scraper → MK-02 churn → MK-03 Walmart → MK-04 RSNA
