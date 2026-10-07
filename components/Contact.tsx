@@ -117,7 +117,7 @@ export default function Contact() {
       <p className="mt-10 text-center mono text-[11px] tracking-[0.25em] text-text-muted">
         DESIGNED & BUILT BY {profile.name.toUpperCase()} · POWERED BY J.A.R.V.I.S
       </p>
-      {/* CC-BY-4.0 attribution for the 3D helmet in the hero and on /armor. */}
+      {/* CC-BY-4.0 attribution for the 3D helmet in the Origin Story. */}
       <p className="mt-3 text-center text-[11px] text-text-dim">
         Helmet model:{" "}
         <a href="https://sketchfab.com/3d-models/ironman-mark-iii-helmet-free-71a03274781145699ac9f88d03609c43" target="_blank" rel="noopener noreferrer" className="underline decoration-dotted underline-offset-2 hover:text-cyan">
@@ -132,6 +132,22 @@ export default function Contact() {
           CC BY 4.0
         </a>
         ; textures resized and compressed.
+      </p>
+      {/* CC-BY-4.0 attribution for the 3D arc reactor in the hero. */}
+      <p className="mt-1 text-center text-[11px] text-text-dim">
+        Arc reactor model:{" "}
+        <a href="https://sketchfab.com/3d-models/arc-reactor-bundle-ff38bee0ad2f4d63b9f77a59369eef4d" target="_blank" rel="noopener noreferrer" className="underline decoration-dotted underline-offset-2 hover:text-cyan">
+          &ldquo;Arc Reactor bundle&rdquo;
+        </a>{" "}
+        by{" "}
+        <a href="https://sketchfab.com/OPREXT" target="_blank" rel="noopener noreferrer" className="underline decoration-dotted underline-offset-2 hover:text-cyan">
+          OPREXT
+        </a>
+        , licensed{" "}
+        <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer" className="underline decoration-dotted underline-offset-2 hover:text-cyan">
+          CC BY 4.0
+        </a>
+        ; simplified, recoloured and animated.
       </p>
     </section>
   );
