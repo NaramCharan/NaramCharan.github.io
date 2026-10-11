@@ -214,3 +214,17 @@ Build passes clean; verified in preview at desktop + mobile.
 - Next.js 16 refuses two dev servers in the same dir; if another session holds the
   lock, kill its PID (shown in the error) before `preview_start`. launch.json has
   `autoPort: true`.
+
+## Portfolio polish and security review (2026-10-11)
+
+- Projects now lead RSNA → Walmart → churn → Transformer → scraper; cards are static reading surfaces with actual evidence. MiniDemo is a labelled book-pipeline schematic only.
+- Each project includes Problem, My contribution, Approach, Results and Limitations in `lib/content.ts`. The real result images and captured RSNA interface have provenance in `public/projects/SOURCES.md`.
+- Intro has a immediately available View Projects action and plain readable name; the 180vh reactor sequence is preserved. Skills uses plain-language navigation.
+- `lib/useDialog.ts` shares focus containment, inert background isolation, Escape handling and restoration between project/resume dialogs. Contact supports mailto, clipboard and optional Gmail; reduced motion uses an SSR-safe external-store hook.
+- Next.js/eslint-config-next are 16.4.0. `npm run build` now also runs `scripts/secure-export.mjs` to hash inline scripts and insert a CSP into static HTML. Do not deploy unprocessed `next build` output.
+- Review findings and remaining lint-tooling/hosting-header limitations are in SECURITY.md. PR checks include Playwright browser tests; deployment gates check production dependencies.
+
+## Visual polish — 12 October 2026
+- Reading sections use static headings and skill emblems; remove page-wide scanlines, magnetic Resume hover and recurring status pings. Hero keeps one bloom pass and a 1.25 DPR cap, with rendering suspended offscreen.
+- All five projects share a labelled preview frame. Walmart chart displays exact published validation metrics; original results remain linked. Learning/data pipelines are explicitly architecture illustrations.
+- RSNA preview now shows a real stored radiograph after its numeric-ID frontend fix, deployed separately through RSNA PR #1. Evidence provenance is in public/projects/SOURCES.md.

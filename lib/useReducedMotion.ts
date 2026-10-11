@@ -1,18 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
-/** True when the user prefers reduced motion (SSR-safe, defaults to false). */
+import { useSyncExternalStore } from "react";
+const query = "(prefers-reduced-motion: reduce)";
+function subscribe(onChange: () => void) {
+  const media = window.matchMedia(query);
+  media.addEventListener("change", onChange);
+  return () => media.removeEventListener("change", onChange);
+}
+// Start with a readable, static experience while hydration resolves preferences.
 export function usePrefersReducedMotion(): boolean {
-  const [reduced, setReduced] = useState(false);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReduced(mq.matches);
-    const onChange = () => setReduced(mq.matches);
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
-  }, []);
-
-  return reduced;
+  return useSyncExternalStore(subscribe, () => window.matchMedia(query).matches, () => true);
 }

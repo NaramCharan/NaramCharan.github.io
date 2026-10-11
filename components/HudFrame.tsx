@@ -4,8 +4,7 @@
  * Decorative HUD overlay: corner brackets + edge readouts that frame the
  * viewport like a heads-up display. Purely visual, hidden from a11y tree.
  */
-export default function HudFrame() {
-  const Corner = ({ className }: { className: string }) => (
+const Corner = ({ className }: { className: string }) => (
     <svg
       viewBox="0 0 60 60"
       className={`absolute h-10 w-10 text-cyan/60 md:h-14 md:w-14 ${className}`}
@@ -18,6 +17,7 @@ export default function HudFrame() {
     </svg>
   );
 
+export default function HudFrame() {
   return (
     <div aria-hidden className="pointer-events-none fixed inset-0 z-40">
       <Corner className="left-3 top-3" />

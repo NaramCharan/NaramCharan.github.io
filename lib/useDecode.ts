@@ -15,10 +15,7 @@ export function useDecode(text: string, speed = 32, start = true): string {
   const [out, setOut] = useState(reduced ? text : "");
 
   useEffect(() => {
-    if (reduced) {
-      setOut(text);
-      return;
-    }
+    if (reduced) return;
     if (!start) return;
     let frame = 0;
     const total = text.length;
@@ -37,15 +34,17 @@ export function useDecode(text: string, speed = 32, start = true): string {
     return () => clearInterval(id);
   }, [text, speed, reduced, start]);
 
-  return out;
+  return reduced ? text : out;
 }
 
 /** Cycles through `words`, returning the current one (changes every `ms`). */
 export function useRotate(words: string[], ms = 2200): string {
   const [i, setI] = useState(0);
+  const reduced = usePrefersReducedMotion();
   useEffect(() => {
+    if (reduced) return;
     const id = setInterval(() => setI((p) => (p + 1) % words.length), ms);
     return () => clearInterval(id);
-  }, [words.length, ms]);
+  }, [words.length, ms, reduced]);
   return words[i];
 }

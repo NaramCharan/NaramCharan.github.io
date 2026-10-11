@@ -80,6 +80,8 @@ export type Project = {
   tech: string[];
   wins: string[]; // key results, shown inline (not hover-gated)
   brief: { label: string; value: string }[]; // FRIDAY deep-dive readout
+  evidence?: { src: string; alt: string; caption: string; source: string; width: number; height: number };
+  caseStudy: { problem: string; contribution: string; approach: string; results: string; limitations: string };
   repo: string;
   demo?: string; // optional live demo / notebook
 };
@@ -87,6 +89,13 @@ export type Project = {
 export const projects: Project[] = [
   {
     id: "scraper",
+    caseStudy: {
+      "problem": "Collect book information without repetitive manual entry.",
+      "contribution": "Built the multi-page scraper, relational schema, and export pipeline.",
+      "approach": "BeautifulSoup extracts book fields; SQLAlchemy stores records in SQLite for reusable CSV exports.",
+      "results": "Collected 980+ books in under 30 minutes.",
+      "limitations": "A site-specific learning pipeline; markup changes can require parser updates. The timing is one reported run, not a general throughput guarantee."
+    },
     code: "MK-01",
     name: "Book Data Scraping & Database Pipeline",
     domain: "Data Engineering",
@@ -111,12 +120,27 @@ export const projects: Project[] = [
   },
   {
     id: "churn",
+    caseStudy: {
+      "problem": "Identify customers likely to leave an e-commerce service.",
+      "contribution": "Built preprocessing pipelines, tuned tree models, trained a PyTorch baseline, and compared model quality against compute cost.",
+      "approach": "70/30 train-test split; preprocessing fit on training data only. Optuna tuning uses 10-fold stratified CV scored on recall.",
+      "results": "XGBoost: 98.28% accuracy, 94.74% F1, 91.58% recall on the held-out test set. The neural network reached 98.76% accuracy, but XGBoost was selected for lighter inference.",
+      "limitations": "One dataset and a single held-out split. XGBoost misses more churners than the neural network; threshold tuning remains future work. No live service is linked."
+    },
+    evidence: {
+      "src": "/projects/churn-model-comparison.svg",
+      "alt": "Held-out test F1 comparison: Random Forest 91.33%, XGBoost 94.74%, neural network 96.23%",
+      "caption": "Test-set F1 · values from the project README",
+      "source": "https://github.com/NaramCharan/ecommerce-customer-churn-prediction",
+      "width": 640,
+      "height": 300
+    },
     code: "MK-02",
     name: "E-Commerce Customer Churn Prediction",
     domain: "Classification",
     metric: "98.28% acc",
     description:
-      "Four-model churn system — Logistic Regression, Random Forest, XGBoost and a 4-hidden-layer PyTorch network. The deep net tops the leaderboard; XGBoost ships anyway, because a half-point of accuracy doesn't buy a GPU bill.",
+      "Four-model churn system — Logistic Regression, Random Forest, XGBoost and a 4-hidden-layer PyTorch network. The deep net tops the leaderboard; XGBoost is selected anyway, because a half-point of accuracy doesn't buy a GPU bill.",
     tech: ["XGBoost", "PyTorch", "Scikit-Learn", "Optuna"],
     repo: "https://github.com/NaramCharan/ecommerce-customer-churn-prediction",
     wins: [
@@ -129,23 +153,38 @@ export const projects: Project[] = [
       { label: "PIPELINE", value: "Reusable ColumnTransformer pipelines fit on train only — imputers, scalers & encoders never see test-set statistics" },
       { label: "MODELS", value: "LogReg vs Random Forest vs XGBoost vs a 4-hidden-layer PyTorch net (BatchNorm, inverted dropout 0.5→0.2, Kaiming init)" },
       { label: "TUNING", value: "Optuna over 10-fold Stratified CV scored on recall; imbalance handled via class weights / scale_pos_weight" },
-      { label: "DECISION", value: "The net edges XGBoost by <1 pt — not worth the compute. XGBoost ships: near-instant scoring, no GPU, interpretable feature importances" },
+      { label: "DECISION", value: "The net edges XGBoost by <1 pt — not worth the compute. XGBoost is selected: near-instant scoring, no GPU, interpretable feature importances" },
       { label: "RESULT", value: "98.28% accuracy · 94.74% F1 · 91.58% recall — threshold tuning can recover most of the recall gap" },
     ],
   },
   {
     id: "walmart",
+    caseStudy: {
+      "problem": "Forecast weekly sales across thousands of store-department time series without leaking future sales into features.",
+      "contribution": "Built the recursive walk-forward engine and feature pipeline; diagnosed temporal leakage and compared three tree models.",
+      "approach": "Split by date before feature engineering. Forecast one week at a time, feeding predictions into subsequent lag and rolling features.",
+      "results": "LightGBM: validation R² 0.9555 and RMSE 4,646.90 on weeks from 25 May 2012 onward.",
+      "limitations": "Results describe the historical validation window, not unseen future retail conditions. Recursive forecasts can accumulate error; no live forecasting service is linked."
+    },
+    evidence: {
+      "src": "/projects/walmart-validation.svg",
+      "alt": "Published validation comparison of Random Forest, XGBoost and LightGBM for Walmart sales forecasting",
+      "caption": "Published validation R² · bars start at zero",
+      "source": "https://github.com/NaramCharan/Walmart-Store-Weekly-Sales-Forecasting",
+      "width": 640,
+      "height": 360
+    },
     code: "MK-03",
     name: "Walmart Store Weekly Sales Forecasting",
     featured: true,
     domain: "Time-Series Forecasting",
-    metric: "95.55% R²",
+    metric: "0.9555 validation R²",
     description:
       "Global multi-series forecasting across ~3,000 Walmart store-department pairs — one model learns them all, driven by a custom recursive walk-forward engine that feeds each week's predictions back in as the next week's lag features.",
     tech: ["Python", "LightGBM", "XGBoost", "Scikit-Learn", "Pandas"],
     repo: "https://github.com/NaramCharan/Walmart-Store-Weekly-Sales-Forecasting",
     wins: [
-      "95.55% validation R² — LightGBM beat XGBoost & Random Forest",
+      "Validation R² 0.9555 — LightGBM beat XGBoost & Random Forest",
       "Recursive walk-forward engine built from scratch, no forecasting libs",
       "Caught & fixed temporal leakage masquerading as R² ≈ 0.98",
     ],
@@ -154,11 +193,26 @@ export const projects: Project[] = [
       { label: "METHOD", value: "Custom recursive walk-forward engine: each week's predictions are injected back into the data to build the next week's lag & rolling features — real deployment conditions, simulated" },
       { label: "INTEGRITY", value: "Split by date first, features engineered on train only; rolling stats via shift(1) so the current week never leaks. An inflated R² ≈ 0.98 was diagnosed as leakage and killed" },
       { label: "MODELS", value: "LightGBM vs XGBoost vs Random Forest under identical leakage-free conditions; a 5-layer neural baseline tested and rejected on compute" },
-      { label: "RESULT", value: "95.55% validation R² · RMSE 4,647 with LightGBM on held-out weeks" },
+      { label: "RESULT", value: "Validation R² 0.9555 · RMSE 4,647 with LightGBM on held-out weeks" },
     ],
   },
   {
     id: "rsna",
+    caseStudy: {
+      "problem": "Classify pneumonia on chest radiographs while accounting for class imbalance and patient overlap.",
+      "contribution": "Built the ML pipeline and FastAPI backend. Directed an AI coding agent for the React interface and Azure deployment.",
+      "approach": "Patient-level 70/24/6 split, weighted loss, and two-stage transfer learning. Compared three CNNs on validation, then evaluated the selected model once on the test set.",
+      "results": "83% pneumonia recall, 75% precision, and 0.79 F1 on 1,836 held-out studies. A Docker container serves the interface and API on Azure.",
+      "limitations": "Single dataset and split; no external hospital validation. About 17% of positive cases are missed and 25% of flags are false positives. Research demonstration, not a clinically validated diagnostic tool."
+    },
+    evidence: {
+      "src": "/projects/rsna-interface.png",
+      "alt": "RSNA application displaying the real radiograph for stored study Case_1",
+      "caption": "Live application · stored study shown · 12 October 2026",
+      "source": "https://github.com/NaramCharan/RSNA-Pneumonia-Detection",
+      "width": 1440,
+      "height": 1000
+    },
     code: "MK-04",
     featured: true,
     name: "RSNA Pneumonia Detection",
@@ -192,6 +246,13 @@ export const projects: Project[] = [
   },
   {
     id: "transformer",
+    caseStudy: {
+      "problem": "Understand how tokenization and causal attention produce language-model predictions.",
+      "contribution": "Implemented a small decoder-only Transformer and byte-level BPE tokenizer in PyTorch, following Karpathy’s lectures with credit.",
+      "approach": "Character-level Shakespeare training: four blocks, four heads, 64-dimensional embeddings, and 5,000 training steps. Built and checked a separate lossless BPE tokenizer.",
+      "results": "Approximately 0.21M parameters; training loss 1.66 and validation loss 1.82. Output resembles play formatting, with limited semantic coherence.",
+      "limitations": "Learning project with a tiny context and model. The Transformer still reads characters; the separately built BPE tokenizer is not integrated into training."
+    },
     code: "MK-05",
     name: "Handbuilt Transformer",
     domain: "Learning Project · NLP",
@@ -349,7 +410,7 @@ export const contact = {
 
 export const navLinks = [
   { href: "#projects", label: "Projects" },
-  { href: "#skills", label: "Systems" },
+  { href: "#skills", label: "Skills" },
   { href: "#about", label: "About" },
   { href: "#contact", label: "Contact" },
 ];

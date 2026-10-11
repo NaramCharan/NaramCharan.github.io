@@ -1,318 +1,58 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useCallback, useState } from "react";
 import { projects, type Project } from "@/lib/content";
-
-/* Displayed newest-first so the current build leads and MK-01 closes.
-   content.ts stays authored in build order, so adding MK-07 is still just a
-   push to the end of that array. */
-const ordered = [...projects].reverse();
-import { useTilt } from "@/lib/useTilt";
-import { usePrefersReducedMotion } from "@/lib/useReducedMotion";
 import SectionHeading from "./SectionHeading";
 import ProjectHologram from "./ProjectHologram";
-import MiniDemo from "./MiniDemo";
+import ProjectEvidence from "./ProjectEvidence";
 
-gsap.registerPlugin(ScrollTrigger);
+const priority = ["rsna", "walmart", "churn", "transformer", "scraper"];
+const ordered = [...projects].sort((a, b) => {
+  const rank = (id: string) => priority.includes(id) ? priority.indexOf(id) : priority.length;
+  return rank(a.id) - rank(b.id);
+});
 
-function ProjectCard({
-  p,
-  onBrief,
-}: {
-  p: Project;
-  onBrief: (p: Project) => void;
-}) {
-  const tilt = useTilt(3.5);
-  const reduced = usePrefersReducedMotion();
-  // A featured card splits into two columns, with the demo and key results
-  // filling the right half. A work-in-progress project has neither yet, so
-  // splitting it would leave that half empty — it stays full-width instead
-  // and still spans both grid columns, so it leads without looking broken.
-  const split = p.featured && !p.wip;
-
-  // Exploded-parts assembly, scrubbed by scroll: each internal part starts
-  // offset/rotated outside the frame and locks into place as the card enters
-  // the viewport (reverses on scroll-back). SSR markup is the assembled state.
-  useEffect(() => {
-    const el = tilt.ref.current;
-    if (!el || reduced) return;
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: el,
-          start: "top 94%",
-          end: "top 45%",
-          scrub: 0.5,
-        },
-      });
-      el.querySelectorAll<HTMLElement>("[data-part]").forEach((part, pi) => {
-        tl.from(
-          part,
-          {
-            x: pi % 2 ? 30 : -30,
-            y: 24 + (pi % 3) * 8,
-            rotate: pi % 2 ? 2.5 : -2.5,
-            opacity: 0,
-            filter: "blur(4px)",
-            duration: 0.45,
-            ease: "power2.out",
-          },
-          0.1 + pi * 0.09
-        );
-      });
-    }, el);
-    return () => ctx.revert();
-  }, [reduced, tilt.ref]);
-
+function ProjectCard({ p, onBrief }: { p: Project; onBrief: (p: Project) => void }) {
   return (
-    <motion.article
-      ref={tilt.ref as React.Ref<HTMLElement>}
-      onPointerMove={tilt.onPointerMove}
-      onPointerLeave={tilt.onPointerLeave}
-      onClick={(e) => {
-        const target = e.target as HTMLElement;
-        if (!target.closest("a") && !target.closest("button")) {
-          onBrief(p);
-        }
-      }}
-      style={{
-        rotateX: tilt.rotateX,
-        rotateY: tilt.rotateY,
-        transformPerspective: 900,
-      }}
-      className={`group relative flex cursor-pointer flex-col justify-between overflow-hidden rounded-xl border border-line bg-surface/60 p-4 transition-colors duration-300 hover:border-cyan/60 hover:bg-surface-2/70 hover:shadow-[0_0_36px_-6px_rgba(34,211,238,0.35)] sm:p-5 ${
-        p.featured || p.wip ? "md:col-span-2" : ""
-      }`}
-    >
-      {/* Scan sweep on hover */}
-      <span
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan to-transparent opacity-0 [animation:scan-sweep_1.4s_ease-in-out_infinite] group-hover:opacity-100"
-      />
-      {/* Cursor-following spotlight */}
-      <span
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-        style={{
-          background:
-            "radial-gradient(340px circle at var(--mx, 50%) var(--my, 50%), rgba(34,211,238,0.09), transparent 65%)",
-        }}
-      />
-
-      {/* Below md the featured card is a plain column. Without `flex flex-col`
-          it was a block with flex-1 inside an overflow-hidden article, which
-          clipped 287px at 375px — the chart drew over the action row and the
-          key results and tech chips vanished entirely. */}
-      <div className={split ? "flex flex-col flex-1 md:grid md:grid-cols-2 md:gap-6 md:items-start" : "flex flex-col flex-1"}>
-        {/* Left Column (or Top) */}
-        <div className="flex flex-col justify-between md:h-full">
-          <div>
-            <div data-part className="mb-3 flex flex-wrap items-center gap-2">
-              <span className="mono rounded border border-cyan/40 px-2 py-0.5 text-[10px] tracking-[0.2em] text-cyan">
-                {p.code}
-              </span>
-              <span className="mono rounded bg-surface-2/80 px-2 py-0.5 text-[10px] tracking-[0.2em] text-text-muted">
-                {p.domain.toUpperCase()}
-              </span>
-              {p.featured && (
-                <span className="mono rounded border border-gold/50 bg-gold/10 px-2 py-0.5 text-[10px] tracking-[0.2em] text-gold">
-                  FEATURED
-                </span>
-              )}
-              {p.wip && (
-                <span className="mono rounded border border-gold/50 bg-gold/10 px-2 py-0.5 text-[10px] tracking-[0.2em] text-gold motion-safe:animate-pulse">
-                  IN PROGRESS
-                </span>
-              )}
-              {p.period && (
-                <span className="mono rounded border border-line px-2 py-0.5 text-[10px] tracking-[0.16em] text-text-dim">
-                  {p.period.toUpperCase()}
-                </span>
-              )}
-            </div>
-
-            {/* Title + headline metric */}
-            <div data-part className="flex items-start justify-between gap-3">
-              <h3 className="text-base font-semibold leading-snug text-text transition-colors duration-200 group-hover:text-cyan-bright sm:text-lg">
-                {p.name}
-              </h3>
-              <span
-                className={`mono shrink-0 whitespace-nowrap text-sm sm:text-base ${
-                  p.wip
-                    ? "font-normal tracking-[0.14em] text-gold/70"
-                    : "font-bold text-gold glow-gold"
-                }`}
-              >
-                {p.metric}
-              </span>
-            </div>
-            <p data-part className="mt-2 text-[13px] leading-normal text-text-muted sm:text-sm">
-              {p.description}
-            </p>
+    <article className={`project-card rounded-2xl border border-line bg-surface/70 p-5 transition-colors hover:border-cyan/50 sm:p-7 ${p.featured ? "md:col-span-2" : ""}`}>
+      <div className={p.featured ? "grid items-start gap-7 md:grid-cols-2" : "flex h-full flex-col"}>
+        <div className="flex h-full flex-col">
+          {!p.featured && <div className="mb-6"><ProjectEvidence project={p} /></div>}
+          <div className="mb-4 flex flex-wrap items-center gap-2">
+            <span className="mono text-xs text-cyan">{p.code}</span>
+            <span className="text-xs text-text-muted">{p.domain}</span>
+            {p.featured && <span className="rounded-full border border-gold/40 bg-gold/10 px-2.5 py-1 text-xs text-gold">Featured project</span>}
+            {p.wip && <span className="text-xs text-gold">In progress</span>}
           </div>
-
-          {/* Action buttons on desktop for featured card */}
-          {split && (
-            <div data-part className="hidden md:flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-t border-line pt-3 mt-3">
-              <button
-                type="button"
-                onClick={() => onBrief(p)}
-                aria-label={`FRIDAY — analyze ${p.name}`}
-                className="friday-chip mono group/friday inline-flex min-h-11 items-center gap-2 rounded-md border border-cyan/40 bg-cyan/5 px-3 py-1.5 text-[11px] tracking-[0.2em] text-cyan transition-all duration-200 hover:border-cyan hover:bg-cyan/15 hover:shadow-[0_0_16px_-4px_rgba(34,211,238,0.5)]"
-              >
-                <span aria-hidden className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan opacity-60" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-cyan" />
-                </span>
-                FRIDAY
-                <span className="text-cyan/60 transition-colors group-hover/friday:text-cyan">◈ BRIEF</span>
-              </button>
-
-              <div className="flex flex-wrap items-center gap-3">
-                {p.demo && <LiveDemoLink href={p.demo} name={p.name} />}
-                <a
-                  href={p.repo}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`${p.name} — open repository on GitHub`}
-                  className="mono inline-flex min-h-11 items-center gap-1.5 text-xs text-cyan transition-transform duration-200 hover:translate-x-1"
-                >
-                  <GitHubMark className="h-3.5 w-3.5" />
-                  VIEW CODE →
-                </a>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Right Column (or Bottom) */}
-        <div className="flex flex-col justify-between mt-3 md:mt-0">
-          <div>
-            {/* Live mini-demo */}
-            {!p.wip && (
-              <div data-part>
-                <MiniDemo id={p.id} />
-              </div>
-            )}
-
-            {/* Key results — omitted entirely while a project is in progress,
-                rather than shown as an empty promise. */}
-            {p.wins.length > 0 && (
-            <div data-part className="mt-2.5">
-              <p className="mono mb-1 flex items-center gap-2 text-[10px] tracking-[0.25em] text-gold/90">
-                <span className="h-px w-3 bg-gold/70" /> KEY RESULTS
-              </p>
-              <ul className="space-y-0.5">
-                {p.wins.map((w) => (
-                  <li key={w} className="flex items-start gap-2 text-xs text-text/90">
-                    <svg viewBox="0 0 24 24" className="mt-[2px] h-3.5 w-3.5 shrink-0 text-cyan" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                      <path d="M20 6 9 17l-5-5" />
-                    </svg>
-                    <span className="leading-snug">{w}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            )}
+          <h3 className="text-xl font-semibold leading-tight sm:text-2xl">{p.name}</h3>
+          <p className="mt-3 text-2xl font-semibold text-gold">{p.metric}</p>
+          <p className="mt-3 text-base leading-relaxed text-text-muted">{p.description}</p>
+          <ul className="mt-5 space-y-2 text-sm leading-relaxed">
+            {p.wins.map(win => <li key={win} className="flex gap-2"><span aria-hidden className="text-cyan">✓</span><span>{win}</span></li>)}
+          </ul>
+          <div className="mt-5 flex flex-wrap gap-2">
+            {p.tech.map(tech => <span key={tech} className="rounded-md bg-cyan/10 px-2.5 py-1 text-xs text-cyan-bright">{tech}</span>)}
           </div>
-
-          <div data-part className="mt-2.5 flex flex-wrap gap-1.5">
-            {p.tech.map((t) => (
-              <span
-                key={t}
-                className="mono rounded bg-cyan/10 px-2 py-0.5 text-[10px] text-cyan/90 sm:text-[11px]"
-              >
-                {t}
-              </span>
-            ))}
+          <div className="mt-6 flex-1" aria-hidden="true" />
+          <div className="mt-auto flex flex-wrap gap-3 border-t border-line pt-5">
+            {p.demo && <a href={p.demo} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center rounded-md border border-gold/50 bg-gold/10 px-4 text-sm font-medium text-gold">Live Demo ↗</a>}
+            <button onClick={() => onBrief(p)} className="inline-flex min-h-11 items-center rounded-md border border-cyan/40 px-4 text-sm text-cyan-bright" aria-label={`Project Details — ${p.name}`}>Project Details <span aria-hidden className="ml-2 mono text-[11px] text-cyan/70">FRIDAY</span></button>
+            <a href={p.repo} target="_blank" rel="noopener noreferrer" aria-label={`${p.name} — view code on GitHub`} className="inline-flex min-h-11 items-center text-sm text-text-muted hover:text-cyan">View Code ↗</a>
           </div>
         </div>
+        {p.featured && <ProjectEvidence project={p} />}
       </div>
-
-      {/* Action buttons for normal cards (and mobile for featured card) */}
-      {(!p.featured || true) && (
-        <div data-part className={`mt-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-t border-line pt-3 ${split ? "md:hidden" : ""}`}>
-          <button
-            type="button"
-            onClick={() => onBrief(p)}
-            aria-label={`FRIDAY — analyze ${p.name}`}
-            className="friday-chip mono group/friday inline-flex min-h-11 items-center gap-2 rounded-md border border-cyan/40 bg-cyan/5 px-3 py-1.5 text-[11px] tracking-[0.2em] text-cyan transition-all duration-200 hover:border-cyan hover:bg-cyan/15 hover:shadow-[0_0_16px_-4px_rgba(34,211,238,0.5)]"
-          >
-            <span aria-hidden className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan opacity-60" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-cyan" />
-            </span>
-            FRIDAY
-            <span className="text-cyan/60 transition-colors group-hover/friday:text-cyan">◈ BRIEF</span>
-          </button>
-
-          <div className="flex flex-wrap items-center gap-3">
-            {p.demo && <LiveDemoLink href={p.demo} name={p.name} />}
-            <a
-              href={p.repo}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`${p.name} — open repository on GitHub`}
-              className="mono inline-flex min-h-11 items-center gap-1.5 text-xs text-cyan transition-transform duration-200 hover:translate-x-1"
-            >
-              <GitHubMark className="h-3.5 w-3.5" />
-              VIEW CODE →
-            </a>
-          </div>
-        </div>
-      )}
-    </motion.article>
+    </article>
   );
 }
-
-/* A deployed project is worth more than a repo — when there's a public URL,
-   it gets the loud gold treatment and sits ahead of VIEW CODE. */
-function LiveDemoLink({ href, name }: { href: string; name: string }) {
-  return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label={`${name} — open the live app (opens in new tab)`}
-      className="mono inline-flex min-h-11 items-center gap-1.5 rounded-md border border-gold/50 bg-gold/10 px-3 py-1.5 text-[11px] tracking-[0.2em] text-gold transition-all duration-200 hover:border-gold hover:bg-gold/20 hover:shadow-[0_0_16px_-4px_rgba(255,178,62,0.55)]"
-    >
-      <span aria-hidden className="relative flex h-2 w-2">
-        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-gold opacity-60" />
-        <span className="relative inline-flex h-2 w-2 rounded-full bg-gold" />
-      </span>
-      LIVE DEMO ↗
-    </a>
-  );
-}
-
-function GitHubMark({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden>
-      <path d="M12 .5C5.73.5.5 5.74.5 12.02c0 5.1 3.29 9.42 7.86 10.95.58.1.79-.25.79-.56 0-.27-.01-1.16-.02-2.1-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.2 1.77 1.2 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.26-1.28-5.26-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.79 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.43-2.7 5.41-5.27 5.69.41.36.78 1.06.78 2.14 0 1.55-.01 2.8-.01 3.18 0 .31.21.67.8.56A11.53 11.53 0 0 0 23.5 12.02C23.5 5.74 18.27.5 12 .5Z" />
-    </svg>
-  );
-}
-
 export default function Projects() {
   const [active, setActive] = useState<Project | null>(null);
-
+  const close = useCallback(() => setActive(null), []);
   return (
-    <section id="projects" className="mx-auto max-w-6xl scroll-mt-20 px-5 py-16 sm:px-6 sm:py-28">
-      <SectionHeading
-        index="01"
-        title="Projects"
-        subtitle="Production-grade ML systems — each scanned, validated, and leakage-checked before deployment. Tap any card or FRIDAY for the full brief."
-      />
-      <div className="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2">
-        {ordered.map((p) => (
-          <ProjectCard key={p.id} p={p} onBrief={setActive} />
-        ))}
-      </div>
-
-      <ProjectHologram project={active} onClose={() => setActive(null)} />
+    <section id="projects" className="mx-auto max-w-6xl scroll-mt-20 px-5 py-16 sm:px-6 sm:py-24">
+      <SectionHeading index="01" title="Selected Projects" subtitle="Medical imaging, forecasting, and the pipelines behind them. Explore the results, my contribution, and what I learned." />
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2">{ordered.map(p => <ProjectCard key={p.id} p={p} onBrief={setActive} />)}</div>
+      <ProjectHologram project={active} onClose={close} />
     </section>
   );
 }

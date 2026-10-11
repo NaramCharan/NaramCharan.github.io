@@ -45,3 +45,7 @@ next-env.d.ts
 
 # python venv for scripts/make_resume.py
 .venv/
+
+# browser verification artifacts
+/test-results/
+/playwright-report/

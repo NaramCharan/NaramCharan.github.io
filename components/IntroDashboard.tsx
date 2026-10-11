@@ -9,7 +9,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { animate } from "animejs";
 import { profile, projects } from "@/lib/content";
 import { usePrefersReducedMotion } from "@/lib/useReducedMotion";
-import { useDecode, useRotate } from "@/lib/useDecode";
+import { useRotate } from "@/lib/useDecode";
 import { EASE } from "@/lib/motion";
 import ArcReactorStatic from "./ArcReactorStatic";
 import HeroHud from "./HeroHud";
@@ -149,8 +149,6 @@ export default function IntroDashboard() {
   }, [reduced]);
   const trackRef = useRef<HTMLElement>(null);
   const specialty = useRotate(SPECIALTIES);
-  // JARVIS boot: the at-rest name scrambles in on load.
-  const bootName = useDecode(profile.name, 42);
 
   useLayoutEffect(() => {
     const track = trackRef.current;
@@ -233,7 +231,6 @@ export default function IntroDashboard() {
         {/* Segment A — at-rest identity: name + role at headline scale, no scroll needed */}
         {!reduced && (
           <div
-            aria-hidden
             // Centred in the viewport, over the faint at-rest reactor.
             className="ia-welcome pointer-events-none absolute inset-0 z-20 flex items-center justify-center px-6"
           >
@@ -266,11 +263,11 @@ export default function IntroDashboard() {
                 // two typefaces.
                 className="font-display text-balance text-5xl font-semibold tracking-tight text-hero-gradient sm:text-6xl lg:text-7xl"
               >
-                {bootName || " "}
+                {profile.name}
               </motion.p>
               <motion.p
                 variants={{ boot: { opacity: 0, y: 10 }, on: { opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE } } }}
-                className="mono text-[11px] tracking-[0.22em] text-text sm:text-sm"
+                className="text-sm tracking-wide text-text sm:text-base"
               >
                 ML ENGINEER · 3RD-YEAR CS ·{" "}
                 <span className="whitespace-nowrap text-gold">OPEN TO INTERNSHIPS</span>
@@ -295,17 +292,15 @@ export default function IntroDashboard() {
                   <Tick to={83} delay={1500} />% PNEUMONIA RECALL
                 </li>
               </motion.ul>
-              {/* Doorway to the full scroll-driven build. This block is
-                  aria-hidden (it duplicates the real h1), so the link is kept
-                  out of the tab order — the accessible one sits beside the
-                  View Projects CTA in segment C. */}
+              {/* Project access stays visible before the scroll sequence starts. */}
               <motion.div
+                className="mt-5 flex flex-col items-center gap-4 sm:flex-row"
                 variants={{ boot: { opacity: 0, y: 8 }, on: { opacity: 1, y: 0, transition: { duration: 0.85, ease: EASE } } }}
               >
+                <a href="#projects" className="pointer-events-auto inline-flex min-h-12 items-center rounded-md border border-cyan/50 bg-cyan/15 px-6 text-base font-medium text-cyan-bright">View Projects →</a>
                 <Link
                   href="/armor/"
-                  tabIndex={-1}
-                  className="pointer-events-auto group mono mt-1 inline-flex items-center gap-2 text-[10px] tracking-[0.3em] text-gold/80 transition-colors hover:text-gold sm:text-[11px]"
+                  className="pointer-events-auto group mono inline-flex items-center gap-2 text-[10px] tracking-[0.3em] text-gold/80 transition-colors hover:text-gold sm:text-[11px]"
                 >
                   <span className="h-1.5 w-1.5 rounded-full bg-gold/80 group-hover:bg-gold" />
                   PROJECT AEGIS — WATCH THE FULL BUILD
