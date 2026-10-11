@@ -41,6 +41,7 @@ export const metadata: Metadata = {
   title: "Naram Charan — ML & Data Science Engineer",
   description:
     "JARVIS-grade portfolio of Naram Charan: production ML models, computer vision, and data engineering. From Iron Man fan to AI obsession.",
+  referrer: "strict-origin-when-cross-origin",
   metadataBase: new URL("https://naramcharan.me"),
   openGraph: {
     title: "Naram Charan — ML & Data Science Engineer",
@@ -94,7 +95,7 @@ export default function RootLayout({
       <body className="min-h-dvh scanlines selection:text-white">
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd).replace(/</g, "\\u003c") }}
         />
         <a
           href="#main"

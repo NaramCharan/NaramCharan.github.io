@@ -163,7 +163,7 @@ function SystemCard({ s }: { s: SkillSystem }) {
         {/* Evidence line — without it these chips just repeat the tech chips
             already on the project cards above. This makes the card an index
             back into the work. */}
-        <p className="mono mt-3 border-t border-line/60 pt-3 text-[10px] leading-relaxed text-text-muted">
+        <p className="mono mt-3 border-t border-line/60 pt-3 text-sm leading-relaxed text-text-muted">
           {s.evidence}
         </p>
       </div>
@@ -183,8 +183,8 @@ export default function Skills() {
       <div className="relative z-10 mx-auto max-w-6xl px-5 sm:px-6">
         <SectionHeading
           index="02"
-          title="Suit Systems"
-          subtitle="Core subsystems and their capabilities — the stack that powers every build. (Go ahead — poke the grid, grab a reticle.)"
+          title="Skills & Systems"
+          subtitle="Tools I use, with evidence from the projects where I applied them."
         />
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
           {skillSystems.map((s) => (

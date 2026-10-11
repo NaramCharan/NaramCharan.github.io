@@ -36,7 +36,7 @@ body {
   background-color: var(--color-bg);
   color: var(--color-text);
   font-family: var(--font-sans);
-  font-weight: 300;
+  font-weight: 400;
   letter-spacing: -0.01em;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -71,16 +71,16 @@ h1 { letter-spacing: -0.035em; }
     to bottom,
     transparent 0,
     transparent 2px,
-    rgba(34, 211, 238, 0.025) 3px,
+    rgba(34, 211, 238, 0.012) 3px,
     transparent 4px
   );
 }
 
 .glow-cyan {
-  text-shadow: 0 0 12px rgba(34, 211, 238, 0.55);
+  text-shadow: 0 0 8px rgba(34, 211, 238, 0.22);
 }
 .glow-gold {
-  text-shadow: 0 0 12px rgba(255, 178, 62, 0.5);
+  text-shadow: 0 0 8px rgba(255, 178, 62, 0.2);
 }
 
 /* Hero name: white-to-cyan metal with a slow light sweep. text-shadow would

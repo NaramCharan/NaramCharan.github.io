@@ -25,10 +25,8 @@ export default function HeroCanvas({
   trackId?: string;
 }) {
   const progress = useRef(0);
-  const [mounted, setMounted] = useState(false);
   const [live, setLive] = useState(true);
 
-  useEffect(() => setMounted(true), []);
 
   // R3F's default frameloop is "always": without this the whole pipeline below
   // — two mipmap Bloom passes, chromatic aberration, vignette — kept rendering
@@ -38,7 +36,6 @@ export default function HeroCanvas({
   // Park the loop when the hero track leaves the viewport; the last frame stays
   // on the canvas, and the margin wakes it before it scrolls back into view.
   useEffect(() => {
-    if (!mounted) return;
     const track = document.getElementById(trackId);
     if (!track) return;
     const io = new IntersectionObserver(
@@ -47,10 +44,9 @@ export default function HeroCanvas({
     );
     io.observe(track);
     return () => io.disconnect();
-  }, [mounted, trackId]);
+  }, [trackId]);
 
   useEffect(() => {
-    if (!mounted) return;
     const track = document.getElementById(trackId);
     if (!track) return;
 
@@ -67,9 +63,8 @@ export default function HeroCanvas({
       },
     });
     return () => st.kill();
-  }, [mounted, trackId]);
+  }, [trackId]);
 
-  if (!mounted) return null;
 
   return (
     <Canvas

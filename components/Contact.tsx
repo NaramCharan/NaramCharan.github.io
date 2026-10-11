@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import { usePrefersReducedMotion } from "@/lib/useReducedMotion";
 import { motion } from "framer-motion";
 import { contact, profile } from "@/lib/content";
 import { EASE } from "@/lib/motion";
@@ -24,29 +26,36 @@ const terminalCmd = {
   },
 };
 
-// Gmail compose (not mailto:) — mailto hands off to whatever mail client is
-// registered on the visitor's machine, which is often unset or the wrong
-// app. This opens Gmail directly in a new tab with the recipient filled in,
-// so the visitor lands straight in a ready-to-send compose window.
+// Optional shortcut for visitors who use Gmail.
 const gmailCompose = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(contact.email)}`;
 
 const links = [
-  { label: "Email", value: contact.email, href: gmailCompose, cmd: "open --mail" },
+  { label: "Email", value: contact.email, href: `mailto:${contact.email}`, cmd: "open --mail" },
   { label: "GitHub", value: "github.com/NaramCharan", href: contact.github, cmd: "git remote" },
   { label: "LinkedIn", value: "in/naramcharan", href: contact.linkedin, cmd: "connect --pro" },
 ];
 
 export default function Contact() {
+  const reduced = usePrefersReducedMotion();
+  const [copyStatus, setCopyStatus] = useState("");
+  async function copyEmail() {
+    try {
+      await navigator.clipboard.writeText(contact.email);
+      setCopyStatus("Email copied.");
+    } catch {
+      setCopyStatus("Copy unavailable. Select the email address above to copy it.");
+    }
+  }
   return (
     <section id="contact" className="mx-auto max-w-6xl scroll-mt-20 px-5 py-16 sm:px-6 sm:py-28">
       <SectionHeading
         index="05"
-        title="Establish Link"
+        title="Contact"
         subtitle="Channels are open. Reach out for internships, collaborations, or to talk shop about ML."
       />
 
       <motion.div
-        initial={{ opacity: 0, y: 22 }}
+        initial={reduced ? false : { opacity: 0, y: 22 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-60px" }}
         transition={{ duration: 0.5 }}
@@ -65,25 +74,26 @@ export default function Contact() {
         {/* Terminal body */}
         <motion.div
           className="space-y-1.5 p-5 sm:p-6"
-          initial="hidden"
+          initial={reduced ? false : "hidden"}
+          animate={reduced ? "show" : undefined}
           whileInView="show"
           viewport={{ once: true, margin: "-60px" }}
-          variants={terminalSeq}
+          variants={reduced ? undefined : terminalSeq}
         >
-          <motion.p variants={terminalCmd} className="mono text-sm text-cyan/80">
+          <motion.p variants={reduced ? undefined : terminalCmd} className="mono text-sm text-cyan/80">
             $ whoami
           </motion.p>
-          <motion.p variants={terminalLine} className="mono text-sm">
+          <motion.p variants={reduced ? undefined : terminalLine} className="mono text-sm">
             <span className="text-text">{profile.fullName}</span>
             <span className="text-text-muted"> — {profile.role}</span>
           </motion.p>
-          <motion.p variants={terminalCmd} className="mono pt-2 text-sm text-cyan/80">
+          <motion.p variants={reduced ? undefined : terminalCmd} className="mono pt-2 text-sm text-cyan/80">
             $ list --channels
           </motion.p>
 
           <ul className="divide-y divide-line/60 pt-1">
             {links.map((l) => (
-              <motion.li key={l.label} variants={terminalLine}>
+              <motion.li key={l.label} variants={reduced ? undefined : terminalLine}>
                 <a
                   href={l.href}
                   target={l.href.startsWith("http") ? "_blank" : undefined}
@@ -96,7 +106,7 @@ export default function Contact() {
                   <span className="text-sm font-medium text-text group-hover:text-cyan-bright">
                     {l.label}
                   </span>
-                  <span className="mono text-xs text-text-muted">{l.value}</span>
+                  <span className="break-all text-sm text-text-muted">{l.value}</span>
                   <span className="mono ml-auto text-xs text-cyan opacity-0 transition-opacity duration-200 group-hover:opacity-100">
                     →
                   </span>
@@ -104,9 +114,13 @@ export default function Contact() {
               </motion.li>
             ))}
           </ul>
-
+          <div className="flex flex-wrap items-center gap-3 pt-3">
+            <button type="button" onClick={copyEmail} className="min-h-11 rounded-md border border-cyan/40 px-4 text-sm text-cyan-bright">Copy email</button>
+            <a href={gmailCompose} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center text-sm text-text-muted underline decoration-dotted underline-offset-4">Open in Gmail ↗</a>
+            <span role="status" className="text-sm text-text-muted">{copyStatus}</span>
+          </div>
           <motion.p
-            variants={terminalLine}
+            variants={reduced ? undefined : terminalLine}
             className="mono flex items-center pt-3 text-sm text-cyan/80"
           >
             $ <span className="ml-1 inline-block h-4 w-2 animate-blink bg-cyan" />

@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { type Project } from "@/lib/content";
+import { useDialog } from "@/lib/useDialog";
 import { EASE } from "@/lib/motion";
 import { usePrefersReducedMotion } from "@/lib/useReducedMotion";
-import ArcReactorStatic from "./ArcReactorStatic";
+import ProjectEvidence from "./ProjectEvidence";
 
 /**
  * FRIDAY project brief — a holographic analysis panel projected from the card.
@@ -21,46 +22,10 @@ export default function ProjectHologram({
 }) {
   const reduced = usePrefersReducedMotion();
   const panelRef = useRef<HTMLDivElement>(null);
-  const triggerRef = useRef<HTMLElement | null>(null);
   const open = !!project;
 
-  // ESC to close, Tab trapped inside the panel, lock body scroll, focus the
-  // panel on open and hand focus back to the FRIDAY button that opened it —
-  // otherwise keyboard users lose their place when the dialog unmounts.
-  useEffect(() => {
-    if (!open) return;
-    triggerRef.current = document.activeElement as HTMLElement | null;
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+  useDialog(open, panelRef, onClose);
 
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        onClose();
-        return;
-      }
-      if (e.key !== "Tab" || !panelRef.current) return;
-      const focusable = panelRef.current.querySelectorAll<HTMLElement>(
-        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
-      );
-      if (focusable.length === 0) return;
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault();
-        first.focus();
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    panelRef.current?.focus();
-    return () => {
-      document.body.style.overflow = prevOverflow;
-      window.removeEventListener("keydown", onKey);
-      triggerRef.current?.focus();
-    };
-  }, [open, onClose]);
 
   return (
     <AnimatePresence>
@@ -73,8 +38,9 @@ export default function ProjectHologram({
           transition={{ duration: 0.25 }}
         >
           {/* Scrim */}
-          <button
-            aria-label="Close project brief"
+          <div
+            data-dialog-scrim
+            aria-hidden="true"
             onClick={onClose}
             className="absolute inset-0 cursor-default bg-bg/85 backdrop-blur-sm"
           />
@@ -105,7 +71,7 @@ export default function ProjectHologram({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.28, ease: EASE }}
-            className="scanlines relative z-10 flex max-h-[92vh] sm:max-h-[88vh] w-full max-w-3xl flex-col overflow-hidden rounded-xl border border-cyan/40 bg-gradient-to-br from-cyan/[0.08] via-surface/85 to-surface/90 shadow-[inset_0_0_28px_-14px_rgba(34,211,238,0.6),0_0_60px_-10px_rgba(34,211,238,0.5)] outline-none backdrop-blur-[15px]"
+            className="scanlines relative z-10 flex max-h-[92dvh] sm:max-h-[88dvh] w-full max-w-3xl flex-col overflow-hidden rounded-xl border border-cyan/40 bg-gradient-to-br from-cyan/[0.08] via-surface/85 to-surface/90 shadow-[inset_0_0_28px_-14px_rgba(34,211,238,0.6),0_0_60px_-10px_rgba(34,211,238,0.5)] outline-none backdrop-blur-[15px]"
           >
             {/* The holo-glitch skew blip used to run here every 3s. Removed:
                 on a panel you actually read, a recurring jolt is a distraction,
@@ -140,7 +106,7 @@ export default function ProjectHologram({
                     <span className="relative inline-flex h-2 w-2 rounded-full bg-cyan" />
                   </span>
                   <span className="mono text-[10px] tracking-[0.35em] text-cyan/80">
-                    FRIDAY // PROJECT ANALYSIS
+                    PROJECT DETAILS // FRIDAY
                   </span>
                 </div>
                 <div className="mb-1 flex flex-wrap items-center gap-2">
@@ -171,11 +137,25 @@ export default function ProjectHologram({
 
             {/* Body */}
             <div className="flex-1 overflow-y-auto px-6 py-5 sm:px-8">
-              <div className="flex flex-col gap-6 sm:flex-row">
-                {/* Reactor motif */}
-                <div className="mx-auto hidden h-28 w-28 shrink-0 opacity-90 sm:block">
-                  <ArcReactorStatic />
-                </div>
+              <ProjectEvidence project={project} />
+              <dl className="mt-6 space-y-5">
+                {([
+                  ["Problem", project.caseStudy.problem],
+                  ["My contribution", project.caseStudy.contribution],
+                  ["Approach", project.caseStudy.approach],
+                  ["Results", project.caseStudy.results],
+                  ["Limitations", project.caseStudy.limitations],
+                ] as const).map(([label, value]) => (
+                  <div key={label}>
+                    <dt className="text-sm font-semibold text-gold">{label}</dt>
+                    <dd className="mt-1.5 text-base leading-relaxed text-text">{value}</dd>
+                  </div>
+                ))}
+              </dl>
+              {project.id === "walmart" && <a href="/projects/walmart-feature-importance.png" target="_blank" rel="noopener noreferrer" className="mt-5 inline-flex min-h-11 items-center text-sm text-cyan-bright underline">View published feature-importance plot ↗</a>}
+              <details className="mt-6 rounded-lg border border-line p-4">
+              <summary className="cursor-pointer text-sm font-medium text-cyan-bright">Technical notes</summary>
+              <div className="mt-4 flex flex-col gap-6 sm:flex-row">
 
                 {/* Schematic readout */}
                 <dl className="min-w-0 flex-1 space-y-3">
@@ -186,7 +166,7 @@ export default function ProjectHologram({
                   {project.brief.map((row) => (
                     <div
                       key={row.label}
-                      className="grid grid-cols-[92px_1fr] gap-3 border-b border-line/50 pb-3 last:border-0"
+                      className="grid gap-2 sm:grid-cols-[110px_1fr] sm:gap-3 border-b border-line/50 pb-3 last:border-0"
                     >
                       <dt className="mono flex items-start gap-1.5 text-[10px] leading-5 tracking-[0.15em] text-gold/90">
                         <span aria-hidden className="mt-1.5 h-1 w-1 shrink-0 rotate-45 bg-cyan" />
@@ -198,6 +178,7 @@ export default function ProjectHologram({
                 </dl>
               </div>
 
+              </details>
               {/* Stack */}
               <div className="mt-5">
                 <p className="mono mb-2 text-[10px] tracking-[0.3em] text-text-dim">STACK</p>
@@ -212,7 +193,7 @@ export default function ProjectHologram({
             </div>
 
             {/* Footer */}
-            <div className="flex items-center justify-between gap-4 border-t border-line px-6 py-3.5 sm:px-8">
+            <div className="flex flex-wrap items-center justify-between gap-4 border-t border-line px-6 py-3.5 sm:px-8">
               <span className="mono text-[10px] tracking-[0.25em] text-text-dim">
                 MARK XLII · ARCHIVE
               </span>

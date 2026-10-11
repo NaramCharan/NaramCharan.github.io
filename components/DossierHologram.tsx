@@ -10,6 +10,7 @@ import {
   certifications,
   projects,
 } from "@/lib/content";
+import { useDialog } from "@/lib/useDialog";
 import { EASE } from "@/lib/motion";
 import { triggerResumeDownload } from "@/lib/resume";
 import { DOSSIER_EVENT } from "@/lib/dossier";
@@ -155,7 +156,6 @@ export default function DossierHologram() {
   const reduced = usePrefersReducedMotion();
   const [open, setOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
-  const triggerRef = useRef<HTMLElement | null>(null);
 
   const close = useCallback(() => setOpen(false), []);
 
@@ -165,42 +165,8 @@ export default function DossierHologram() {
     return () => window.removeEventListener(DOSSIER_EVENT, onOpen);
   }, []);
 
-  // ESC closes, Tab is trapped inside, body scroll locks, and focus returns to
-  // whichever control opened it.
-  useEffect(() => {
-    if (!open) return;
-    triggerRef.current = document.activeElement as HTMLElement | null;
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+  useDialog(open, panelRef, close);
 
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        close();
-        return;
-      }
-      if (e.key !== "Tab" || !panelRef.current) return;
-      const focusable = panelRef.current.querySelectorAll<HTMLElement>(
-        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
-      );
-      if (focusable.length === 0) return;
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault();
-        first.focus();
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    panelRef.current?.focus();
-    return () => {
-      document.body.style.overflow = prevOverflow;
-      window.removeEventListener("keydown", onKey);
-      triggerRef.current?.focus();
-    };
-  }, [open, close]);
 
   // "Service Record" has to dismiss the dialog before the page can scroll to
   // the section behind it.
@@ -228,8 +194,9 @@ export default function DossierHologram() {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.25 }}
         >
-          <button
-            aria-label="Close personnel file"
+          <div
+            data-dialog-scrim
+            aria-hidden="true"
             onClick={close}
             className="absolute inset-0 cursor-default bg-bg/88 backdrop-blur-sm"
           />

@@ -4,9 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && node scripts/secure-export.mjs",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "test:security": "node --test tests/secure-export.test.mjs",
+    "test:e2e": "playwright test",
+    "security:secrets": "node scripts/scan-secrets.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",
@@ -15,20 +19,21 @@
     "animejs": "^4.5.0",
     "framer-motion": "^12.42.0",
     "gsap": "^3.15.0",
-    "next": "16.2.9",
+    "next": "16.4.0",
     "postprocessing": "^6.39.2",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "three": "^0.185.1"
   },
   "devDependencies": {
+    "@playwright/test": "1.64.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/three": "^0.185.0",
     "eslint": "^9",
-    "eslint-config-next": "16.2.9",
+    "eslint-config-next": "16.4.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   },

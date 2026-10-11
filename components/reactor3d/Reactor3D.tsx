@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/immutability -- R3F useFrame updates owned Three.js material instances outside React rendering. */
 "use client";
 
 import { useMemo, useRef } from "react";
@@ -78,11 +79,8 @@ export default function Reactor3D({ progress }: Props) {
     // Dev-only: pin assembly progress via window.__pin to inspect the locked
     // pose without scrolling (preview screenshots black out when scrolled).
     // Stripped from the production static export.
-    if (process.env.NODE_ENV !== "production") {
-      const pin = (globalThis as { __pin?: number }).__pin;
-      if (typeof pin === "number") progress.current = pin;
-    }
-    const p = progress.current;
+    const pin = process.env.NODE_ENV !== "production" ? (globalThis as { __pin?: number }).__pin : undefined;
+    const p = typeof pin === "number" ? pin : progress.current;
     const t = state.clock.elapsedTime;
     const asm = win(p, 0.3, 0.72);
 

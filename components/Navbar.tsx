@@ -64,10 +64,10 @@ export default function Navbar() {
 
       {/* Always visible — the RESUME button must be reachable without scrolling. */}
       <header className="fixed inset-x-0 top-0 z-[58] border-b border-line bg-bg/70 backdrop-blur-md">
-        <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
+        <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
           <a
             href="#top"
-            className="group flex min-h-11 items-center gap-2.5"
+            className="group flex min-h-11 items-center gap-2 sm:gap-2.5"
             /* WCAG 2.5.3 Label in Name — the accessible name must contain the
                visible text ("NC"), or voice-control users can't say what they see. */
             aria-label="NC — back to top"
@@ -136,7 +136,7 @@ export default function Navbar() {
                 e.preventDefault();
                 openDossier();
               }}
-              className="inline-flex min-h-11 items-center gap-1.5 rounded-md border border-gold/60 bg-gold/15 px-4 py-1.5 mono text-[11px] tracking-[0.15em] text-gold transition-all duration-300 hover:bg-gold/25 hover:shadow-[0_0_18px_rgba(255,178,62,0.3)]"
+              className="inline-flex min-h-11 items-center gap-1.5 rounded-md border border-gold/60 bg-gold/15 px-3 sm:px-4 py-1.5 mono text-[11px] tracking-[0.15em] text-gold transition-all duration-300 hover:bg-gold/25 hover:shadow-[0_0_18px_rgba(255,178,62,0.3)]"
             >
               <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14" />

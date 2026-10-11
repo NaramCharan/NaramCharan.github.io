@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="300" viewBox="0 0 640 300" role="img" aria-labelledby="title desc">
+<title id="title">Held-out test F1 by model</title><desc id="desc">Random Forest 91.33%, XGBoost 94.74%, Neural Network 96.23%. Values from the project README, 70/30 train-test split. Bars start at zero.</desc>
+<rect width="640" height="300" rx="16" fill="#070c16"/><g font-family="system-ui,sans-serif" fill="#eaf7fb"><text x="28" y="38" font-size="20" font-weight="600">Model comparison</text><text x="28" y="62" font-size="13" fill="#a8c6d2">F1 score · held-out test set · 70/30 split</text>
+<g font-size="14"><text x="28" y="111">Random Forest</text><text x="28" y="167">XGBoost</text><text x="28" y="223">Neural Network</text></g>
+<rect x="170" y="91" width="346.05" height="27" rx="5" fill="#22d3ee"/><rect x="170" y="147" width="358.97" height="27" rx="5" fill="#ffb23e"/><rect x="170" y="203" width="364.61" height="27" rx="5" fill="#22d3ee"/>
+<g font-size="14" font-weight="600"><text x="550" y="111">91.33%</text><text x="550" y="167">94.74%</text><text x="550" y="223">96.23%</text></g><g font-size="12" fill="#a8c6d2"><text x="170" y="254">0%</text><text x="518" y="254">100%</text><text x="28" y="282">XGBoost selected for lighter inference; the neural net scored higher.</text></g></g>
+</svg>

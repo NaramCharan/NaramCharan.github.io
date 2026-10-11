@@ -45,7 +45,7 @@ export default function SectionHeading({
   return (
     <div className="mb-14">
       <motion.div
-        initial={{ opacity: 0, y: 14 }}
+        initial={reduced ? false : { opacity: 0, y: 14 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-80px" }}
         transition={{ duration: 0.6, ease: EASE }}
@@ -53,14 +53,14 @@ export default function SectionHeading({
       >
         <span className="mono text-xs tracking-[0.3em] text-gold">{index}</span>
         <motion.span
-          initial={{ scaleX: 0 }}
+          initial={reduced ? false : { scaleX: 0 }}
           whileInView={{ scaleX: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, ease: EASE, delay: 0.1 }}
           className="h-px w-16 origin-left bg-gradient-to-r from-cyan to-transparent"
         />
         <span className="mono text-[10px] tracking-[0.4em] text-text-dim">
-          SYSTEM MODULE
+          PORTFOLIO
         </span>
       </motion.div>
       <h2
@@ -77,7 +77,7 @@ export default function SectionHeading({
               <span
                 key={i}
                 className="sh-char inline-block will-change-transform"
-                style={{ opacity: 0, transformStyle: "preserve-3d" }}
+                style={{ transformStyle: "preserve-3d" }}
               >
                 {ch}
               </span>
@@ -87,7 +87,7 @@ export default function SectionHeading({
       </h2>
       {subtitle && (
         <motion.p
-          initial={{ opacity: 0 }}
+          initial={reduced ? false : { opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.7, ease: EASE, delay: 0.18 }}
