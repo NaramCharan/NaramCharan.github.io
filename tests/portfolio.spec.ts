@@ -16,6 +16,10 @@ test('desktop project access, dialogs, clipboard and browser CSP', async ({ page
   expect(bounds).not.toBeNull();
   expect(bounds!.y + bounds!.height).toBeLessThanOrEqual(1000);
   await opening.click();
+  // After checking the animated hero, exercise navigation without its continuous
+  // WebGL rendering on CI's virtual GPU. Armor model/CSP coverage stays separate.
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(page.locator('#top canvas')).toHaveCount(0);
   await expect(page.locator('#projects article h3').first()).toHaveText('RSNA Pneumonia Detection');
   await expect(page.locator('#projects article h3').nth(1)).toHaveText('Walmart Store Weekly Sales Forecasting');
   const trigger = page.getByRole('button', { name: 'Project Details — RSNA Pneumonia Detection', exact: true });
