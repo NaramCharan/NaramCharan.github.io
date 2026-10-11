@@ -5,7 +5,6 @@ import { projects, type Project } from "@/lib/content";
 import SectionHeading from "./SectionHeading";
 import ProjectHologram from "./ProjectHologram";
 import ProjectEvidence from "./ProjectEvidence";
-import MiniDemo from "./MiniDemo";
 
 const priority = ["rsna", "walmart", "churn", "transformer", "scraper"];
 const ordered = [...projects].sort((a, b) => {
@@ -18,6 +17,7 @@ function ProjectCard({ p, onBrief }: { p: Project; onBrief: (p: Project) => void
     <article className={`project-card rounded-2xl border border-line bg-surface/70 p-5 transition-colors hover:border-cyan/50 sm:p-7 ${p.featured ? "md:col-span-2" : ""}`}>
       <div className={p.featured ? "grid items-start gap-7 md:grid-cols-2" : "flex h-full flex-col"}>
         <div className="flex h-full flex-col">
+          {!p.featured && <div className="mb-6"><ProjectEvidence project={p} /></div>}
           <div className="mb-4 flex flex-wrap items-center gap-2">
             <span className="mono text-xs text-cyan">{p.code}</span>
             <span className="text-xs text-text-muted">{p.domain}</span>
@@ -33,8 +33,8 @@ function ProjectCard({ p, onBrief }: { p: Project; onBrief: (p: Project) => void
           <div className="mt-5 flex flex-wrap gap-2">
             {p.tech.map(tech => <span key={tech} className="rounded-md bg-cyan/10 px-2.5 py-1 text-xs text-cyan-bright">{tech}</span>)}
           </div>
-          {!p.featured && <div className="mt-5"><ProjectEvidence project={p} />{!p.evidence && <MiniDemo id={p.id} />}</div>}
-          <div className="mt-6 flex flex-wrap gap-3 border-t border-line pt-5">
+          <div className="mt-6 flex-1" aria-hidden="true" />
+          <div className="mt-auto flex flex-wrap gap-3 border-t border-line pt-5">
             {p.demo && <a href={p.demo} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center rounded-md border border-gold/50 bg-gold/10 px-4 text-sm font-medium text-gold">Live Demo ↗</a>}
             <button onClick={() => onBrief(p)} className="inline-flex min-h-11 items-center rounded-md border border-cyan/40 px-4 text-sm text-cyan-bright" aria-label={`Project Details — ${p.name}`}>Project Details <span aria-hidden className="ml-2 mono text-[11px] text-cyan/70">FRIDAY</span></button>
             <a href={p.repo} target="_blank" rel="noopener noreferrer" aria-label={`${p.name} — view code on GitHub`} className="inline-flex min-h-11 items-center text-sm text-text-muted hover:text-cyan">View Code ↗</a>

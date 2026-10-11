@@ -167,12 +167,12 @@ export const projects: Project[] = [
       "limitations": "Results describe the historical validation window, not unseen future retail conditions. Recursive forecasts can accumulate error; no live forecasting service is linked."
     },
     evidence: {
-      "src": "/projects/walmart-model-comparison.png",
+      "src": "/projects/walmart-validation.svg",
       "alt": "Published validation comparison of Random Forest, XGBoost and LightGBM for Walmart sales forecasting",
-      "caption": "Published model comparison · historical validation set",
+      "caption": "Published validation R² · bars start at zero",
       "source": "https://github.com/NaramCharan/Walmart-Store-Weekly-Sales-Forecasting",
-      "width": 1348,
-      "height": 298
+      "width": 640,
+      "height": 360
     },
     code: "MK-03",
     name: "Walmart Store Weekly Sales Forecasting",
@@ -206,9 +206,9 @@ export const projects: Project[] = [
       "limitations": "Single dataset and split; no external hospital validation. About 17% of positive cases are missed and 25% of flags are false positives. Research demonstration, not a clinically validated diagnostic tool."
     },
     evidence: {
-      "src": "/projects/rsna-interface.webp",
-      "alt": "RSNA pneumonia demonstration interface with a study browser and analysis viewport",
-      "caption": "Actual application interface · captured 11 October 2026",
+      "src": "/projects/rsna-interface.png",
+      "alt": "RSNA application displaying the real radiograph for stored study Case_1",
+      "caption": "Live application · stored study shown · 12 October 2026",
       "source": "https://github.com/NaramCharan/RSNA-Pneumonia-Detection",
       "width": 1440,
       "height": 1000

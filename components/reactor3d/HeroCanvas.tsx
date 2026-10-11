@@ -3,9 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { Environment, Lightformer } from "@react-three/drei";
-import { EffectComposer, Bloom, Vignette, ChromaticAberration } from "@react-three/postprocessing";
+import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
 import { BlendFunction } from "postprocessing";
-import * as THREE from "three";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Reactor3D from "./Reactor3D";
@@ -28,19 +27,14 @@ export default function HeroCanvas({
   const [live, setLive] = useState(true);
 
 
-  // R3F's default frameloop is "always": without this the whole pipeline below
-  // — two mipmap Bloom passes, chromatic aberration, vignette — kept rendering
-  // every frame for the entire page, long after the hero had scrolled away.
-  // That was the site-wide scroll stutter: a 4-pass post-processing chain
-  // burning GPU on an off-screen canvas while you read Projects and Contact.
-  // Park the loop when the hero track leaves the viewport; the last frame stays
-  // on the canvas, and the margin wakes it before it scrolls back into view.
+  // Stop rendering as soon as the hero leaves the viewport. Reading the
+  // project sections should not keep a WebGL/postprocessing loop running.
   useEffect(() => {
     const track = document.getElementById(trackId);
     if (!track) return;
     const io = new IntersectionObserver(
       ([entry]) => setLive(entry.isIntersecting),
-      { rootMargin: "250px 0px" }
+      { rootMargin: "0px" }
     );
     io.observe(track);
     return () => io.disconnect();
@@ -71,10 +65,8 @@ export default function HeroCanvas({
       className="!absolute inset-0"
       camera={{ position: [0, 0, 9.2], fov: 42 }}
       frameloop={live ? "always" : "never"}
-      // 2× DPR on a retina panel is 4× the pixels through four post passes.
-      // 1.5 is the last step where the bloom still reads clean, and it cuts
-      // roughly 44% of the fragment work on exactly the machines that struggled.
-      dpr={[1, 1.5]}
+      // Cap pixel density to limit GPU work on retina displays.
+      dpr={[1, 1.25]}
       // The scene renders into the EffectComposer's own target, so context
       // MSAA never applies here — it only cost memory.
       gl={{ antialias: false, alpha: true, powerPreference: "high-performance" }}
@@ -102,28 +94,14 @@ export default function HeroCanvas({
       </group>
 
       <EffectComposer multisampling={0}>
-        {/* Two-pass bloom: a tight hot core plus a much wider, softer bleed —
-            the huge soft halo is what reads as "real light in a dark room"
-            instead of a clean CG glow. */}
+        {/* A single restrained bloom keeps the reactor's light without
+            the extra wide halo and chromatic aberration passes. */}
         <Bloom
           intensity={0.55}
           luminanceThreshold={0.82}
           luminanceSmoothing={0.25}
           mipmapBlur
           radius={0.5}
-        />
-        <Bloom
-          intensity={0.9}
-          luminanceThreshold={0.4}
-          luminanceSmoothing={0.9}
-          mipmapBlur
-          radius={0.9}
-        />
-        <ChromaticAberration
-          offset={new THREE.Vector2(0.0006, 0.0006)}
-          radialModulation={true}
-          modulationOffset={0.4}
-          blendFunction={BlendFunction.NORMAL}
         />
         <Vignette eskil={false} offset={0.28} darkness={0.62} blendFunction={BlendFunction.NORMAL} />
       </EffectComposer>

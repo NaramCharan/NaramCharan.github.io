@@ -123,7 +123,7 @@ export default function Contact() {
             variants={reduced ? undefined : terminalLine}
             className="mono flex items-center pt-3 text-sm text-cyan/80"
           >
-            $ <span className="ml-1 inline-block h-4 w-2 animate-blink bg-cyan" />
+            $ <span className="ml-1 inline-block h-4 w-2 bg-cyan/60" />
           </motion.p>
         </motion.div>
       </motion.div>

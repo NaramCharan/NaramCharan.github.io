@@ -71,7 +71,7 @@ export default function ProjectHologram({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.28, ease: EASE }}
-            className="scanlines relative z-10 flex max-h-[92dvh] sm:max-h-[88dvh] w-full max-w-3xl flex-col overflow-hidden rounded-xl border border-cyan/40 bg-gradient-to-br from-cyan/[0.08] via-surface/85 to-surface/90 shadow-[inset_0_0_28px_-14px_rgba(34,211,238,0.6),0_0_60px_-10px_rgba(34,211,238,0.5)] outline-none backdrop-blur-[15px]"
+            className="relative z-10 flex max-h-[92dvh] sm:max-h-[88dvh] w-full max-w-3xl flex-col overflow-hidden rounded-xl border border-cyan/40 bg-gradient-to-br from-cyan/[0.08] via-surface/85 to-surface/90 shadow-2xl outline-none backdrop-blur-[15px]"
           >
             {/* The holo-glitch skew blip used to run here every 3s. Removed:
                 on a panel you actually read, a recurring jolt is a distraction,
@@ -102,7 +102,6 @@ export default function ProjectHologram({
               <div className="min-w-0">
                 <div className="mb-2 flex items-center gap-2">
                   <span className="relative flex h-2 w-2">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan opacity-60" />
                     <span className="relative inline-flex h-2 w-2 rounded-full bg-cyan" />
                   </span>
                   <span className="mono text-[10px] tracking-[0.35em] text-cyan/80">
@@ -152,7 +151,10 @@ export default function ProjectHologram({
                   </div>
                 ))}
               </dl>
-              {project.id === "walmart" && <a href="/projects/walmart-feature-importance.png" target="_blank" rel="noopener noreferrer" className="mt-5 inline-flex min-h-11 items-center text-sm text-cyan-bright underline">View published feature-importance plot ↗</a>}
+              {project.id === "walmart" && <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2">
+                <a href="/projects/walmart-model-comparison.png" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center text-sm text-cyan-bright underline">Original results table ↗</a>
+                <a href="/projects/walmart-feature-importance.png" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center text-sm text-cyan-bright underline">Feature-importance plot ↗</a>
+              </div>}
               <details className="mt-6 rounded-lg border border-line p-4">
               <summary className="cursor-pointer text-sm font-medium text-cyan-bright">Technical notes</summary>
               <div className="mt-4 flex flex-col gap-6 sm:flex-row">

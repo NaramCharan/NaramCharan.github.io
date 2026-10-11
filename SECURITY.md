@@ -29,9 +29,9 @@ Live Pages responses did not include `Content-Security-Policy`, `X-Frame-Options
 
 Next.js server `headers()` configuration does not run on GitHub Pages static hosting. Complete framing/MIME header protection requires a hosting or proxy layer that can set response headers. At that layer, add `Content-Security-Policy: frame-ancestors 'none'` (alongside the document CSP), `X-Frame-Options: DENY`, and `X-Content-Type-Options: nosniff`. No hosting migration or DNS change was made. This portfolio has no authenticated actions or payment flows, which limits the impact of framing but does not eliminate the missing protection.
 
-### Linked application availability
+### Linked application repaired on 12 October 2026
 
-The linked RSNA demo interface loaded, but selecting its first stored case and pressing **Show Image** displayed “Could not load the image for this study.” The portfolio screenshot truthfully shows the initial interface, not an invented inference result. The separate application needs its image endpoint checked. No uploads, inference requests or destructive probes were performed.
+The RSNA frontend discarded numeric IDs from `/samples` and substituted list positions, requesting `/image/0` for the first stored case. A separate [frontend fix](https://github.com/NaramCharan/RSNA-Pneumonia-Detection/pull/1) preserves safe integer/string IDs and rejects malformed ones. Regression tests cover image and prediction URL identity. The frontend patch was deployed on the existing Azure model/runtime image; Chromium verified that `Case_1` and `Case_42` display their real radiographs through `/image/1` and `/image/42`, with no page errors. No uploads or inference requests were performed. The separate backend, model service and Azure account still have not had a full security audit.
 
 ## Validation
 

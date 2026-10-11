@@ -99,8 +99,8 @@ h1 { letter-spacing: -0.035em; }
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  filter: drop-shadow(0 0 14px rgba(34, 211, 238, 0.45));
-  animation: name-sheen 7s ease-in-out 1.5s infinite;
+  filter: drop-shadow(0 0 8px rgba(34, 211, 238, 0.2));
+  /* Identity stays still; the reactor carries the hero motion. */
 }
 @keyframes name-sheen {
   0%, 55% { background-position: 100% 0; }

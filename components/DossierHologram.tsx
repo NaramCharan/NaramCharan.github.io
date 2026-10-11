@@ -228,7 +228,7 @@ export default function DossierHologram() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.45, ease: EASE }}
-            className="scanlines relative z-10 flex max-h-[94dvh] w-full max-w-4xl flex-col overflow-hidden rounded-xl border border-cyan/40 bg-gradient-to-br from-cyan/[0.07] via-surface/90 to-surface/95 shadow-[inset_0_0_30px_-14px_rgba(34,211,238,0.6),0_0_70px_-18px_rgba(34,211,238,0.5)] outline-none backdrop-blur-[15px]"
+            className="relative z-10 flex max-h-[94dvh] w-full max-w-4xl flex-col overflow-hidden rounded-xl border border-cyan/40 bg-gradient-to-br from-cyan/[0.07] via-surface/90 to-surface/95 shadow-2xl outline-none backdrop-blur-[15px]"
           >
             {/* Glitch layer on an inner wrapper so it can't fight the
                 entrance/exit transform. */}
@@ -259,9 +259,6 @@ export default function DossierHologram() {
               <div className="flex items-center justify-between gap-3 border-b border-line px-5 py-3 sm:px-7 sm:py-3.5">
                 <div className="flex min-w-0 items-center gap-2">
                   <span className="relative flex h-2 w-2 shrink-0">
-                    {!reduced && (
-                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan opacity-60" />
-                    )}
                     <span className="relative inline-flex h-2 w-2 rounded-full bg-cyan" />
                   </span>
                   <span className="mono truncate text-[9px] tracking-[0.3em] text-cyan/80 sm:text-[10px] sm:tracking-[0.35em]">
