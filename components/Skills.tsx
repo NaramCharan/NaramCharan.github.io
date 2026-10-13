@@ -1,6 +1,8 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import { skillSystems, type SkillSystem } from "@/lib/content";
+import HudPanel from "./HudPanel";
 import SectionHeading from "./SectionHeading";
 import { SystemIcon } from "./SystemIcons";
 
@@ -10,10 +12,12 @@ function SystemEmblem({ icon }: { icon: SkillSystem["icon"] }) {
   return (
     <div className="relative h-16 w-16 shrink-0 sm:h-24 sm:w-24">
       <div className="absolute inset-0">
-        {/* Static reticle keeps the skill text as the focus. */}
+        {/* The dashed ring spins up on reveal and turns only while hovered,
+            so at rest the skill text stays the focus. */}
         <svg viewBox="0 0 96 96" className="absolute inset-0 h-full w-full">
           <circle cx="48" cy="48" r="44" fill="none" stroke="#0f1828" strokeWidth="2" />
           <circle
+            className="hud-ring"
             cx="48"
             cy="48"
             r="44"
@@ -22,7 +26,7 @@ function SystemEmblem({ icon }: { icon: SkillSystem["icon"] }) {
             strokeWidth="2"
             strokeLinecap="round"
             strokeDasharray="14 10"
-            style={{ transformOrigin: "center", filter: "drop-shadow(0 0 4px rgba(34,211,238,0.5))" }}
+            style={{ filter: "drop-shadow(0 0 4px rgba(34,211,238,0.5))" }}
           />
           {/* corner ticks */}
           {[0, 90, 180, 270].map((deg) => (
@@ -46,29 +50,35 @@ function SystemEmblem({ icon }: { icon: SkillSystem["icon"] }) {
   );
 }
 
-function SystemCard({ s }: { s: SkillSystem }) {
+function SystemCard({ s, index }: { s: SkillSystem; index: number }) {
   return (
-    <div
-      className="flex gap-4 rounded-xl border border-line bg-surface/50 p-5 backdrop-blur-[2px] transition-colors duration-300 hover:border-cyan/50 sm:gap-5 sm:p-7"
+    <HudPanel
+      delay={(index % 2) * 110}
+      className="flex gap-4 rounded-xl border border-line bg-surface/50 p-5 sm:gap-5 sm:p-7"
     >
       <div data-emblem>
         <SystemEmblem icon={s.icon} />
       </div>
       <div className="min-w-0">
-        <div data-tag className="mb-1 flex items-center gap-2">
+        <div data-tag className="mb-1 flex items-center justify-between gap-3">
           <span className="mono text-[10px] tracking-[0.25em] text-gold">
-            ◢ {s.tag}
+            ◢ SYS-0{index + 1} · {s.tag}
+          </span>
+          <span className="mono inline-flex items-center gap-1.5 text-[9px] tracking-[0.25em] text-cyan/80">
+            <span aria-hidden className="hud-led" />
+            ONLINE
           </span>
         </div>
         <h3 data-heading className="text-lg font-semibold text-text">
           {s.system}
         </h3>
         <ul className="mt-3 flex flex-wrap gap-2">
-          {s.items.map((it) => (
+          {s.items.map((it, i) => (
             <li
               key={it}
               data-chip
-              className="mono rounded bg-cyan/8 px-2 py-1 text-[11px] text-cyan/90 ring-1 ring-inset ring-cyan/20 transition-colors duration-200 hover:bg-cyan/15 hover:text-cyan-bright"
+              style={{ "--i": i } as CSSProperties}
+              className="hud-chip mono rounded bg-cyan/8 px-2 py-1 text-[11px] text-cyan/90 ring-1 ring-inset ring-cyan/20 transition-colors duration-200 hover:bg-cyan/15 hover:text-cyan-bright"
             >
               {it}
             </li>
@@ -81,7 +91,7 @@ function SystemCard({ s }: { s: SkillSystem }) {
           {s.evidence}
         </p>
       </div>
-    </div>
+    </HudPanel>
   );
 }
 
@@ -98,8 +108,8 @@ export default function Skills() {
           subtitle="Tools I use, with evidence from the projects where I applied them."
         />
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-          {skillSystems.map((s) => (
-            <SystemCard key={s.system} s={s} />
+          {skillSystems.map((s, i) => (
+            <SystemCard key={s.system} s={s} index={i} />
           ))}
         </div>
       </div>
