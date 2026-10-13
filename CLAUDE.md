@@ -228,3 +228,8 @@ Build passes clean; verified in preview at desktop + mobile.
 - Reading sections use static headings and skill emblems; remove page-wide scanlines, magnetic Resume hover and recurring status pings. Hero keeps one bloom pass and a 1.25 DPR cap, with rendering suspended offscreen.
 - All five projects share a labelled preview frame. Walmart chart displays exact published validation metrics; original results remain linked. Learning/data pipelines are explicitly architecture illustrations.
 - RSNA preview now shows a real stored radiograph after its numeric-ID frontend fix, deployed separately through RSNA PR #1. Evidence provenance is in public/projects/SOURCES.md.
+
+## Holographic panels — 13 October 2026
+- At the user's request ("a little futuristic", projects + skills), cards are wrapped in `components/HudPanel.tsx` with `.hud-*` styles in `app/globals.css`: HUD corner brackets (gold top-right), cyan→gold top edge, faint inner grid, pointer-following glow (CSS vars `--mx/--my`, no re-render), a ONE-SHOT scan sweep on first view (replays per hover), staggered reveal and chip stream-in. Nothing loops at rest; reduced motion disables reveal/sweep/spin.
+- Reveal is applied only after mount and only to panels still below the fold (`data-reveal="pending"` → `"done"`), so SSR/no-JS content is always visible.
+- Project cards: mono `MK-0x —— DOMAIN` row + static status LED (LIVE if demo, ONGOING for the learning project, else COMPLETE), PRIMARY METRIC readout, diamond bullets, tech chips; previews get reticle corners + faint scanlines (`.hud-reticle`). Skill cards: `SYS-0x · TAG` + ONLINE LED; emblem ring spins up on reveal, turns only while hovered. Card text, h3 order and button labels are unchanged (the Playwright spec depends on them).
