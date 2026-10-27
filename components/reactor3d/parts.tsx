@@ -7,28 +7,20 @@ import * as THREE from "three";
 export function useReactorMaterials() {
   return useMemo(() => {
     const darkMetal = new THREE.MeshPhysicalMaterial({
-      color: "#0c1a22",
+      color: "#08131a",
       metalness: 0.95,
-      roughness: 0.34,
+      roughness: 0.35,
       clearcoat: 0.4,
       clearcoatRoughness: 0.25,
     });
     const brightMetal = new THREE.MeshPhysicalMaterial({
-      color: "#173a44",
+      color: "#18404c",
       metalness: 1,
       roughness: 0.2,
       clearcoat: 0.6,
       clearcoatRoughness: 0.15,
     });
-    const copper = new THREE.MeshPhysicalMaterial({
-      color: "#c9772e",
-      metalness: 1,
-      roughness: 0.36,
-      emissive: "#3a1e08",
-      emissiveIntensity: 0.4,
-      clearcoat: 0.3,
-      clearcoatRoughness: 0.4,
-    });
+    // Glowing cyan frame / glass accents
     const cyanGlass = new THREE.MeshStandardMaterial({
       color: "#22d3ee",
       emissive: "#22d3ee",
@@ -38,52 +30,70 @@ export function useReactorMaterials() {
       transparent: true,
       opacity: 0.92,
     });
+    // Orange/amber copper border for the coil blocks
+    const copper = new THREE.MeshPhysicalMaterial({
+      color: "#ea7a24",
+      metalness: 0.85,
+      roughness: 0.3,
+      emissive: "#8a3a05",
+      emissiveIntensity: 0.45,
+      clearcoat: 0.4,
+      clearcoatRoughness: 0.3,
+    });
+    // Dark oxidized bronze/copper interior of each coil
+    const copperDark = new THREE.MeshStandardMaterial({
+      color: "#2e1507",
+      metalness: 0.9,
+      roughness: 0.5,
+      emissive: "#190a03",
+      emissiveIntensity: 0.2,
+    });
+    // Intense emissive white-cyan for the central upward triangle
     const coreGlow = new THREE.MeshStandardMaterial({
       color: "#eafdff",
       emissive: "#bdf3fb",
-      emissiveIntensity: 2.6,
+      emissiveIntensity: 2.8,
       metalness: 0,
       roughness: 0.1,
     });
-    // Machined steel for the concentric rings + core tooth-ring — reads as a
-    // milled part catching the rim light, distinct from the near-black darkMetal.
+    // Machined steel for the concentric rings & gear collar
     const steel = new THREE.MeshPhysicalMaterial({
-      color: "#2a4a55",
+      color: "#284b57",
       metalness: 1,
       roughness: 0.24,
       clearcoat: 0.5,
       clearcoatRoughness: 0.2,
     });
-    // The cold white-blue plasma spilling from between the coils — the real
-    // prop's light source. Kept separate from cyanGlass so the gap-glow can
-    // stay luminous at idle while decorative cyan bits calm down.
+    // The cold white-blue plasma spilling from between the coils & divider slots
     const slotGlow = new THREE.MeshStandardMaterial({
       color: "#eafdff",
-      emissive: "#a8ecf9",
-      emissiveIntensity: 0.5,
+      emissive: "#22d3ee",
+      emissiveIntensity: 2.0,
       metalness: 0,
-      roughness: 0.4,
+      roughness: 0.2,
     });
-    // Darker enamelled copper for the wire-wrap bands across each coil.
-    const copperDark = new THREE.MeshStandardMaterial({
-      color: "#7a4517",
-      metalness: 1,
-      roughness: 0.45,
-    });
-    return { darkMetal, brightMetal, copper, cyanGlass, coreGlow, steel, slotGlow, copperDark };
+    return {
+      darkMetal,
+      brightMetal,
+      copper,
+      copperDark,
+      cyanGlass,
+      coreGlow,
+      steel,
+      slotGlow,
+    };
   }, []);
 }
 
 /**
- * A single radial coil segment — a trapezoid (narrow inner edge, wide outer
- * edge) extruded in z, so ten of them fan around the ring like the copper
- * windings of a real arc reactor. Length runs along local +Y (outward).
+ * A single radial coil trapezoid (narrow inner edge, wide outer edge) extruded in z.
+ * Length runs along local +Y (outward).
  */
 export function useTrapezoidGeometry(
-  innerW = 0.3,
-  outerW = 0.46,
-  length = 0.62,
-  depth = 0.16
+  innerW = 0.34,
+  outerW = 0.54,
+  length = 0.56,
+  depth = 0.14
 ) {
   return useMemo(() => {
     const h = length / 2;
@@ -96,8 +106,8 @@ export function useTrapezoidGeometry(
     const geo = new THREE.ExtrudeGeometry(shape, {
       depth,
       bevelEnabled: true,
-      bevelThickness: 0.03,
-      bevelSize: 0.03,
+      bevelThickness: 0.02,
+      bevelSize: 0.02,
       bevelSegments: 1,
     });
     geo.center();
@@ -105,24 +115,79 @@ export function useTrapezoidGeometry(
   }, [innerW, outerW, length, depth]);
 }
 
-/* Downward-pointing triangular prism (the Mark XLII "new element" core rotor). */
-export function useTriangleGeometry(radius = 1.15, depth = 0.26) {
+/**
+ * Downward-pointing hollow triangular frame (equilateral inverted triangle).
+ * Apex points straight DOWN at -Y; top edge is horizontal between top-left and top-right.
+ * Created using THREE.Shape with a hole so the center is completely open/hollow.
+ */
+export function useHollowTriangleGeometry(
+  outerRadius = 1.25,
+  innerRadius = 1.02,
+  depth = 0.16
+) {
   return useMemo(() => {
     const shape = new THREE.Shape();
-    // pointing down: apex at bottom
-    for (let i = 0; i < 3; i++) {
-      const a = -Math.PI / 2 + (i * 2 * Math.PI) / 3 + Math.PI; // rotate so apex down
+    // Angles for inverted equilateral triangle:
+    // Top-Right: 30 deg (pi/6)
+    // Top-Left: 150 deg (5pi/6)
+    // Bottom: 270 deg (3pi/2)
+    // CCW order: 30 -> 150 -> 270 -> 30
+    const angles = [Math.PI / 6, (5 * Math.PI) / 6, (3 * Math.PI) / 2];
+
+    angles.forEach((a, i) => {
+      const x = Math.cos(a) * outerRadius;
+      const y = Math.sin(a) * outerRadius;
+      if (i === 0) shape.moveTo(x, y);
+      else shape.lineTo(x, y);
+    });
+    shape.closePath();
+
+    // Inner hole in CW (opposite) order: 30 -> 270 -> 150 -> 30
+    const holeAngles = [Math.PI / 6, (3 * Math.PI) / 2, (5 * Math.PI) / 6];
+    const hole = new THREE.Path();
+    holeAngles.forEach((a, i) => {
+      const x = Math.cos(a) * innerRadius;
+      const y = Math.sin(a) * innerRadius;
+      if (i === 0) hole.moveTo(x, y);
+      else hole.lineTo(x, y);
+    });
+    hole.closePath();
+    shape.holes.push(hole);
+
+    const geo = new THREE.ExtrudeGeometry(shape, {
+      depth,
+      bevelEnabled: true,
+      bevelThickness: 0.02,
+      bevelSize: 0.02,
+      bevelSegments: 2,
+    });
+    geo.center();
+    return geo;
+  }, [outerRadius, innerRadius, depth]);
+}
+
+/**
+ * Upward-pointing solid triangular prism (the glowing core triangle).
+ * Apex points straight UP at +Y (90 deg / pi/2); base is horizontal at -Y.
+ */
+export function useUpwardTriangleGeometry(radius = 0.44, depth = 0.12) {
+  return useMemo(() => {
+    const shape = new THREE.Shape();
+    // CCW order: 90 deg -> 210 deg -> 330 deg
+    const angles = [Math.PI / 2, (7 * Math.PI) / 6, (11 * Math.PI) / 6];
+    angles.forEach((a, i) => {
       const x = Math.cos(a) * radius;
       const y = Math.sin(a) * radius;
       if (i === 0) shape.moveTo(x, y);
       else shape.lineTo(x, y);
-    }
+    });
     shape.closePath();
+
     const geo = new THREE.ExtrudeGeometry(shape, {
       depth,
       bevelEnabled: true,
-      bevelThickness: 0.05,
-      bevelSize: 0.05,
+      bevelThickness: 0.02,
+      bevelSize: 0.02,
       bevelSegments: 2,
     });
     geo.center();

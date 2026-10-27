@@ -1,57 +1,96 @@
 "use client";
 
 /**
- * Iron Man 3 "Mark XLII" arc reactor — the triangular new-element core.
+ * Iron Man Arc Reactor (Avengers / Mark VI triangular core design).
  * Pure SVG so it stays crisp at any size, themeable, and reduced-motion safe
  * (the global reduced-motion rule freezes the CSS spins/pulse automatically).
  *
- * Geometry mirrors the WebGL hero rig: 10 radial copper coil wedges in a
- * recessed well with lit slots between them, concentric machined rings, a
- * dominant downward triangle rotor with corner nodes, and a 16-tooth collar
- * around the bright upward-triangle core.
+ * Visual structure:
+ * - Outer machined bezel + rotating dashed tick ring
+ * - Recessed well with concentric circular boundary tracks
+ * - 8 copper coil blocks with orange borders & radial split grooves,
+ *   interleaved with 5 glowing cyan radial dividers
+ * - Inverted hollow triangular frame (truss) with 3 circular corner nodes
+ *   and nested HUD wireframe triangles
+ * - Center 20-tooth gear collar
+ * - Central glowing UPWARD-pointing triangle core with nested luminous layers
  */
 
-// deterministic polar helper (no Math.random — hydration-safe)
+// Helper to convert math polar angles (deg) to SVG canvas coordinates
+// 0 deg = +X (3 o'clock), 90 deg = +Y (12 o'clock, straight up)
 const pt = (deg: number, r: number): [number, number] => {
-  const a = (deg * Math.PI) / 180;
-  return [+(100 + Math.cos(a) * r).toFixed(2), +(100 + Math.sin(a) * r).toFixed(2)];
+  const rad = (deg * Math.PI) / 180;
+  return [
+    +(100 + Math.cos(rad) * r).toFixed(2),
+    +(100 - Math.sin(rad) * r).toFixed(2),
+  ];
 };
 
 export default function ArcReactorStatic() {
-  // Downward triangle, circumradius 62 → centroid (100,100).
-  const outer = "100,162 46.3,69 153.7,69";
-  const nest1 = "100,150 56.7,75 143.3,75";
-  const nest2 = "100,138 67,81 133,81";
-  const corners: [number, number][] = [
-    [100, 162],
-    [46.3, 69],
-    [153.7, 69],
-  ];
-  // Upward triangle core, circumradius 22.
-  const core = "100,78 81,111 119,111";
-  const coreInner = "100,88 89.6,106 110.4,106";
+  // Inverted Equilateral Triangle (Frame):
+  // Top-Right: 30 deg, Top-Left: 150 deg, Bottom: 270 deg (circumradius 58)
+  // Base is horizontal at y = 71; apex points straight down at y = 158
+  const triOuter = "49.77,71 150.23,71 100,158";
+  const triNest1 = "63.83,79.17 136.17,79.17 100,141.76";
+  const triNest2 = "70.87,83.25 129.13,83.25 100,133.64";
 
-  // 10 copper coil wedges (narrow end inward), matching the 3D rig.
-  const coilWedges = Array.from({ length: 10 }, (_, i) => {
-    const a = i * 36 - 90;
-    const [x1, y1] = pt(a - 6.3, 50);
-    const [x2, y2] = pt(a + 6.3, 50);
-    const [x3, y3] = pt(a + 7.8, 74);
-    const [x4, y4] = pt(a - 7.8, 74);
-    return `${x1},${y1} ${x2},${y2} ${x3},${y3} ${x4},${y4}`;
+  // 3 Corner circular nodes at triangle vertices
+  const corners: [number, number][] = [
+    [49.77, 71], // Top-Left
+    [150.23, 71], // Top-Right
+    [100, 158], // Bottom
+  ];
+
+  // Upward Equilateral Triangle Core (pointing UP):
+  // Apex at 90 deg (y = 79); base is horizontal at y = 110.5
+  const coreOuter = "100,79 81.8,110.5 118.2,110.5";
+  const coreMid = "100,86 87.9,107 112.1,107";
+  const coreInner = "100,93 93.9,103.5 106.1,103.5";
+
+  // 8 Copper Coil Blocks grouped in 3 sectors:
+  // Top sector: 2 coils (116 deg, 64 deg)
+  // Left sector: 3 coils (172 deg, 210 deg, 248 deg)
+  // Right sector: 3 coils (292 deg, 330 deg, 10 deg)
+  const coilSpecs = [
+    { deg: 116, w: 10.5 },
+    { deg: 64, w: 10.5 },
+    { deg: 172, w: 8.5 },
+    { deg: 210, w: 9.5 },
+    { deg: 248, w: 8.5 },
+    { deg: 292, w: 8.5 },
+    { deg: 330, w: 9.5 },
+    { deg: 10, w: 8.5 },
+  ];
+
+  const coilPolygons = coilSpecs.map(({ deg, w }) => {
+    const [x1, y1] = pt(deg - w, 50);
+    const [x2, y2] = pt(deg + w, 50);
+    const [x3, y3] = pt(deg + w * 1.15, 73);
+    const [x4, y4] = pt(deg - w * 1.15, 73);
+    const [sx1, sy1] = pt(deg, 51);
+    const [sx2, sy2] = pt(deg, 72);
+    return {
+      pts: `${x1},${y1} ${x2},${y2} ${x3},${y3} ${x4},${y4}`,
+      split: { sx1, sy1, sx2, sy2 },
+    };
   });
-  // lit slots between the wedges (offset half a pitch)
-  const slots = Array.from({ length: 10 }, (_, i) => {
-    const a = i * 36 - 72;
-    const [x1, y1] = pt(a, 52);
-    const [x2, y2] = pt(a, 72);
+
+  // 5 Glowing Cyan Radial Dividers
+  // Top: 90 deg (12 o'clock)
+  // Left: 190 deg, 230 deg
+  // Right: 310 deg, 350 deg
+  const dividerAngles = [90, 190, 230, 310, 350];
+  const dividers = dividerAngles.map((deg) => {
+    const [x1, y1] = pt(deg, 49);
+    const [x2, y2] = pt(deg, 74);
     return { x1, y1, x2, y2 };
   });
-  // 16-tooth collar around the core
-  const teeth = Array.from({ length: 16 }, (_, i) => {
-    const a = i * 22.5;
-    const [x, y] = pt(a, 30);
-    return { x, y, rot: +(a + 90).toFixed(2) };
+
+  // 20-Tooth Gear Collar around the core (radius 29)
+  const teeth = Array.from({ length: 20 }, (_, i) => {
+    const deg = (i / 20) * 360;
+    const [x, y] = pt(deg, 29);
+    return { x, y, rot: +(90 - deg).toFixed(2) };
   });
 
   return (
@@ -61,14 +100,15 @@ export default function ArcReactorStatic() {
     >
       <svg viewBox="0 0 200 200" className="h-full w-full max-h-[460px]">
         <defs>
-          <radialGradient id="ar-core" cx="50%" cy="42%" r="60%">
-            <stop offset="0%" stopColor="#f4feff" />
-            <stop offset="35%" stopColor="#bdf3fb" />
-            <stop offset="72%" stopColor="#22d3ee" />
-            <stop offset="100%" stopColor="#0e7d8f" />
+          <radialGradient id="ar-core" cx="50%" cy="45%" r="60%">
+            <stop offset="0%" stopColor="#ffffff" />
+            <stop offset="25%" stopColor="#bdf3fb" />
+            <stop offset="65%" stopColor="#22d3ee" />
+            <stop offset="100%" stopColor="#087082" />
           </radialGradient>
           <radialGradient id="ar-glow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#22d3ee" stopOpacity="0.5" />
+            <stop offset="0%" stopColor="#22d3ee" stopOpacity="0.55" />
+            <stop offset="70%" stopColor="#22d3ee" stopOpacity="0.15" />
             <stop offset="100%" stopColor="#22d3ee" stopOpacity="0" />
           </radialGradient>
           <linearGradient id="ar-metal" x1="0" y1="0" x2="0" y2="1">
@@ -78,111 +118,246 @@ export default function ArcReactorStatic() {
           </linearGradient>
         </defs>
 
-        {/* Ambient glow */}
+        {/* 1 — Ambient Cyan Halo */}
         <circle cx="100" cy="100" r="98" fill="url(#ar-glow)" />
 
-        {/* Outer bezel */}
-        <circle cx="100" cy="100" r="90" fill="#06121a" stroke="#0f3d47" strokeWidth="3" />
-        <circle cx="100" cy="100" r="90" fill="none" stroke="#22d3ee" strokeOpacity="0.45" strokeWidth="1" />
+        {/* 2 — Outer Machined Bezel */}
+        <circle
+          cx="100"
+          cy="100"
+          r="90"
+          fill="#06121a"
+          stroke="#0f3d47"
+          strokeWidth="3"
+        />
+        <circle
+          cx="100"
+          cy="100"
+          r="90"
+          fill="none"
+          stroke="#22d3ee"
+          strokeOpacity="0.5"
+          strokeWidth="1.2"
+        />
 
-        {/* Rotating outer tick ring */}
-        <g className="animate-spin-slow" style={{ transformOrigin: "100px 100px" }}>
+        {/* 3 — Rotating Dashed Tick Ring */}
+        <g
+          className="animate-spin-slow"
+          style={{ transformOrigin: "100px 100px" }}
+        >
           <circle
             cx="100"
             cy="100"
             r="83"
             fill="none"
             stroke="#22d3ee"
-            strokeOpacity="0.35"
-            strokeWidth="1"
-            strokeDasharray="2 6"
+            strokeOpacity="0.45"
+            strokeWidth="1.2"
+            strokeDasharray="2.5 5.5"
           />
         </g>
 
-        {/* Recessed coil well */}
-        <circle cx="100" cy="100" r="76" fill="#08161f" stroke="#155e6b" strokeWidth="2" />
-        <circle cx="100" cy="100" r="72" fill="#060f16" />
+        {/* 4 — Recessed Coil Well & Inner Boundary Tracks */}
+        <circle
+          cx="100"
+          cy="100"
+          r="76"
+          fill="#08161f"
+          stroke="#155e6b"
+          strokeWidth="2"
+        />
+        <circle cx="100" cy="100" r="74" fill="#050e14" />
+        <circle
+          cx="100"
+          cy="100"
+          r="49"
+          fill="none"
+          stroke="#22d3ee"
+          strokeOpacity="0.5"
+          strokeWidth="1.2"
+        />
 
-        {/* Coil band — copper wedges + lit slots, slowly counter-rotating */}
-        <g className="animate-spin-rev" style={{ transformOrigin: "100px 100px" }}>
-          {slots.map((s, i) => (
-            <line
-              key={`s${i}`}
-              x1={s.x1}
-              y1={s.y1}
-              x2={s.x2}
-              y2={s.y2}
-              stroke="#22d3ee"
-              strokeOpacity="0.8"
-              strokeWidth="2.4"
-              strokeLinecap="round"
-            />
-          ))}
-          {coilWedges.map((pts, i) => (
-            <g key={`w${i}`}>
-              <polygon points={pts} fill="#241408" stroke="#c9772e" strokeOpacity="0.8" strokeWidth="1.4" strokeLinejoin="round" />
-              {/* cyan winding highlight down each wedge face */}
+        {/* 5 — 8 Copper Coil Blocks with Orange Borders & Split Grooves */}
+        <g>
+          {coilPolygons.map(({ pts, split }, i) => (
+            <g key={`coil-${i}`}>
+              <polygon
+                points={pts}
+                fill="#241408"
+                stroke="#ea7a24"
+                strokeOpacity="0.9"
+                strokeWidth="1.5"
+                strokeLinejoin="round"
+              />
+              {/* Center radial split groove */}
               <line
-                x1={pt(i * 36 - 90, 53)[0]}
-                y1={pt(i * 36 - 90, 53)[1]}
-                x2={pt(i * 36 - 90, 71)[0]}
-                y2={pt(i * 36 - 90, 71)[1]}
-                stroke="#22d3ee"
-                strokeOpacity="0.55"
-                strokeWidth="1.4"
-                strokeLinecap="round"
+                x1={split.sx1}
+                y1={split.sy1}
+                x2={split.sx2}
+                y2={split.sy2}
+                stroke="#06121a"
+                strokeWidth="1.2"
               />
             </g>
           ))}
         </g>
 
-        {/* Concentric machined rings between coils and rotor */}
-        <circle cx="100" cy="100" r="46" fill="none" stroke="#2a4a55" strokeWidth="1.6" />
-        <circle cx="100" cy="100" r="42" fill="none" stroke="#7de7f5" strokeOpacity="0.3" strokeWidth="1" />
+        {/* 6 — 5 Glowing Cyan Radial Dividers */}
+        <g>
+          {dividers.map((d, i) => (
+            <line
+              key={`div-${i}`}
+              x1={d.x1}
+              y1={d.y1}
+              x2={d.x2}
+              y2={d.y2}
+              stroke="#22d3ee"
+              strokeOpacity="0.9"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+            />
+          ))}
+        </g>
 
-        {/* Dominant downward triangle (beveled metal) */}
-        <polygon points={outer} fill="#08202a" stroke="url(#ar-metal)" strokeWidth="6" strokeLinejoin="round" />
-        <polygon points={outer} fill="none" stroke="#7de7f5" strokeOpacity="0.85" strokeWidth="1.5" strokeLinejoin="round" />
+        {/* 7 — Concentric Machined Rings inside Coils */}
+        <circle
+          cx="100"
+          cy="100"
+          r="45"
+          fill="none"
+          stroke="#2a4a55"
+          strokeWidth="1.5"
+        />
+        <circle
+          cx="100"
+          cy="100"
+          r="41"
+          fill="none"
+          stroke="#7de7f5"
+          strokeOpacity="0.35"
+          strokeWidth="1"
+        />
 
-        {/* Nested triangle bevels */}
-        <polygon points={nest1} fill="none" stroke="#22d3ee" strokeOpacity="0.55" strokeWidth="2" strokeLinejoin="round" />
-        <polygon points={nest2} fill="none" stroke="#22d3ee" strokeOpacity="0.4" strokeWidth="1.5" strokeLinejoin="round" />
+        {/* 8 — Inverted Hollow Triangular Frame (Truss Structure) */}
+        {/* Main beveled metal truss */}
+        <polygon
+          points={triOuter}
+          fill="none"
+          stroke="url(#ar-metal)"
+          strokeWidth="5"
+          strokeLinejoin="round"
+        />
+        <polygon
+          points={triOuter}
+          fill="none"
+          stroke="#22d3ee"
+          strokeOpacity="0.85"
+          strokeWidth="1.6"
+          strokeLinejoin="round"
+        />
 
-        {/* Corner nodes */}
+        {/* Nested HUD wireframe inverted triangles */}
+        <polygon
+          points={triNest1}
+          fill="none"
+          stroke="#22d3ee"
+          strokeOpacity="0.55"
+          strokeWidth="1.4"
+          strokeLinejoin="round"
+        />
+        <polygon
+          points={triNest2}
+          fill="none"
+          stroke="#22d3ee"
+          strokeOpacity="0.38"
+          strokeWidth="1"
+          strokeLinejoin="round"
+        />
+
+        {/* 9 — 3 Circular Corner Nodes at Triangle Vertices */}
         {corners.map(([x, y], i) => (
-          <g key={i}>
-            <circle cx={x} cy={y} r="9" fill="#06121a" stroke="#22d3ee" strokeWidth="2" />
-            <circle cx={x} cy={y} r="4" fill="#22d3ee" />
+          <g key={`corner-${i}`}>
+            <circle
+              cx={x}
+              cy={y}
+              r="9.5"
+              fill="#06121a"
+              stroke="#22d3ee"
+              strokeWidth="2.2"
+            />
+            <circle
+              cx={x}
+              cy={y}
+              r="5.5"
+              fill="#0d2a36"
+              stroke="#155e6b"
+              strokeWidth="1"
+            />
+            <circle cx={x} cy={y} r="2.8" fill="#22d3ee" />
+            <circle cx={x} cy={y} r="1.2" fill="#eafdff" />
           </g>
         ))}
 
-        {/* 16-tooth collar + hub ring around the core (matches the 3D rig) */}
-        {teeth.map((t, i) => (
-          <rect
-            key={i}
-            x={+(t.x - 2.2).toFixed(2)}
-            y={+(t.y - 3).toFixed(2)}
-            width="4.4"
-            height="6"
-            fill="#2a4a55"
+        {/* 10 — 20-Tooth Gear Collar around the Core */}
+        <g
+          className="animate-spin-rev"
+          style={{
+            transformOrigin: "100px 100px",
+            animationDuration: "35s",
+          }}
+        >
+          {teeth.map((t, i) => (
+            <rect
+              key={`tooth-${i}`}
+              x={+(t.x - 1.8).toFixed(2)}
+              y={+(t.y - 2.8).toFixed(2)}
+              width="3.6"
+              height="5.6"
+              fill="#2a4a55"
+              stroke="#7de7f5"
+              strokeOpacity="0.4"
+              strokeWidth="0.6"
+              transform={`rotate(${t.rot} ${t.x} ${t.y})`}
+            />
+          ))}
+          <circle
+            cx="100"
+            cy="100"
+            r="27"
+            fill="none"
             stroke="#7de7f5"
-            strokeOpacity="0.35"
-            strokeWidth="0.6"
-            transform={`rotate(${t.rot} ${t.x} ${t.y})`}
+            strokeOpacity="0.65"
+            strokeWidth="1.5"
           />
-        ))}
-        <circle cx="100" cy="100" r="26" fill="none" stroke="#7de7f5" strokeOpacity="0.6" strokeWidth="1.6" />
+        </g>
 
-        {/* Central core glow + upward-triangle emblem */}
-        <circle cx="100" cy="100" r="34" fill="url(#ar-glow)" />
+        {/* 11 — Central Glowing Upward-Pointing Triangle Core */}
+        <circle cx="100" cy="100" r="32" fill="url(#ar-glow)" />
+
         <polygon
-          points={core}
+          points={coreOuter}
           fill="url(#ar-core)"
+          stroke="#22d3ee"
+          strokeWidth="1.5"
+          strokeLinejoin="round"
           className="animate-pulse-core"
           style={{ transformOrigin: "100px 100px" }}
         />
-        <polygon points={coreInner} fill="none" stroke="#eafdff" strokeOpacity="0.9" strokeWidth="1.5" strokeLinejoin="round" />
-        <polygon points="100,94 95,104 105,104" fill="#eafdff" />
+        <polygon
+          points={coreMid}
+          fill="none"
+          stroke="#eafdff"
+          strokeOpacity="0.9"
+          strokeWidth="1.5"
+          strokeLinejoin="round"
+        />
+        <polygon
+          points={coreInner}
+          fill="#eafdff"
+          stroke="#ffffff"
+          strokeWidth="0.8"
+          strokeLinejoin="round"
+        />
       </svg>
     </div>
   );

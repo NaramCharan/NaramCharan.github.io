@@ -14,11 +14,9 @@ content is REAL, sourced from naramcharan.me.
 - **Next.js 16 (App Router, Turbopack)** + TypeScript + **Tailwind CSS v4**
   (CSS-first: tokens live in `@theme` in `app/globals.css`, no tailwind.config).
 - **Three.js / React-Three-Fiber + drei + postprocessing (Bloom)** power the hero's
-  3D reactor; **GSAP + ScrollTrigger** scrubs both the WebGL progress and the DOM
-  overlays; **Framer Motion** for the rest of the UI. (The old "no Three.js, SVG
-  only" rule was lifted when the user asked for a true 3D cinematic hero matching the
-  EDITH reference video.) The FRIDAY modal reactor + reduced-motion hero fallback are
-  still the pure-SVG `ArcReactorStatic`.
+  3D arc reactor (Avengers / Mark VI triangular core design); **GSAP + ScrollTrigger** scrubs both the WebGL progress and the DOM
+  overlays; **Framer Motion** for the rest of the UI. The reduced-motion hero fallback and shimmer are
+  the matching pure-SVG `ArcReactorStatic`.
 - Static-export friendly. `npm run dev` → http://localhost:3000. `npm run build` must pass.
 - AGENTS.md rule: this is a modified Next.js — check `node_modules/next/dist/docs/` before
   using unfamiliar APIs.
