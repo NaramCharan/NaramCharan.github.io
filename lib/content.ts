@@ -361,8 +361,25 @@ export const education = {
   cgpa: "8.98 / 10.0",
 };
 
-// `url` = the holder's real credential verification link.
-export const certifications = [
+type Certification = {
+  name: string;
+  issuer: string;
+  note: string;
+  url: string;
+  description?: string;
+  kind?: "certificate";
+};
+
+// Link to a supplied certificate or the holder's real verification URL.
+export const certifications: Certification[] = [
+  {
+    name: "Hugging Face LLM Course — Fundamentals of LLMs",
+    issuer: "Hugging Face",
+    note: "Chapter 1 completed · 18 Oct 2026",
+    description: "Course focus: transformer internals, pretrained transformers, and fine-tuning.",
+    url: "/certificates/hugging-face-llm-fundamentals.webp",
+    kind: "certificate",
+  },
   {
     name: "Deep Learning Specialization",
     issuer: "DeepLearning.AI",

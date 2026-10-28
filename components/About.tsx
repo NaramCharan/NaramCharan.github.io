@@ -138,7 +138,7 @@ export default function About() {
                     href={c.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    aria-label={`${c.name} — view credential (opens in new tab)`}
+                    aria-label={`${c.name} — view ${c.kind === "certificate" ? "certificate" : "credential"} (opens in new tab)`}
                     className="group block rounded-lg border border-line bg-surface/40 px-4 py-3 transition-all duration-300 hover:border-cyan/60 hover:bg-surface-2/60 hover:shadow-[0_0_22px_-8px_rgba(34,211,238,0.4)]"
                   >
                     <div className="flex items-start justify-between gap-3">
@@ -159,8 +159,9 @@ export default function About() {
                       </svg>
                     </div>
                     <p className="text-xs text-text-muted">{c.issuer}</p>
+                    {c.description && <p className="mt-2 text-xs leading-relaxed text-text-muted">{c.description}</p>}
                     <p className="mono mt-1 text-[10px] tracking-wide text-cyan/80">
-                      {c.note} · VERIFY →
+                      {c.note} · {c.kind === "certificate" ? "VIEW CERTIFICATE" : "VERIFY"} →
                     </p>
                   </a>
                 </div>

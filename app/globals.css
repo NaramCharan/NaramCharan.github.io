@@ -372,7 +372,7 @@ svg[data-assembling="true"] .ar-part {
   box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.08), 0 18px 60px -30px rgba(34, 211, 238, 0.45);
 }
 .hud-panel:hover > .hud-corner--tl::after { opacity: 1; }
-/* one-shot scan sweep: on first view, and again per hover */
+/* one-shot scan sweep: on first view, and again on pointer entry */
 .hud-panel::after {
   content: "";
   position: absolute;
@@ -388,7 +388,7 @@ svg[data-assembling="true"] .ar-part {
 .hud-panel[data-reveal="done"]::after {
   animation: hud-scan 1.5s cubic-bezier(0.45, 0, 0.2, 1) var(--reveal-delay, 0ms) 1 both;
 }
-.hud-panel[data-reveal="done"]:hover::after { animation: hud-scan-hover 1.1s cubic-bezier(0.45, 0, 0.2, 1) 1 both; }
+.hud-panel[data-reveal="done"][data-pointer="inside"]::after { animation: hud-scan-hover 1.1s cubic-bezier(0.45, 0, 0.2, 1) 1 both; }
 @keyframes hud-scan {
   0% { transform: translateY(-110%); opacity: 1; }
   85% { opacity: 1; }
