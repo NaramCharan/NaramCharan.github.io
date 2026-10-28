@@ -47,25 +47,10 @@ export default function HudPanel({
       el.style.setProperty("--mx", `${e.clientX - r.left}px`);
       el.style.setProperty("--my", `${e.clientY - r.top}px`);
     };
-    // Keep the scan sweep on pointer entry. CSS :hover is still used for the
-    // calm border/glow treatment, but it must not own the animation: leaving
-    // a card should never restart or trigger a scan.
-    const enter = (e: PointerEvent) => {
-      if (e.pointerType && e.pointerType !== "mouse") return;
-      el.dataset.pointer = "inside";
-    };
-    const leave = (e: PointerEvent) => {
-      if (e.pointerType && e.pointerType !== "mouse") return;
-      delete el.dataset.pointer;
-    };
     el.addEventListener("pointermove", move);
-    el.addEventListener("pointerenter", enter);
-    el.addEventListener("pointerleave", leave);
     return () => {
       io.disconnect();
       el.removeEventListener("pointermove", move);
-      el.removeEventListener("pointerenter", enter);
-      el.removeEventListener("pointerleave", leave);
     };
   }, []);
 
