@@ -100,7 +100,7 @@ export const ML_TREE: { root: string; branches: [TreeBranch, TreeBranch] } = {
               id: "mlp",
               label: "Neural Net (MLP)",
               projectIds: ["churn"],
-              note: "4-hidden-layer PyTorch net — hit 98.76%, rejected on compute cost.",
+              note: "4-hidden-layer PyTorch baseline — 98.76% on the test set, with no validation split.",
             },
           ],
         },

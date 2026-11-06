@@ -122,15 +122,15 @@ export const projects: Project[] = [
     id: "churn",
     caseStudy: {
       "problem": "Identify customers likely to leave an e-commerce service.",
-      "contribution": "Built preprocessing pipelines, tuned tree models, trained a PyTorch baseline, and compared model quality against compute cost.",
+      "contribution": "Built preprocessing pipelines, tuned tree models, trained a PyTorch baseline, and compared the models on a held-out test set.",
       "approach": "70/30 train-test split; preprocessing fit on training data only. Optuna tuning uses 10-fold stratified CV scored on recall.",
-      "results": "XGBoost: 98.28% accuracy, 94.74% F1, 91.58% recall on the held-out test set. The neural network reached 98.76% accuracy, but XGBoost was selected for lighter inference.",
-      "limitations": "One dataset and a single held-out split. XGBoost misses more churners than the neural network; threshold tuning remains future work. No live service is linked."
+      "results": "XGBoost: 98.28% accuracy, 94.74% F1, 91.58% recall on the held-out test set. A PyTorch baseline reached 98.76% accuracy, but it was scored on the test set with no validation split, so that is not a fair comparison.",
+      "limitations": "One dataset and a single held-out split. Threshold tuning remains future work. No live service is linked."
     },
     evidence: {
       "src": "/projects/churn-model-comparison.svg",
       "alt": "Held-out test F1 comparison: Random Forest 91.33%, XGBoost 94.74%, neural network 96.23%",
-      "caption": "Test-set F1 · values from the project README",
+      "caption": "Test-set F1 · values from the project README · neural network had no validation split",
       "source": "https://github.com/NaramCharan/ecommerce-customer-churn-prediction",
       "width": 640,
       "height": 300
@@ -140,12 +140,12 @@ export const projects: Project[] = [
     domain: "Classification",
     metric: "98.28% acc",
     description:
-      "Four-model churn system — Logistic Regression, Random Forest, XGBoost and a 4-hidden-layer PyTorch network. The deep net tops the leaderboard; XGBoost is selected anyway, because a half-point of accuracy doesn't buy a GPU bill.",
+      "Four-model churn system — Logistic Regression, Random Forest, XGBoost and a 4-hidden-layer PyTorch network. XGBoost is selected after Optuna tuning scored on recall; the PyTorch baseline had no validation split, so its higher test number is not a fair comparison.",
     tech: ["XGBoost", "PyTorch", "Scikit-Learn", "Optuna"],
     repo: "https://github.com/NaramCharan/ecommerce-customer-churn-prediction",
     wins: [
       "98.28% accuracy · 94.74% F1 on the held-out test set",
-      "PyTorch net hit 98.76% — rejected: marginal gain, heavy compute",
+      "PyTorch baseline: 98.76%, but no validation split, so not a fair comparison",
       "Optuna over 10-fold Stratified CV, scored on recall",
     ],
     brief: [
@@ -180,7 +180,7 @@ export const projects: Project[] = [
     domain: "Time-Series Forecasting",
     metric: "0.9555 validation R²",
     description:
-      "Global multi-series forecasting across ~3,000 Walmart store-department pairs — one model learns them all, driven by a custom recursive walk-forward engine that feeds each week's predictions back in as the next week's lag features.",
+      "Global multi-series forecasting across 3,331 Walmart store-department pairs — one model learns them all, driven by a custom recursive walk-forward engine that feeds each week's predictions back in as the next week's lag features.",
     tech: ["Python", "LightGBM", "XGBoost", "Scikit-Learn", "Pandas"],
     repo: "https://github.com/NaramCharan/Walmart-Store-Weekly-Sales-Forecasting",
     wins: [
@@ -189,7 +189,7 @@ export const projects: Project[] = [
       "Caught & fixed temporal leakage masquerading as R² ≈ 0.98",
     ],
     brief: [
-      { label: "OBJECTIVE", value: "Forecast weekly sales for 45 stores × 99 departments — one global model across ~3,000 series" },
+      { label: "OBJECTIVE", value: "Forecast weekly sales for 45 stores × 99 departments — one global model across 3,331 series" },
       { label: "METHOD", value: "Custom recursive walk-forward engine: each week's predictions are injected back into the data to build the next week's lag & rolling features — real deployment conditions, simulated" },
       { label: "INTEGRITY", value: "Split by date first, features engineered on train only; rolling stats via shift(1) so the current week never leaks. An inflated R² ≈ 0.98 was diagnosed as leakage and killed" },
       { label: "MODELS", value: "LightGBM vs XGBoost vs Random Forest under identical leakage-free conditions; a 5-layer neural baseline tested and rejected on compute" },
@@ -240,7 +240,7 @@ export const projects: Project[] = [
       { label: "IMBALANCE", value: "~70% negative, so the first unweighted model learned to say 'no'. Weighted CrossEntropyLoss reprices a missed pneumonia; scheduler and early stopping both watch F1, not accuracy" },
       { label: "MODELS", value: "DenseNet-121 vs EfficientNet-B2 vs ResNet-34, two-stage transfer learning under one protocol. ResNet-34 fine-tuned won on F1 (0.77 val) — DenseNet hit higher recall but at 0.67 precision" },
       { label: "RESULT", value: "83% recall · 75% precision · 0.79 F1 · 86% accuracy on the pneumonia class, against a 68% always-negative baseline" },
-      { label: "SHIPPED", value: "FastAPI serves the React bundle and the API from one origin — no CORS, no second service. Priced the Postgres layer at $25.68/mo to store a 4KB CSV, deleted it, cut hosting 84%" },
+      { label: "SHIPPED", value: "FastAPI serves the React bundle and the API from one origin — no CORS, no second service. Priced the Postgres layer at $25.68/mo to store a 4KB CSV, deleted it; hosting now runs at $5.06/mo" },
       { label: "BUILD SPLIT", value: "The ML pipeline — dataset handling, transforms, training, evaluation, model selection — and the FastAPI backend are mine. The React frontend and the Azure deployment were built by an AI coding agent working to my instructions: I directed it, followed every step, and came out understanding the deployment path rather than just owning the output" },
     ],
   },
@@ -317,7 +317,7 @@ export const skillSystems: SkillSystem[] = [
       "Scikit-Learn",
       "Optuna",
     ],
-    evidence: "MK-03 & MK-02 — LightGBM at 95.55% R² across ~3,000 series; XGBoost at 98.28% accuracy, tuned with Optuna.",
+    evidence: "MK-03 & MK-02 — LightGBM at 95.55% R² across 3,331 series; XGBoost at 98.28% accuracy, tuned with Optuna.",
   },
   {
     system: "Data Intelligence",
