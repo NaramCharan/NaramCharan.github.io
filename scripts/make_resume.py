@@ -173,7 +173,7 @@ S.append(project(
         "architecture change in the project combined.",
         "Prevented patient-level leakage by splitting on unique patient IDs rather than rows, "
         "evaluating the test set once; deployed as one Docker container on Azure serving a React "
-        "interface and REST API, cutting hosting cost 84%.",
+        "interface and REST API, at $5.06/month after removing a $25.68/month database.",
     ]))
 
 S.append(project(
@@ -183,7 +183,7 @@ S.append(project(
     None,
     [
         "Engineered a global multi-series forecasting pipeline predicting weekly sales across "
-        "~3,000 store-department combinations, achieving <b>95.55% validation R&sup2;</b> with an "
+        "3,331 store-department combinations, achieving <b>95.55% validation R&sup2;</b> with an "
         "optimized LightGBM regressor.",
         "Built a custom recursive walk-forward inference system from scratch to project rolling and "
         "lag features over future validation horizons where actual sales are missing.",
@@ -198,8 +198,8 @@ S.append(project(
     None,
     [
         "Tuned tree classifiers with Optuna over 10-fold Stratified Cross-Validation, achieving "
-        "<b>98.28% accuracy and 94.74% F1</b> on the final selected XGBoost production model; a "
-        "4-hidden-layer PyTorch network scored 98.76% and was rejected as not worth the compute.",
+        "<b>98.28% accuracy and 94.74% F1</b> on the selected XGBoost model, with "
+        "91.58% recall on a 30% held-out test set.",
     ]))
 
 S.append(project(
