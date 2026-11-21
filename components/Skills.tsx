@@ -1,10 +1,11 @@
 "use client";
 
-import type { CSSProperties } from "react";
+import { useRef, type CSSProperties } from "react";
 import { skillSystems, type SkillSystem } from "@/lib/content";
 import HudPanel from "./HudPanel";
 import SectionHeading from "./SectionHeading";
 import { SystemIcon } from "./SystemIcons";
+import { SkillsBackdrop, SkillsDive, useSkillsWorld } from "./SkillsWorld";
 
 function SystemEmblem({ icon }: { icon: SkillSystem["icon"] }) {
   // 96px of emblem left the text column only 161px at 375px — every skill chip
@@ -54,7 +55,7 @@ function SystemCard({ s, index }: { s: SkillSystem; index: number }) {
   return (
     <HudPanel
       delay={(index % 2) * 110}
-      className="flex gap-4 rounded-xl border border-line bg-surface/50 p-5 sm:gap-5 sm:p-7"
+      className="flex gap-4 rounded-xl border border-line bg-surface/65 p-5 backdrop-blur-[3px] sm:gap-5 sm:p-7"
     >
       <div data-emblem>
         <SystemEmblem icon={s.icon} />
@@ -96,23 +97,31 @@ function SystemCard({ s, index }: { s: SkillSystem; index: number }) {
 }
 
 export default function Skills() {
+  const worldRef = useRef<HTMLDivElement>(null);
+  const diveRef = useRef<HTMLDivElement>(null);
+  const world = useSkillsWorld(worldRef, diveRef);
+
+  // The world wrapper spans the dive AND the cards, so the starfield backdrop
+  // stays behind both. `id="skills"` sits on the cards themselves: the nav link
+  // jumps straight to the content, scrolling down from Projects takes the dive.
   return (
-    <section
-      id="skills"
-      className="relative scroll-mt-20 border-y border-line bg-bg-2/40 py-16 sm:py-28"
-    >
-      <div className="relative z-10 mx-auto max-w-6xl px-5 sm:px-6">
-        <SectionHeading
-          index="02"
-          title="Skills & Systems"
-          subtitle="Tools I use, with evidence from the projects where I applied them."
-        />
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-          {skillSystems.map((s, i) => (
-            <SystemCard key={s.system} s={s} index={i} />
-          ))}
+    <div ref={worldRef} className="sw-world relative">
+      <SkillsBackdrop world={world} />
+      <SkillsDive world={world} diveRef={diveRef} />
+      <section id="skills" className="sw-content relative z-10 scroll-mt-20 pb-24 pt-10 sm:pb-36 sm:pt-16">
+        <div className="mx-auto max-w-6xl px-5 sm:px-6">
+          <SectionHeading
+            index="02"
+            title="Skills & Systems"
+            subtitle="Tools I use, with evidence from the projects where I applied them."
+          />
+          <div className="sw-grid grid grid-cols-1 gap-5 md:grid-cols-2">
+            {skillSystems.map((s, i) => (
+              <SystemCard key={s.system} s={s} index={i} />
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
   );
 }

@@ -7,6 +7,7 @@ import { useDialog } from "@/lib/useDialog";
 import { EASE } from "@/lib/motion";
 import { usePrefersReducedMotion } from "@/lib/useReducedMotion";
 import ProjectEvidence from "./ProjectEvidence";
+import ArcReactorStatic from "./ArcReactorStatic";
 
 /**
  * FRIDAY project brief — a holographic analysis panel projected from the card.
@@ -99,7 +100,19 @@ export default function ProjectHologram({
 
             {/* Header */}
             <div className="flex items-start justify-between gap-4 border-b border-line px-6 py-4 sm:px-8">
-              <div className="min-w-0">
+              {/* Reactor motif — the brief's signature mark. It used to sit in
+                  the body (desktop only) and was lost when the body became a
+                  case study; it lives in the header now, on every screen size. */}
+              <div
+                aria-hidden
+                className="relative mt-1 h-12 w-12 shrink-0 sm:h-16 sm:w-16"
+              >
+                <div className="absolute inset-[-30%] rounded-full bg-[radial-gradient(circle,rgba(34,211,238,0.22),transparent_65%)]" />
+                <div className="relative h-full w-full">
+                  <ArcReactorStatic />
+                </div>
+              </div>
+              <div className="min-w-0 flex-1">
                 <div className="mb-2 flex items-center gap-2">
                   <span className="relative flex h-2 w-2">
                     <span className="relative inline-flex h-2 w-2 rounded-full bg-cyan" />
