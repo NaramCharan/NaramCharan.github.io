@@ -1,11 +1,11 @@
 "use client";
 
-import { useRef, type CSSProperties } from "react";
+import type { CSSProperties } from "react";
 import { skillSystems, type SkillSystem } from "@/lib/content";
 import HudPanel from "./HudPanel";
 import SectionHeading from "./SectionHeading";
 import { SystemIcon } from "./SystemIcons";
-import { SkillsBackdrop, SkillsDive, useSkillsWorld } from "./SkillsWorld";
+import SkillsBackdrop from "./SkillsWorld";
 
 function SystemEmblem({ icon }: { icon: SkillSystem["icon"] }) {
   // 96px of emblem left the text column only 161px at 375px — every skill chip
@@ -97,18 +97,11 @@ function SystemCard({ s, index }: { s: SkillSystem; index: number }) {
 }
 
 export default function Skills() {
-  const worldRef = useRef<HTMLDivElement>(null);
-  const diveRef = useRef<HTMLDivElement>(null);
-  const world = useSkillsWorld(worldRef, diveRef);
-
-  // The world wrapper spans the dive AND the cards, so the starfield backdrop
-  // stays behind both. `id="skills"` sits on the cards themselves: the nav link
-  // jumps straight to the content, scrolling down from Projects takes the dive.
+  // The world wrapper holds the sticky star-field backdrop behind the cards.
   return (
-    <div ref={worldRef} className="sw-world relative">
-      <SkillsBackdrop world={world} />
-      <SkillsDive world={world} diveRef={diveRef} />
-      <section id="skills" className="sw-content relative z-10 scroll-mt-20 pb-24 pt-10 sm:pb-36 sm:pt-16">
+    <div className="sw-world relative">
+      <SkillsBackdrop />
+      <section id="skills" className="relative z-10 scroll-mt-20 pb-24 pt-24 sm:pb-36 sm:pt-36">
         <div className="mx-auto max-w-6xl px-5 sm:px-6">
           <SectionHeading
             index="02"
