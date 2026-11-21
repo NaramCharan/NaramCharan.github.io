@@ -162,13 +162,12 @@ content is REAL, sourced from naramcharan.me.
 - `Skills.tsx` + `SystemIcons.tsx` — "Suit Systems" with **icon emblems, NO numbers**
   (brain=Deep Learning, circuit=ML, database=Data, terminal=Engineering) in rotating reticles.
   **Skills world (2026-11, user request: "like diving into a new world"):** `SkillsWorld.tsx`
-  wraps Skills in `.sw-world` — a sticky full-viewport canvas starfield + perspective grid
-  floor behind the whole section, preceded by `SkillsDive` (150vh track, sticky stage):
-  HUD rings fly past the camera and a DEPTH readout counts (the "Enter the Systems"
-  title zoom was removed at the user's request, 2026-11 — don't re-add it), then the cards rise over the dive's tail (`-30vh` overlap) and surface from
-  depth (translateZ reveal). Stars are scroll-LINKED (position = f(scroll), damped rAF that
-  stops when caught up) — no idle loop. `id="skills"` is on the cards' `<section>` so the
-  nav link skips the dive. Reduced motion: `.sw-dive{display:none}`, one static frame.
+  (`SkillsBackdrop`) puts a sticky full-viewport canvas starfield + perspective grid floor
+  behind the cards (`.sw-world`); cards surface from depth (translateZ reveal). Stars are
+  scroll-LINKED (position = f(scroll), damped rAF that stops when caught up) — no idle loop.
+  The pinned "dive" portal (rings, warp, "Enter the Systems" title) that preceded the cards
+  was REMOVED at the user's request (2026-11) — don't re-add it. Reduced motion: one
+  static frame, floor still.
 - `About.tsx` — origin story + education GPAs + cert timeline. Row 1: story paragraphs
   beside `OriginHelmet` (→ `armor/OriginHelmetCanvas`, next/dynamic): the Mark III helmet
   assembles on scroll — its own figure is the ScrollTrigger (bottom 92% → center 45%: starts only once fully in view), so
