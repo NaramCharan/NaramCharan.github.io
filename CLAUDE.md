@@ -139,7 +139,8 @@ content is REAL, sourced from naramcharan.me.
   screenshot canvas scaling → do a fresh `preview_start` + `preview_resize`.
 - `ArcReactorStatic.tsx` — the same **Iron Man 3 (Mark XLII) reactor**, non-animated
   SVG. Used by `ProjectHologram` (FRIDAY brief modal). It sits in the brief's HEADER beside the
-  title on every screen size (restored 2026-11 after #49 dropped it — the user missed it).
+  title on every screen size (restored 2026-11 after #49 dropped it — the user missed it),
+  and the whole reactor revolves (12s turn, `animate-spin-slow`) as it used to.
 - `ProjectHologram.tsx` — FRIDAY deep-dive dialog opened from project-card chips
   (a11y complete: dialog role, ESC/scrim close, focus + scroll lock). Three-layer
   hologram stack: glass (backdrop-blur 15px + cyan gradient), glow (inset + outer
@@ -162,9 +163,9 @@ content is REAL, sourced from naramcharan.me.
   (brain=Deep Learning, circuit=ML, database=Data, terminal=Engineering) in rotating reticles.
   **Skills world (2026-11, user request: "like diving into a new world"):** `SkillsWorld.tsx`
   wraps Skills in `.sw-world` — a sticky full-viewport canvas starfield + perspective grid
-  floor behind the whole section, preceded by `SkillsDive` (190vh track, sticky stage):
-  HUD rings fly past the camera, a DEPTH readout counts, "Enter the Systems" zooms out of
-  the void, then the cards rise over the dive's tail (`-30vh` overlap) and surface from
+  floor behind the whole section, preceded by `SkillsDive` (150vh track, sticky stage):
+  HUD rings fly past the camera and a DEPTH readout counts (the "Enter the Systems"
+  title zoom was removed at the user's request, 2026-11 — don't re-add it), then the cards rise over the dive's tail (`-30vh` overlap) and surface from
   depth (translateZ reveal). Stars are scroll-LINKED (position = f(scroll), damped rAF that
   stops when caught up) — no idle loop. `id="skills"` is on the cards' `<section>` so the
   nav link skips the dive. Reduced motion: `.sw-dive{display:none}`, one static frame.

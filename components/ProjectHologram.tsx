@@ -105,10 +105,15 @@ export default function ProjectHologram({
                   case study; it lives in the header now, on every screen size. */}
               <div
                 aria-hidden
-                className="relative mt-1 h-12 w-12 shrink-0 sm:h-16 sm:w-16"
+                className="relative mt-1 h-14 w-14 shrink-0 sm:h-[72px] sm:w-[72px]"
               >
                 <div className="absolute inset-[-30%] rounded-full bg-[radial-gradient(circle,rgba(34,211,238,0.22),transparent_65%)]" />
-                <div className="relative h-full w-full">
+                {/* The whole reactor revolves slowly (its tick ring and gear
+                    collar counter-spin inside it); frozen by reduced motion. */}
+                <div
+                  className="animate-spin-slow relative h-full w-full"
+                  style={{ animationDuration: "12s" }}
+                >
                   <ArcReactorStatic />
                 </div>
               </div>

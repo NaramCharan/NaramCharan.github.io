@@ -18,7 +18,7 @@ gsap.registerPlugin(ScrollTrigger);
  * - `SkillsBackdrop` — sticky, full-viewport canvas starfield + perspective
  *   grid floor behind the WHOLE section (the "world").
  * - `SkillsDive` — the pinned portal stage: HUD rings fly past the camera,
- *   a depth readout counts down, and the title zooms out of the void.
+ *   and a depth readout counts up while the stars streak into warp.
  *
  * Both read the same progress, published on the section as CSS vars and on a
  * shared mutable object (no React re-render per frame). Reduced motion: the
@@ -241,7 +241,6 @@ export function SkillsDive({
   diveRef: React.RefObject<HTMLDivElement | null>;
 }) {
   const ringRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const titleRef = useRef<HTMLDivElement>(null);
   const depthRef = useRef<HTMLSpanElement>(null);
   const eyebrowRef = useRef<HTMLDivElement>(null);
 
@@ -258,15 +257,6 @@ export function SkillsDive({
         el.style.transform = `translate(-50%,-50%) scale(${scale.toFixed(4)}) rotate(${(i % 2 ? -1 : 1) * d * 90}deg)`;
         el.style.opacity = op.toFixed(3);
       });
-      // title: emerges from the void, holds, then we fly through it
-      if (titleRef.current) {
-        const inT = smooth(0.05, 0.42, d);
-        const outT = smooth(0.7, 0.96, d);
-        const scale = 0.55 + inT * 0.45 + outT * outT * 4;
-        titleRef.current.style.transform = `scale(${scale.toFixed(4)})`;
-        titleRef.current.style.opacity = (inT * (1 - outT)).toFixed(3);
-        titleRef.current.style.filter = `blur(${((1 - inT) * 8 + outT * 6).toFixed(2)}px)`;
-      }
       if (eyebrowRef.current) {
         eyebrowRef.current.style.opacity = (
           smooth(0.0, 0.2, d) * (1 - smooth(0.6, 0.8, d))
@@ -285,7 +275,7 @@ export function SkillsDive({
   }, [world]);
 
   return (
-    <div ref={diveRef} aria-hidden className="sw-dive relative h-[190vh]">
+    <div ref={diveRef} aria-hidden className="sw-dive relative h-[150vh]">
       <div className="sticky top-0 flex h-dvh items-center justify-center overflow-hidden">
         {/* portal core glow — opens as you approach */}
         <div className="sw-core absolute left-1/2 top-1/2 h-[70vmin] w-[70vmin] -translate-x-1/2 -translate-y-1/2 rounded-full" />
@@ -337,17 +327,6 @@ export function SkillsDive({
           </div>
         </div>
 
-        <div ref={titleRef} className="relative px-6 text-center will-change-transform" style={{ opacity: 0 }}>
-          <p className="mono mb-4 text-[10px] tracking-[0.5em] text-gold sm:text-xs">
-            02 · SUIT SYSTEMS
-          </p>
-          <p className="sw-title font-display text-5xl font-semibold tracking-tight sm:text-7xl md:text-8xl">
-            Enter the Systems
-          </p>
-          <p className="mono mt-5 text-[10px] tracking-[0.35em] text-cyan/70 sm:text-xs">
-            NEURAL · MODELS · SIGNALS · CORE
-          </p>
-        </div>
       </div>
     </div>
   );

@@ -519,13 +519,6 @@ svg[data-assembling="true"] .ar-part {
   transform: scale(calc(0.35 + var(--sw-d, 0) * 1.6));
   opacity: calc(var(--sw-d, 0) * (1 - var(--sw-d, 0)) * 3.2);
 }
-.sw-title {
-  background: linear-gradient(180deg, #ffffff 0%, var(--color-cyan-bright) 55%, var(--color-cyan) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  filter: drop-shadow(0 0 28px rgba(34, 211, 238, 0.35));
-}
 /* the cards rise over the tail of the dive instead of after an empty screen */
 .sw-dive + .sw-content { margin-top: -30vh; }
 /* cards surface out of the depth of the world */
@@ -537,6 +530,7 @@ svg[data-assembling="true"] .ar-part {
 }
 @media (prefers-reduced-motion: reduce) {
   .sw-dive { display: none; }
+  .sw-floor { background-position: 0 0; }
   .sw-grid .hud-panel[data-reveal="pending"] { opacity: 1; transform: none; }
 }
 
