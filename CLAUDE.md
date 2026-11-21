@@ -138,7 +138,8 @@ content is REAL, sourced from naramcharan.me.
   `dispatchEvent('scroll')` → screenshot). Also: HMR reloads can corrupt the
   screenshot canvas scaling → do a fresh `preview_start` + `preview_resize`.
 - `ArcReactorStatic.tsx` — the same **Iron Man 3 (Mark XLII) reactor**, non-animated
-  SVG. Used by `ProjectHologram` (FRIDAY brief modal).
+  SVG. Used by `ProjectHologram` (FRIDAY brief modal). It sits in the brief's HEADER beside the
+  title on every screen size (restored 2026-11 after #49 dropped it — the user missed it).
 - `ProjectHologram.tsx` — FRIDAY deep-dive dialog opened from project-card chips
   (a11y complete: dialog role, ESC/scrim close, focus + scroll lock). Three-layer
   hologram stack: glass (backdrop-blur 15px + cyan gradient), glow (inset + outer
@@ -159,6 +160,14 @@ content is REAL, sourced from naramcharan.me.
   newest-first. Any "MK-0x" in skill/ML-tree prose must match these codes.
 - `Skills.tsx` + `SystemIcons.tsx` — "Suit Systems" with **icon emblems, NO numbers**
   (brain=Deep Learning, circuit=ML, database=Data, terminal=Engineering) in rotating reticles.
+  **Skills world (2026-11, user request: "like diving into a new world"):** `SkillsWorld.tsx`
+  wraps Skills in `.sw-world` — a sticky full-viewport canvas starfield + perspective grid
+  floor behind the whole section, preceded by `SkillsDive` (190vh track, sticky stage):
+  HUD rings fly past the camera, a DEPTH readout counts, "Enter the Systems" zooms out of
+  the void, then the cards rise over the dive's tail (`-30vh` overlap) and surface from
+  depth (translateZ reveal). Stars are scroll-LINKED (position = f(scroll), damped rAF that
+  stops when caught up) — no idle loop. `id="skills"` is on the cards' `<section>` so the
+  nav link skips the dive. Reduced motion: `.sw-dive{display:none}`, one static frame.
 - `About.tsx` — origin story + education GPAs + cert timeline. Row 1: story paragraphs
   beside `OriginHelmet` (→ `armor/OriginHelmetCanvas`, next/dynamic): the Mark III helmet
   assembles on scroll — its own figure is the ScrollTrigger (bottom 92% → center 45%: starts only once fully in view), so
